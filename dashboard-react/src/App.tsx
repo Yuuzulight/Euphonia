@@ -20,6 +20,7 @@ import { RecordingCard } from "./components/RecordingCard";
 import { CheatSheet } from "./components/CheatSheet";
 import { RegisterSection } from "./components/RegisterSection";
 import { RecordButton } from "./components/RecordButton";
+import { GeneratedInsight } from "./components/GeneratedInsight";
 import {
   AnnotationsProvider,
   Note,
@@ -45,6 +46,7 @@ export function App() {
   const [modal, setModal] = useState<{ key: MetricKey; rect: DOMRect } | null>(
     null,
   );
+  const [_showOnboarding, setShowOnboarding] = useState(false);
 
   function refetchRecordings() {
     fetch(`${import.meta.env.BASE_URL}recordings.json?t=${Date.now()}`)
@@ -282,17 +284,7 @@ export function App() {
                 · custom analysis of what to work on next
               </span>
             </h2>
-            <Region
-              id="region.insights"
-              empty={
-                <div className="insight-placeholder">
-                  ✍️ no custom insight written for take #{active.id} yet.
-                  <br />
-                  ask Claude to "analyze this recording" — it'll design one right
-                  here.
-                </div>
-              }
-            />
+            <GeneratedInsight recording={active} onNeedsApiKey={() => setShowOnboarding(true)} />
           </section>
 
           <Region id="region.bottom" />
