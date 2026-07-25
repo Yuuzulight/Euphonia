@@ -5,6 +5,11 @@ export interface VoiceGardenBridge {
     label: string;
     note?: string;
   }): Promise<void>;
+  settings: {
+    getStatus(): Promise<{ hasKey: boolean }>;
+    setKey(key: string): Promise<void>;
+    clearKey(): Promise<void>;
+  };
 }
 
 declare global {
