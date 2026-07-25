@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import path from "node:path";
 import { registerAppProtocolScheme, registerAppProtocolHandler } from "./protocol";
+import { registerIpcHandlers } from "./ipcHandlers";
 
 registerAppProtocolScheme();
 
@@ -19,6 +20,7 @@ function createWindow(): void {
 
 app.whenReady().then(() => {
   registerAppProtocolHandler();
+  registerIpcHandlers();
   createWindow();
 
   app.on("activate", () => {

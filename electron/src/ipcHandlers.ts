@@ -1,0 +1,35 @@
+import { ipcMain } from "electron";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { randomUUID } from "node:crypto";
+import { runAnalyze } from "./sidecar";
+
+interface CreateRecordingPayload {
+  audioBase64: string;
+  mimeType: string; // e.g. "audio/webm"
+  label: string;
+  note?: string;
+}
+
+function extFromMimeType(mimeType: string): string {
+  if (mimeType.includes("webm")) return ".webm";
+  if (mimeType.includes("wav")) return ".wav";
+  if (mimeType.includes("mpeg") || mimeType.includes("mp3")) return ".mp3";
+  return ".m4a";
+}
+
+export function registerIpcHandlers(): void {
+  ipcMain.handle("recordings:create", async (_event, payload: CreateRecordingPayload) => {
+    const tempPath = path.join(
+      os.tmpdir(),
+      `voicegarden-${randomUUID()}${extFromMimeType(payload.mimeType)}`,
+    );
+    fs.writeFileSync(tempPath, Buffer.from(payload.audioBase64, "base64"));
+    try {
+      await runAnalyze({ audioTempPath: tempPath, label: payload.label, note: payload.note });
+    } finally {
+      fs.rmSync(tempPath, { force: true });
+    }
+  });
+}
