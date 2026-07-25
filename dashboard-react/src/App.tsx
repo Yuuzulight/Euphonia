@@ -21,6 +21,7 @@ import { CheatSheet } from "./components/CheatSheet";
 import { RegisterSection } from "./components/RegisterSection";
 import { RecordButton } from "./components/RecordButton";
 import { GeneratedInsight } from "./components/GeneratedInsight";
+import { OnboardingModal } from "./components/OnboardingModal";
 import {
   AnnotationsProvider,
   Note,
@@ -46,7 +47,7 @@ export function App() {
   const [modal, setModal] = useState<{ key: MetricKey; rect: DOMRect } | null>(
     null,
   );
-  const [_showOnboarding, setShowOnboarding] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   function refetchRecordings() {
     fetch(`${import.meta.env.BASE_URL}recordings.json?t=${Date.now()}`)
@@ -59,6 +60,13 @@ export function App() {
   }
 
   useEffect(refetchRecordings, []);
+
+  // check if user has an API key on mount, show onboarding if not
+  useEffect(() => {
+    window.euphonia.settings.getStatus().then(({ hasKey }) => {
+      if (!hasKey) setShowOnboarding(true);
+    });
+  }, []);
 
   // reference voices (real men/women) — degrade gracefully if missing.
   useEffect(() => {
@@ -86,10 +94,27 @@ export function App() {
   return (
     <div className="wrap">
       <header className="hero">
-        <h1>
-          <EuphoniaIcon title="Euphonia" /> Euphonia
-        </h1>
-        <p>finding the sound that feels like you 💗✨</p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <h1>
+              <EuphoniaIcon title="Euphonia" /> Euphonia
+            </h1>
+            <p>finding the sound that feels like you 💗✨</p>
+          </div>
+          <button
+            onClick={() => setShowOnboarding(true)}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "1.5rem",
+              cursor: "pointer",
+              padding: "0.5rem",
+            }}
+            title="Settings"
+          >
+            ⚙️
+          </button>
+        </div>
         {active && (
           <div className="latest-banner">
             💗 <b>#{active.id}</b> &middot; {active.label} &middot;{" "}
@@ -393,6 +418,11 @@ export function App() {
           onClose={() => setModal(null)}
         />
       )}
+
+      <OnboardingModal
+        open={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+      />
     </div>
   );
 }
