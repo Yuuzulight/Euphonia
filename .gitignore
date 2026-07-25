@@ -19,6 +19,9 @@ ds-bundle/
 # Node
 node_modules/
 
+# Claude Code worktrees
+.claude/worktrees/
+
 # Unrelated local tooling
 .design-sync/
 
