@@ -31,3 +31,7 @@ euphonia-starter.zip
 
 # reference-build audio cache (regenerate via scripts/build_reference_set.py)
 .refcache/
+
+# scripts/build_sidecar.py output
+dist-sidecar/
+build-sidecar/
