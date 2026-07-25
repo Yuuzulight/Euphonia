@@ -7,3 +7,8 @@ dependencies = [
     "numpy>=2.5.0",
     "praat-parselmouth>=0.4.7",
 ]
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.21.0",
+]
