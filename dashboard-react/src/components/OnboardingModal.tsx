@@ -16,15 +16,26 @@ export function OnboardingModal({
 }) {
   const [key, setKey] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!open) return null;
 
   async function save() {
     if (!key.trim()) return;
     setSaving(true);
-    await window.euphonia.settings.setKey(key.trim());
-    setSaving(false);
-    onClose();
+    setError(null);
+    try {
+      await window.euphonia.settings.setKey(key.trim());
+      setSaving(false);
+      onClose();
+    } catch (err) {
+      setSaving(false);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "couldn't save key — check that encryption is available"
+      );
+    }
   }
 
   return (
@@ -54,6 +65,7 @@ export function OnboardingModal({
           onChange={(e) => setKey(e.target.value)}
           disabled={saving}
         />
+        {error && <p className="modal-error">{error}</p>}
         <div className="modal-actions">
           <button onClick={onClose}>skip for now</button>
           <button onClick={save} disabled={saving || !key.trim()}>

@@ -1279,3 +1279,14 @@ a.legend-link {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.modal-error {
+  margin: -12px 0 16px;
+  padding: 10px 13px;
+  background: #ffe8e8;
+  border: 1.5px solid #ffcccc;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #c84545;
+  line-height: 1.4;
+}
