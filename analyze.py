@@ -25,10 +25,12 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import shutil
 import statistics
 import subprocess
 import tempfile
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
@@ -37,13 +39,36 @@ import parselmouth
 from parselmouth.praat import call
 
 ROOT = Path(__file__).resolve().parent
-RECORDINGS_JSON = ROOT / "recordings.json"  # source of truth
 
-# The React dashboard (dashboard-react) reads these at runtime from public/.
-APP_PUBLIC = ROOT / "dashboard-react" / "public"
-PUBLIC_RECORDINGS_JSON = APP_PUBLIC / "recordings.json"
-AUDIO_DIR = APP_PUBLIC / "audio"
-ANALYSIS_DIR = APP_PUBLIC / "analysis"
+
+@dataclass(frozen=True)
+class Paths:
+    recordings_json: Path
+    mirror_recordings_json: Path | None  # dev workflow only; None when --output-root is used
+    audio_dir: Path
+    analysis_dir: Path
+
+
+def resolve_paths(output_root: str | None) -> Paths:
+    """Default (no output_root): today's dev-workflow layout, dual-written
+    (repo-root recordings.json = source of truth, dashboard-react/public/
+    mirrored for the Vite dev server). With output_root (the desktop app's
+    per-user data dir): a single self-contained location, no mirror."""
+    if output_root is None:
+        app_public = ROOT / "dashboard-react" / "public"
+        return Paths(
+            recordings_json=ROOT / "recordings.json",
+            mirror_recordings_json=app_public / "recordings.json",
+            audio_dir=app_public / "audio",
+            analysis_dir=app_public / "analysis",
+        )
+    root = Path(output_root)
+    return Paths(
+        recordings_json=root / "recordings.json",
+        mirror_recordings_json=None,
+        audio_dir=root / "audio",
+        analysis_dir=root / "analysis",
+    )
 
 # Pitch search range (Hz). Wide enough for a feminizing voice without octave errors.
 PITCH_FLOOR = 75.0
@@ -80,8 +105,9 @@ def sd(values: list[float]) -> float | None:
 def to_wav_mono(src: Path) -> Path:
     """Convert any audio file to a temp mono WAV for analysis via ffmpeg."""
     tmp = Path(tempfile.mkdtemp()) / "analysis.wav"
+    ffmpeg_bin = os.environ.get("FFMPEG_BIN", "ffmpeg")
     subprocess.run(
-        ["ffmpeg", "-y", "-i", str(src), "-ac", "1", "-ar", "44100", str(tmp)],
+        [ffmpeg_bin, "-y", "-i", str(src), "-ac", "1", "-ar", "44100", str(tmp)],
         check=True,
         capture_output=True,
     )
@@ -530,28 +556,30 @@ def analyze_register(sound: parselmouth.Sound, floor: float) -> tuple[dict, dict
     return detail, headline
 
 
-def load_recordings() -> list[dict]:
-    if RECORDINGS_JSON.exists():
-        return json.loads(RECORDINGS_JSON.read_text())
+def load_recordings(paths: Paths) -> list[dict]:
+    if paths.recordings_json.exists():
+        return json.loads(paths.recordings_json.read_text())
     return []
 
 
-def save_recordings(recordings: list[dict]) -> None:
+def save_recordings(paths: Paths, recordings: list[dict]) -> None:
     payload = json.dumps(recordings, indent=2)
-    RECORDINGS_JSON.write_text(payload)
-    APP_PUBLIC.mkdir(parents=True, exist_ok=True)
-    PUBLIC_RECORDINGS_JSON.write_text(payload)
+    paths.recordings_json.parent.mkdir(parents=True, exist_ok=True)
+    paths.recordings_json.write_text(payload)
+    if paths.mirror_recordings_json is not None:
+        paths.mirror_recordings_json.parent.mkdir(parents=True, exist_ok=True)
+        paths.mirror_recordings_json.write_text(payload)
 
 
-def backfill() -> None:
+def backfill(paths: Paths) -> None:
     """Recompute metrics for every existing recording from its stored audio,
     preserving id/label/note/date. Use after adding a new metric (e.g. weight)."""
-    recordings = load_recordings()
+    recordings = load_recordings(paths)
     if not recordings:
         raise SystemExit("No recordings to backfill.")
-    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+    paths.analysis_dir.mkdir(parents=True, exist_ok=True)
     for entry in recordings:
-        src = AUDIO_DIR / Path(entry["audio"]).name
+        src = paths.audio_dir / Path(entry["audio"]).name
         if not src.exists():
             print(f"⚠️  #{entry['id']}: audio not found ({src}) — skipped")
             continue
@@ -561,10 +589,10 @@ def backfill() -> None:
         entry.update(analyze(sound))
         detail, register = analyze_register(sound, floor)
         entry["register"] = register
-        (ANALYSIS_DIR / f"{entry['id']}.json").write_text(json.dumps(detail))
+        (paths.analysis_dir / f"{entry['id']}.json").write_text(json.dumps(detail))
         print(f"✅ #{entry['id']} backfilled — weight {entry['weight']}")
     recordings.sort(key=lambda r: r["id"])
-    save_recordings(recordings)
+    save_recordings(paths, recordings)
     print("🌸 Backfill complete.")
 
 
@@ -587,10 +615,16 @@ def main() -> None:
         help="Recompute metrics for ALL existing recordings from their stored audio "
              "(preserves id/label/note/date). Use after adding a new metric.",
     )
+    parser.add_argument(
+        "--output-root", default=None,
+        help="Write recordings.json/audio/analysis under this directory instead of "
+             "the repo's default dev layout (used by the desktop app).",
+    )
     args = parser.parse_args()
+    paths = resolve_paths(args.output_root)
 
     if args.backfill:
-        backfill()
+        backfill(paths)
         return
 
     if not args.audio:
@@ -602,9 +636,9 @@ def main() -> None:
     if not src.exists():
         raise SystemExit(f"❌ File not found: {src}")
 
-    AUDIO_DIR.mkdir(parents=True, exist_ok=True)
-    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
-    recordings = load_recordings()
+    paths.audio_dir.mkdir(parents=True, exist_ok=True)
+    paths.analysis_dir.mkdir(parents=True, exist_ok=True)
+    recordings = load_recordings(paths)
     if args.id is not None:
         if any(r["id"] == args.id for r in recordings):
             raise SystemExit(f"❌ id {args.id} already exists — pick another or renumber first.")
@@ -620,8 +654,8 @@ def main() -> None:
     detail, register = analyze_register(sound, args.register_floor)
 
     playback_name = f"{rec_id:03d}{src.suffix.lower()}"
-    shutil.copy2(src, AUDIO_DIR / playback_name)
-    (ANALYSIS_DIR / f"{rec_id}.json").write_text(json.dumps(detail))
+    shutil.copy2(src, paths.audio_dir / playback_name)
+    (paths.analysis_dir / f"{rec_id}.json").write_text(json.dumps(detail))
 
     entry = {
         "id": rec_id,
@@ -636,7 +670,7 @@ def main() -> None:
     }
     recordings.append(entry)
     recordings.sort(key=lambda r: r["id"])
-    save_recordings(recordings)
+    save_recordings(paths, recordings)
 
     p, f = metrics["pitch"], metrics["formants"]
     print(
