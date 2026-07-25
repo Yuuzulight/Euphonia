@@ -26,6 +26,8 @@ Additionally, in jurisdictions where statements of this kind are legal, I dedica
 
 **What this means for the packaged Euphonia installer:** the desktop installer built via `electron/electron-builder.yml` bundles `analyze.exe` (a PyInstaller build that freezes in Praat/parselmouth, per Task 9) alongside a GPLv3 ffmpeg build. That combination is exactly the "bundled artifact" case above: the *source code* in this repo remains MIT/public domain as described, but the *built/packaged installer* is a combined work and is licensed as a whole under **GPLv3**, not MIT. License texts for Praat, parselmouth, and the bundled ffmpeg build are shipped alongside the installer in `electron/resources/licenses/` (see `THIRD-PARTY-LICENSES.md` there) so recipients of the installer receive the license notices GPLv3 requires.
 
+**A note on the "Windows protected your PC" warning:** the installer isn't code-signed (no certificate — not worth the cost for a small group of friends), so Windows SmartScreen will flag it as from an unrecognized publisher the first time it's run. This is expected, not a sign anything's broken. Click **"More info"**, then **"Run anyway"** to proceed.
+
 ## Credits & third-party assets
 
 - **Reference voices** — the preview clips in `dashboard-react/public/reference-audio/` and the measured values in `reference.json` are derived from the **VCTK Corpus** (CSTR, University of Edinburgh — Veaux, Yamagishi & MacDonald), licensed **CC BY 4.0**. The clips were trimmed and transcoded. These files remain under **CC BY 4.0**. <https://datashare.ed.ac.uk/handle/10283/3443> · <https://creativecommons.org/licenses/by/4.0/>
