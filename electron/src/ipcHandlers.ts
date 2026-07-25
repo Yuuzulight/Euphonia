@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { runAnalyze } from "./sidecar";
+import { getApiKey, setApiKey, clearApiKey } from "./settings";
 
 interface CreateRecordingPayload {
   audioBase64: string;
@@ -32,4 +33,8 @@ export function registerIpcHandlers(): void {
       fs.rmSync(tempPath, { force: true });
     }
   });
+
+  ipcMain.handle("settings:getStatus", () => ({ hasKey: getApiKey() !== null }));
+  ipcMain.handle("settings:setKey", (_event, key: string) => setApiKey(key));
+  ipcMain.handle("settings:clearKey", () => clearApiKey());
 }
