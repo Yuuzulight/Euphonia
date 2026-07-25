@@ -1,2 +1,10 @@
-// contextBridge APIs are added in Task 3 (recordings) and Task 5 (settings).
-export {};
+import { contextBridge, ipcRenderer } from "electron";
+
+contextBridge.exposeInMainWorld("voiceGarden", {
+  createRecording: (payload: {
+    audioBase64: string;
+    mimeType: string;
+    label: string;
+    note?: string;
+  }) => ipcRenderer.invoke("recordings:create", payload),
+});
