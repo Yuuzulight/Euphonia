@@ -19,6 +19,7 @@ import { LineChart, type Point, type ChartBand } from "./components/LineChart";
 import { RecordingCard } from "./components/RecordingCard";
 import { CheatSheet } from "./components/CheatSheet";
 import { RegisterSection } from "./components/RegisterSection";
+import { RecordButton } from "./components/RecordButton";
 import {
   AnnotationsProvider,
   Note,
@@ -45,17 +46,17 @@ export function App() {
     null,
   );
 
-  useEffect(() => {
+  function refetchRecordings() {
     fetch(`${import.meta.env.BASE_URL}recordings.json?t=${Date.now()}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then((data: Recording[]) =>
-        setRecordings([...data].sort((a, b) => a.id - b.id)),
-      )
+      .then((data: Recording[]) => setRecordings([...data].sort((a, b) => a.id - b.id)))
       .catch((e) => setError(String(e)));
-  }, []);
+  }
+
+  useEffect(refetchRecordings, []);
 
   // reference voices (real men/women) — degrade gracefully if missing.
   useEffect(() => {
@@ -94,6 +95,8 @@ export function App() {
           </div>
         )}
       </header>
+
+      <RecordButton onRecorded={refetchRecordings} />
 
       {error && (
         <div className="empty">
