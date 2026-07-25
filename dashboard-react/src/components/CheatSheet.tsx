@@ -12,7 +12,7 @@ export function CheatSheet() {
           setOpen((o) => !o);
         }}
       >
-        tap to open your gentle cheat sheet 🌸
+        tap to open your gentle cheat sheet 💗
       </summary>
       <div className="gloss">
         <div className="gloss-item">
@@ -138,7 +138,7 @@ export function CheatSheet() {
         </div>
 
         <p className="gloss-note">
-          🌸 Honest note: jitter, shimmer &amp; HNR norms come from sustained
+          💗 Honest note: jitter, shimmer &amp; HNR norms come from sustained
           vowels, so on a full passage like the Rainbow they'll look "worse" than
           the textbook numbers — that's normal. Use them to spot{" "}
           <b>your own trend</b> over time, not as pass/fail. And remember: every

@@ -1,5 +1,5 @@
 // ───────────────────────────────────────────────────────────────────────────
-// Emoji → custom-icon registry 🌸
+// Emoji → custom-icon registry 💗
 //
 // Authors (and the LLM) keep writing literal emoji in prose; <RichText> scans
 // text and swaps any emoji listed here for its custom inline component. Emoji

@@ -1,7 +1,7 @@
 // ───────────────────────────────────────────────────────────────────────────
-// Custom hand-drawn icon set 🌸 — soft pastel glyphs that replace the section
+// Custom hand-drawn icon set 💗 — soft pastel glyphs that replace the section
 // emoji so the whole dashboard feels bespoke and cohesive (same family as the
-// tulip favicon). Each is a self-contained inline SVG that inherits text sizing
+// Euphonia favicon). Each is a self-contained inline SVG that inherits text sizing
 // via `em`, so it lines up with the heading it sits beside. Decorative only.
 //
 // Palette (from zones.ts / index.css): pink #ffb6d5 · deep-pink #ff9ec5/#ff89bb
@@ -146,33 +146,29 @@ export function BulbIcon(p: IconProps = {}) {
   );
 }
 
-/** 🌷 → the Voice Garden tulip (matches the favicon) — hero mark */
-export function TulipIcon(p: IconProps = {}) {
-  // viewBox cropped tight to the flower's bounding box (centered on it) so the
-  // bloom fills the icon instead of floating small in a 512² field.
-  const { children, ...rest } = svgProps("88 132 336 336", { size: "1.15em", ...p });
+/** 💗 → the Euphonia mark: a heart with a soundwave (matches the favicon) — hero mark */
+export function EuphoniaIcon(p: IconProps = {}) {
+  // viewBox cropped tight to the mark's bounding box so it fills the icon
+  // instead of floating small in a wider field.
+  const { children, ...rest } = svgProps("120 150 300 280", { size: "1.15em", ...p });
   return (
     <svg {...rest}>
       {children}
       <defs>
-        <linearGradient id="tulipPetal" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="euphoniaHeart" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#ffc8df" />
           <stop offset="1" stopColor="#ff92be" />
         </linearGradient>
-        <linearGradient id="tulipLeaf" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#a6e0bd" />
-          <stop offset="1" stopColor="#79c797" />
-        </linearGradient>
       </defs>
-      <g transform="translate(0,-6) translate(256,300) scale(1.1) translate(-256,-300)">
-        <path d="M256 454 C256 394 256 350 256 302" stroke="url(#tulipLeaf)" strokeWidth="24" fill="none" strokeLinecap="round" />
-        <path d="M256 412 C178 408 138 350 142 290 C220 296 260 342 256 412 Z" fill="url(#tulipLeaf)" />
-        <path d="M256 396 C334 392 374 336 370 286 C292 292 252 330 256 396 Z" fill="#8aceA4" />
-        <path d="M256 314 C186 314 152 256 152 204 C152 154 196 146 256 206 C316 146 360 154 360 204 C360 256 326 314 256 314 Z" fill="url(#tulipPetal)" />
-        <path d="M256 314 C230 314 204 256 204 194 C204 146 238 146 256 190 C274 146 308 146 308 194 C308 256 282 314 256 314 Z" fill="#ffb6d5" />
-        <path d="M206 208 C210 250 230 294 256 310" stroke="#ff89bb" strokeWidth="6" fill="none" strokeLinecap="round" opacity="0.45" />
-        <path d="M306 208 C302 250 282 294 256 310" stroke="#ff89bb" strokeWidth="6" fill="none" strokeLinecap="round" opacity="0.45" />
-        <ellipse cx="218" cy="204" rx="15" ry="21" fill="#ffffff" opacity="0.5" />
+      <path
+        d="M256,232 C226,180 158,180 158,236 C158,296 200,336 256,396 C312,336 354,296 354,236 C354,180 286,180 256,232 Z"
+        fill="url(#euphoniaHeart)"
+      />
+      <ellipse cx="216" cy="222" rx="16" ry="22" fill="#ffffff" opacity="0.5" />
+      <g stroke="#b6a2f0" strokeWidth="14" fill="none" strokeLinecap="round">
+        <path d="M336 206 A34 34 0 0 1 336 278" opacity="0.95" />
+        <path d="M356 182 A62 62 0 0 1 356 302" opacity="0.75" />
+        <path d="M376 158 A90 90 0 0 1 376 326" opacity="0.55" />
       </g>
     </svg>
   );

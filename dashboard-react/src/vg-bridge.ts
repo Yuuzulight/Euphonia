@@ -1,4 +1,4 @@
-export interface VoiceGardenBridge {
+export interface EuphoniaBridge {
   createRecording(payload: {
     audioBase64: string;
     mimeType: string;
@@ -14,7 +14,7 @@ export interface VoiceGardenBridge {
 
 declare global {
   interface Window {
-    voiceGarden: VoiceGardenBridge;
+    euphonia: EuphoniaBridge;
   }
 }
 

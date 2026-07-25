@@ -1,8 +1,8 @@
-# Voice Garden Desktop App Implementation Plan
+# Euphonia Desktop App Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Package Voice Garden as an installable Electron desktop app — no server, no accounts — that records audio, runs the existing Praat/parselmouth analysis, and generates a free Gemini-powered written insight per recording, replacing the current "clone the repo + ask a coding agent" workflow.
+**Goal:** Package Euphonia as an installable Electron desktop app — no server, no accounts — that records audio, runs the existing Praat/parselmouth analysis, and generates a free Gemini-powered written insight per recording, replacing the current "clone the repo + ask a coding agent" workflow.
 
 **Architecture:** Electron main process spawns the existing `analyze.py` as a subprocess (dev: via `uv run`; packaged: a PyInstaller-frozen executable) and serves the existing `dashboard-react` renderer through a custom `app://` protocol that transparently redirects the small set of *dynamic* paths (`recordings.json`, `audio/*`, `analysis/*`) to the OS per-user data directory while everything else is served read-only from the built bundle — so almost none of the existing React code changes. New IPC channels (recording upload, Gemini insight generation, API key settings) are exposed to the renderer via a `contextBridge` preload script.
 
@@ -28,7 +28,7 @@ voice-training-ui/
     src/
       types.ts                                (MODIFY: add GeneratedInsight type)
       App.tsx                                 (MODIFY: mount RecordButton/OnboardingModal, swap region.insights)
-      vg-bridge.ts                             (NEW: typed window.voiceGarden accessor)
+      vg-bridge.ts                             (NEW: typed window.euphonia accessor)
       components/
         RecordButton.tsx                      (NEW)
         GeneratedInsight.tsx                  (NEW)
@@ -74,7 +74,7 @@ voice-training-ui/
 `electron/package.json`:
 ```json
 {
-  "name": "voice-garden-electron",
+  "name": "euphonia-electron",
   "private": true,
   "version": "0.1.0",
   "main": "dist/main.js",
@@ -268,7 +268,7 @@ Run:
 cd dashboard-react && npm install && npm run build
 cd ../electron && npm run build && npx electron .
 ```
-Expected: a window opens showing the Voice Garden hero, "no recordings yet 🌸" empty state, and a working "What do these mean?" cheat sheet — proving both the static bundle and the empty-`recordings.json` dynamic path resolve correctly through the custom protocol.
+Expected: a window opens showing the Euphonia hero, "no recordings yet 💗" empty state, and a working "What do these mean?" cheat sheet — proving both the static bundle and the empty-`recordings.json` dynamic path resolve correctly through the custom protocol.
 
 - [ ] **Step 7: Commit**
 
@@ -473,7 +473,7 @@ git commit -m "feat: parametrize analyze.py output location and ffmpeg binary"
 - Consumes: `getAudioDir/getAnalysisDir/getRecordingsJsonPath/getUserDataRoot` from Task 1's `paths.ts`.
 - Produces: `runAnalyze(input: { audioTempPath: string; label: string; note?: string }): Promise<void>` (`sidecar.ts`) — spawns `analyze.py` with `--output-root <userDataRoot>`.
 - Produces: IPC channel `"recordings:create"`, payload `{ audioBase64: string; mimeType: string; label: string; note?: string }`, resolves `void` (renderer refetches `recordings.json` itself, matching the existing polling-free but refetch-on-mount pattern).
-- Produces: `window.voiceGarden.createRecording(audio: Blob, label: string, note?: string): Promise<void>` (`vg-bridge.ts`).
+- Produces: `window.euphonia.createRecording(audio: Blob, label: string, note?: string): Promise<void>` (`vg-bridge.ts`).
 
 - [ ] **Step 1: `sidecar.ts` — spawn analyze.py, dev vs packaged**
 
@@ -594,7 +594,7 @@ app.whenReady().then(() => {
 // electron/src/preload.ts
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld("voiceGarden", {
+contextBridge.exposeInMainWorld("euphonia", {
   createRecording: (payload: {
     audioBase64: string;
     mimeType: string;
@@ -608,7 +608,7 @@ contextBridge.exposeInMainWorld("voiceGarden", {
 
 ```typescript
 // dashboard-react/src/vg-bridge.ts
-export interface VoiceGardenBridge {
+export interface EuphoniaBridge {
   createRecording(payload: {
     audioBase64: string;
     mimeType: string;
@@ -619,7 +619,7 @@ export interface VoiceGardenBridge {
 
 declare global {
   interface Window {
-    voiceGarden: VoiceGardenBridge;
+    euphonia: EuphoniaBridge;
   }
 }
 
@@ -646,7 +646,7 @@ then, with a real short audio file available on disk, exercise the IPC path from
 ```js
 const buf = await (await fetch("file:///C:/path/to/test.wav")).arrayBuffer();
 const b64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
-await window.voiceGarden.createRecording({ audioBase64: b64, mimeType: "audio/wav", label: "manual test" });
+await window.euphonia.createRecording({ audioBase64: b64, mimeType: "audio/wav", label: "manual test" });
 ```
 Expected: no error thrown; reloading the window (Ctrl+R) shows the new take in "All recordings" and as the active take — proving the sidecar wrote `recordings.json`/`audio/`/`analysis/` into userData and the protocol layer picked it up with zero renderer changes.
 
@@ -666,7 +666,7 @@ git commit -m "feat: wire recording upload through IPC to the analyze.py sidecar
 - Modify: `dashboard-react/src/App.tsx`
 
 **Interfaces:**
-- Consumes: `window.voiceGarden.createRecording` and `blobToBase64` from Task 3's `vg-bridge.ts`.
+- Consumes: `window.euphonia.createRecording` and `blobToBase64` from Task 3's `vg-bridge.ts`.
 - Produces: `<RecordButton onRecorded={() => void}>` — calls `onRecorded` after a successful upload so `App.tsx` can refetch `recordings.json`.
 
 - [ ] **Step 1: Component**
@@ -703,7 +703,7 @@ export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
     setState("saving");
     try {
       const audioBase64 = await blobToBase64(blob);
-      await window.voiceGarden.createRecording({
+      await window.euphonia.createRecording({
         audioBase64,
         mimeType: blob.type,
         label: label.trim() || "untitled take",
@@ -723,7 +723,7 @@ export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
         <>
           <input
             type="text"
-            placeholder="what are you trying this take? 🌱"
+            placeholder="what are you trying this take? ✨"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
           />
@@ -731,7 +731,7 @@ export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
         </>
       )}
       {state === "recording" && <button onClick={stop}>⏹️ stop &amp; analyze</button>}
-      {state === "saving" && <span>analyzing… 🌸</span>}
+      {state === "saving" && <span>analyzing… 💗</span>}
       {state === "error" && <span>couldn't save that take 🌧️ — try again</span>}
     </div>
   );
@@ -787,7 +787,7 @@ git commit -m "feat: add in-app recording via MediaRecorder"
 **Interfaces:**
 - Produces: `getApiKey(): string | null`, `setApiKey(key: string): void`, `clearApiKey(): void` (`settings.ts`).
 - Produces: IPC channels `"settings:getStatus"` → `{ hasKey: boolean }`, `"settings:setKey"` payload `string` → `void`, `"settings:clearKey"` → `void`.
-- Produces: `window.voiceGarden.settings.getStatus/setKey/clearKey` on the bridge.
+- Produces: `window.euphonia.settings.getStatus/setKey/clearKey` on the bridge.
 
 - [ ] **Step 1: `settings.ts`**
 
@@ -843,7 +843,7 @@ ipcMain.handle("settings:clearKey", () => clearApiKey());
 
 `electron/src/preload.ts` — extend the exposed object:
 ```typescript
-contextBridge.exposeInMainWorld("voiceGarden", {
+contextBridge.exposeInMainWorld("euphonia", {
   createRecording: (payload: {
     audioBase64: string;
     mimeType: string;
@@ -860,7 +860,7 @@ contextBridge.exposeInMainWorld("voiceGarden", {
 
 `dashboard-react/src/vg-bridge.ts` — extend the interface:
 ```typescript
-export interface VoiceGardenBridge {
+export interface EuphoniaBridge {
   createRecording(payload: {
     audioBase64: string;
     mimeType: string;
@@ -879,11 +879,11 @@ export interface VoiceGardenBridge {
 
 Run: `cd electron && npm run build && npx electron .`, in DevTools console:
 ```js
-await window.voiceGarden.settings.getStatus()      // { hasKey: false }
-await window.voiceGarden.settings.setKey("test-123")
-await window.voiceGarden.settings.getStatus()      // { hasKey: true }
-await window.voiceGarden.settings.clearKey()
-await window.voiceGarden.settings.getStatus()      // { hasKey: false }
+await window.euphonia.settings.getStatus()      // { hasKey: false }
+await window.euphonia.settings.setKey("test-123")
+await window.euphonia.settings.getStatus()      // { hasKey: true }
+await window.euphonia.settings.clearKey()
+await window.euphonia.settings.getStatus()      // { hasKey: false }
 ```
 Expected: matches the comments above; inspect `<userData>/gemini-key.enc` and confirm it's binary/encrypted, not plaintext.
 
@@ -1059,7 +1059,7 @@ insights: {
 ```typescript
 import type { GeneratedInsight, Recording } from "./types";
 
-// add to VoiceGardenBridge:
+// add to EuphoniaBridge:
 insights: {
   get(recordingId: number): Promise<GeneratedInsight | null>;
   generate(recording: Recording): Promise<GeneratedInsight>;
@@ -1070,9 +1070,9 @@ insights: {
 
 With a real Gemini key (free, from Google AI Studio) set via the Task 5 console commands, in DevTools:
 ```js
-await window.voiceGarden.insights.generate({ id: 1, label: "test", pitch: {mean_hz: 190}, formants: {f2_hz: 2000}, voice_quality: {hnr_db: 15, jitter_pct: 1.2}, register: {in_register_pct: 80, offset_sub_pct: 20, phrases_landed_pct: 75} })
+await window.euphonia.insights.generate({ id: 1, label: "test", pitch: {mean_hz: 190}, formants: {f2_hz: 2000}, voice_quality: {hnr_db: 15, jitter_pct: 1.2}, register: {in_register_pct: 80, offset_sub_pct: 20, phrases_landed_pct: 75} })
 ```
-Expected: resolves with `{ summary, strengths, focus_area, tip, generated_at }`; `<userData>/analysis/1-insight.json` now exists; calling `window.voiceGarden.insights.get(1)` returns the same cached object without another network call (check DevTools Network tab shows no new request).
+Expected: resolves with `{ summary, strengths, focus_area, tip, generated_at }`; `<userData>/analysis/1-insight.json` now exists; calling `window.euphonia.insights.get(1)` returns the same cached object without another network call (check DevTools Network tab shows no new request).
 
 - [ ] **Step 6: Commit**
 
@@ -1090,7 +1090,7 @@ git commit -m "feat: generate and cache per-recording insights via the Gemini AP
 - Modify: `dashboard-react/src/App.tsx`
 
 **Interfaces:**
-- Consumes: `window.voiceGarden.insights.get/generate` (Task 6), `InsightCard`/`Drill` from `../annotations/lib`.
+- Consumes: `window.euphonia.insights.get/generate` (Task 6), `InsightCard`/`Drill` from `../annotations/lib`.
 - Produces: `<GeneratedInsight recording={active} onNeedsApiKey={() => void}>` — replaces the `region.insights` `<Region>` placeholder in `App.tsx`.
 
 - [ ] **Step 1: Component**
@@ -1114,7 +1114,7 @@ export function GeneratedInsight({
 
   useEffect(() => {
     setStatus("loading");
-    window.voiceGarden.insights.get(recording.id).then((cached) => {
+    window.euphonia.insights.get(recording.id).then((cached) => {
       setInsight(cached);
       setStatus("idle");
     });
@@ -1123,7 +1123,7 @@ export function GeneratedInsight({
   async function generate() {
     setStatus("generating");
     try {
-      const result = await window.voiceGarden.insights.generate(recording);
+      const result = await window.euphonia.insights.generate(recording);
       setInsight(result);
       setStatus("idle");
     } catch (e) {
@@ -1208,7 +1208,7 @@ git commit -m "feat: render Gemini-generated insights in the dashboard"
 - Modify: `dashboard-react/src/App.tsx`
 
 **Interfaces:**
-- Consumes: `window.voiceGarden.settings.getStatus/setKey/clearKey` (Task 5).
+- Consumes: `window.euphonia.settings.getStatus/setKey/clearKey` (Task 5).
 - Produces: `<OnboardingModal open={boolean} onClose={() => void}>` — shown on first launch (no key, not yet dismissed this session) and reopenable as "Settings" from the header.
 
 - [ ] **Step 1: The guide content (single source of truth, also readable on GitHub)**
@@ -1217,14 +1217,14 @@ git commit -m "feat: render Gemini-generated insights in the dashboard"
 ```markdown
 # Getting a free Gemini API key
 
-Voice Garden uses this key only to write your per-recording insight — it's
+Euphonia uses this key only to write your per-recording insight — it's
 never sent anywhere except Google's Gemini API, and it's stored encrypted
 on your own machine.
 
 1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
 2. Sign in with a Google account.
 3. Click **Create API key**.
-4. Copy the key and paste it into Voice Garden's setup screen (or Settings,
+4. Copy the key and paste it into Euphonia's setup screen (or Settings,
    any time later).
 
 Gemini's free tier is rate-limited but plenty for occasional personal use.
@@ -1260,7 +1260,7 @@ export function OnboardingModal({
   async function save() {
     if (!key.trim()) return;
     setSaving(true);
-    await window.voiceGarden.settings.setKey(key.trim());
+    await window.euphonia.settings.setKey(key.trim());
     setSaving(false);
     onClose();
   }
@@ -1268,7 +1268,7 @@ export function OnboardingModal({
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="modal onboarding">
-        <h2>🌷 welcome to Voice Garden</h2>
+        <h2>💗 welcome to Euphonia</h2>
         <p>add a free Gemini key to get written insights per take:</p>
         <ol>
           {GUIDE_STEPS.map(([step, link], i) => (
@@ -1314,7 +1314,7 @@ import { OnboardingModal } from "./components/OnboardingModal";
 const [showOnboarding, setShowOnboarding] = useState(false);
 
 useEffect(() => {
-  window.voiceGarden.settings.getStatus().then(({ hasKey }) => {
+  window.euphonia.settings.getStatus().then(({ hasKey }) => {
     if (!hasKey) setShowOnboarding(true);
   });
 }, []);
@@ -1432,7 +1432,7 @@ git commit -m "feat: add PyInstaller build script for the analyze.py sidecar"
 
 **Interfaces:**
 - Consumes: `dashboard-react/dist` (Task 1), `dist-sidecar/analyze[.exe]` (Task 9), a downloaded static ffmpeg binary.
-- Produces: a Windows installer (`electron/release/*.exe`) that launches into a working, empty-state Voice Garden.
+- Produces: a Windows installer (`electron/release/*.exe`) that launches into a working, empty-state Euphonia.
 
 - [ ] **Step 1: Fetch a static ffmpeg build for bundling**
 
@@ -1443,7 +1443,7 @@ Download a static Windows ffmpeg build (e.g. from ffmpeg.org's official builds p
 ```yaml
 # ffmpeg.exe sourced from: <fill in the exact release URL used in Step 1>
 appId: com.voicegarden.desktop
-productName: Voice Garden
+productName: Euphonia
 directories:
   output: release
 files:
@@ -1495,5 +1495,5 @@ electron/resources/ffmpeg/
 appended to the root `.gitignore`, then:
 ```bash
 git add electron/electron-builder.yml electron/package.json .gitignore
-git commit -m "feat: package Voice Garden as a Windows installer via electron-builder"
+git commit -m "feat: package Euphonia as a Windows installer via electron-builder"
 ```

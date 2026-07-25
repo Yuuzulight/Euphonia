@@ -14,7 +14,7 @@ export function RegisterSection() {
   if (!reg || !detail)
     return (
       <div className="empty">
-        no register data for this take yet 🌱
+        no register data for this take yet ✨
         <br />
         re-run the analyzer to generate it
       </div>

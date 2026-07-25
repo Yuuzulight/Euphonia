@@ -1,4 +1,4 @@
-"""Voice training analyzer 🌸
+"""Voice training analyzer 💗
 
 Analyzes a recording with Praat (via parselmouth) and adds it to the dashboard.
 
@@ -593,11 +593,11 @@ def backfill(paths: Paths) -> None:
         print(f"✅ #{entry['id']} backfilled — weight {entry['weight']}")
     recordings.sort(key=lambda r: r["id"])
     save_recordings(paths, recordings)
-    print("🌸 Backfill complete.")
+    print("💗 Backfill complete.")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Analyze a voice training recording 🌸")
+    parser = argparse.ArgumentParser(description="Analyze a voice training recording 💗")
     parser.add_argument("audio", nargs="?", help="Path to the audio file (mp3/m4a/wav/...)")
     parser.add_argument("--label", help="What you were trying this take")
     parser.add_argument("--note", default="", help="Optional extra note")
@@ -685,7 +685,7 @@ def main() -> None:
         f"{register['mid_sub_pct']}/{register['offset_sub_pct']}% "
         f"(onset/mid/offset)"
     )
-    print("🌸 Saved. Run the React dashboard (npm run dev) and refresh.")
+    print("💗 Saved. Run the React dashboard (npm run dev) and refresh.")
 
 
 if __name__ == "__main__":

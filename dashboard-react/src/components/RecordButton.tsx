@@ -28,7 +28,7 @@ export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
     setState("saving");
     try {
       const audioBase64 = await blobToBase64(blob);
-      await window.voiceGarden.createRecording({
+      await window.euphonia.createRecording({
         audioBase64,
         mimeType: blob.type,
         label: label.trim() || "untitled take",
@@ -48,7 +48,7 @@ export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
         <>
           <input
             type="text"
-            placeholder="what are you trying this take? 🌱"
+            placeholder="what are you trying this take? ✨"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
           />
@@ -56,7 +56,7 @@ export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
         </>
       )}
       {state === "recording" && <button onClick={stop}>⏹️ stop &amp; analyze</button>}
-      {state === "saving" && <span>analyzing… 🌸</span>}
+      {state === "saving" && <span>analyzing… 💗</span>}
       {state === "error" && (
         <>
           <span>couldn't save that take 🌧️ — try again</span>
