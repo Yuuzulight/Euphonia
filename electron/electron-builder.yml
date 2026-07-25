@@ -1,0 +1,21 @@
+# ffmpeg.exe sourced from: https://github.com/GyanD/codexffmpeg/releases/download/8.1.2/ffmpeg-8.1.2-full_build.zip
+appId: com.voicegarden.desktop
+productName: Euphonia
+directories:
+  output: release
+files:
+  - dist/**/*
+  - package.json
+extraResources:
+  - from: ../dashboard-react/dist
+    to: dashboard
+  - from: ../dist-sidecar
+    to: sidecar
+  - from: resources/ffmpeg
+    to: ffmpeg
+win:
+  target: nsis
+  # No code-signing cert available; this also skips a winCodeSign download
+  # that fails to extract on this machine (dylib symlinks need Windows
+  # Developer Mode/admin, which we won't enable just to build unsigned).
+  signAndEditExecutable: false
