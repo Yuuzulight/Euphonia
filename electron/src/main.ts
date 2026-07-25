@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, shell } from "electron";
 import path from "node:path";
 import { registerAppProtocolScheme, registerAppProtocolHandler } from "./protocol";
 import { registerIpcHandlers } from "./ipcHandlers";
@@ -16,6 +16,21 @@ function createWindow(): void {
     },
   });
   win.loadURL("app://dashboard/index.html");
+
+  // Any window.open()/target="_blank" (e.g. the onboarding modal's Google AI
+  // Studio link) must go to the OS browser, never a new BrowserWindow — a new
+  // BrowserWindow would inherit this preload script and expose window.euphonia
+  // to whatever remote origin it navigated to.
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: "deny" };
+  });
+  win.webContents.on("will-navigate", (event, url) => {
+    if (!url.startsWith("app://")) {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
+  });
 }
 
 app.whenReady().then(() => {
