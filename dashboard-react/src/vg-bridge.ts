@@ -1,3 +1,5 @@
+import type { GeneratedInsight, Recording } from "./types";
+
 export interface EuphoniaBridge {
   createRecording(payload: {
     audioBase64: string;
@@ -9,6 +11,10 @@ export interface EuphoniaBridge {
     getStatus(): Promise<{ hasKey: boolean }>;
     setKey(key: string): Promise<void>;
     clearKey(): Promise<void>;
+  };
+  insights: {
+    get(recordingId: number): Promise<GeneratedInsight | null>;
+    generate(recording: Recording): Promise<GeneratedInsight>;
   };
 }
 

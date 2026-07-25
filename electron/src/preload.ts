@@ -12,4 +12,8 @@ contextBridge.exposeInMainWorld("euphonia", {
     setKey: (key: string) => ipcRenderer.invoke("settings:setKey", key),
     clearKey: () => ipcRenderer.invoke("settings:clearKey"),
   },
+  insights: {
+    get: (recordingId: number) => ipcRenderer.invoke("insights:get", recordingId),
+    generate: (recording: unknown) => ipcRenderer.invoke("insights:generate", recording),
+  },
 });
