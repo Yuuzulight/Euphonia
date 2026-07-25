@@ -90,6 +90,14 @@ export interface Phrase {
   sub_register_pct: number;
 }
 
+export interface GeneratedInsight {
+  summary: string;
+  strengths: string[];
+  focus_area: string;
+  tip: string;
+  generated_at: string;
+}
+
 // The heavy per-recording analysis at public/analysis/<id>.json.
 export interface RecordingDetail {
   register_floor_hz: number;
