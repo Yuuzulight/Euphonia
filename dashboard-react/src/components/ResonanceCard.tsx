@@ -30,7 +30,7 @@ export function ResonanceCard({ r, onExpand }: ResonanceCardProps) {
   else if (score <= -1)
     summary = (
       <>
-        🌱 Your resonance <b>leans deeper</b> right now — totally workable! This
+        ✨ Your resonance <b>leans deeper</b> right now — totally workable! This
         is usually the biggest lever after pitch.
       </>
     );

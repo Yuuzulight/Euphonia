@@ -1,4 +1,4 @@
-// Design-system entry: re-exports the Voice Garden component library for
+// Design-system entry: re-exports the Euphonia component library for
 // claude.ai/design (consumed by /design-sync). Not used by the app itself —
 // the app mounts via main.tsx. Keep this in sync with src/components/ and
 // src/annotations/lib/.

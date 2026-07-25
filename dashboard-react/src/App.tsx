@@ -26,7 +26,7 @@ import {
   Region,
 } from "./annotations/AnnotationsProvider";
 import {
-  TulipIcon,
+  EuphoniaIcon,
   BowIcon,
   SparkleIcon,
   ContourIcon,
@@ -85,12 +85,12 @@ export function App() {
     <div className="wrap">
       <header className="hero">
         <h1>
-          <TulipIcon title="Voice Garden" /> Voice Garden
+          <EuphoniaIcon title="Euphonia" /> Euphonia
         </h1>
-        <p>a cozy place to watch your voice bloom 🌱✨</p>
+        <p>finding the sound that feels like you 💗✨</p>
         {active && (
           <div className="latest-banner">
-            🌸 <b>#{active.id}</b> &middot; {active.label} &middot;{" "}
+            💗 <b>#{active.id}</b> &middot; {active.label} &middot;{" "}
             <span style={{ color: "#9d8ba8" }}>{active.date}</span>
           </div>
         )}
@@ -307,7 +307,7 @@ export function App() {
         <div className="chart-grid">
           {R.length < 2 && (
             <p className="cap" style={{ gridColumn: "1/-1", margin: "0 0 4px" }}>
-              add another recording to watch the lines grow 🌱
+              add another recording to watch your trends take shape ✨
             </p>
           )}
           <ChartCard
@@ -359,9 +359,9 @@ export function App() {
         <div className="rec-grid">
           {R.length === 0 ? (
             <div className="empty">
-              no recordings yet 🌸
+              no recordings yet 💗
               <br />
-              run the analyzer to plant your first one!
+              run the analyzer to add your first one!
             </div>
           ) : (
             [...R].reverse().map((r) => (

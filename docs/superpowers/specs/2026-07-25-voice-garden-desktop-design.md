@@ -1,8 +1,8 @@
-# Voice Garden Desktop App — Design
+# Euphonia Desktop App — Design
 
 ## Goal
 
-Turn Voice Garden from a repo you clone and drive via a coding agent into an
+Turn Euphonia from a repo you clone and drive via a coding agent into an
 installable desktop app that friends can run on their own machines, with no
 server, no accounts, and no per-install cost beyond an optional free Gemini
 API key.

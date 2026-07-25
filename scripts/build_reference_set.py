@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["praat-parselmouth", "numpy", "huggingface_hub", "pyarrow"]
 # ///
-"""Build / refresh the reference-voice set for Voice Garden 🌸
+"""Build / refresh the reference-voice set for Euphonia 💗
 
 Downloads a set of real male & female reference speakers (VCTK American accent +
 CMU ARCTIC US), measures each with the project's OWN `analyze()` (so the numbers
@@ -239,7 +239,7 @@ def main() -> None:
     REF_JSON.write_text(json.dumps(refs, indent=2))
     nf = sum(r["gender"] == "f" for r in refs)
     nm = sum(r["gender"] == "m" for r in refs)
-    print(f"\n🌸 wrote {len(refs)} reference voices ({nf} F / {nm} M) → {REF_JSON}")
+    print(f"\n💗 wrote {len(refs)} reference voices ({nf} F / {nm} M) → {REF_JSON}")
     print("\n=== suggested zone thresholds (drop into zones.ts) ===")
     suggest_zones("F2", by_gender["f2"]["f"], by_gender["f2"]["m"], fem_high=True)
     suggest_zones("F3", by_gender["f3"]["f"], by_gender["f3"]["m"], fem_high=True)

@@ -3,9 +3,9 @@ name: analyze-voice
 description: Analyze one of Rachel's voice-training recordings end to end — run the parselmouth analyzer, intelligently interpret the results, and author per-recording "annotations" (a custom insight + woven-in personalized notes) that surface the most important specific thing to work on. Use whenever Rachel shares a new recording, points at an audio file to analyze, or asks how a take went / what to work on next.
 ---
 
-# Analyze Rachel's voice (Voice Garden)
+# Analyze Rachel's voice (Euphonia)
 
-**Voice Garden** is a voice-feminization training tracker. Rachel records herself (usually
+**Euphonia** is a voice-feminization training tracker. Rachel records herself (usually
 the Rainbow Passage), tells you what she was practicing, and you analyze it. There are
 **two layers** and your job spans both:
 
@@ -90,7 +90,7 @@ are in `../../zones`.
 - **Color rule:** blue `MASC` (`#bcd3f0` / `#5e7fb8`) = masculine / fell-out-of-register ONLY,
   never generic "bad." Pink `FEM` = good, butter = neutral, `GROW` `#cdc6da` = non-gendered
   "room to grow" (breathy/rough/flat). A register crash *is* masculine register → blue is right.
-- **Tone:** warm, specific, encouraging; tasteful emoji (🌸🎯💕). End affirming with a clear next
+- **Tone:** warm, specific, encouraging; tasteful emoji (💗🎯💕). End affirming with a clear next
   step. Frame as a finishing move, not a rebuild, when she's close.
 - **Honesty:** don't inflate progress. If the melody is a mirage, say so — kindly.
 

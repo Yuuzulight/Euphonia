@@ -1,4 +1,4 @@
-# Voice Garden 🌷 — project guide for Claude
+# Euphonia 💗 — project guide for Claude
 
 A cozy, quantitative **voice-feminization training tracker** for Rachel. She records
 herself (usually the Rainbow Passage), tells you what she was practicing, and you
@@ -60,7 +60,7 @@ goal is just as important as the metrics:
 - **Woven-in, personal encouragement.** The little notes ("you're in the *fem* zone —
   165 Hz+ reads feminine to most ears 💕") are a core feature, not decoration. Personalize
   them per recording where it helps (see the annotation slots below).
-- Emoji in moderation (🌸🎀🎯💕🌱). Rounded font (`ui-rounded`). Keep it soft.
+- Emoji in moderation (💗🎀🎯💕✨). Rounded font (`ui-rounded`). Keep it soft.
 
 ### Color convention — STRICT
 Defined in `dashboard-react/src/zones.ts`:
@@ -76,21 +76,22 @@ Defined in `dashboard-react/src/zones.ts`:
 ## Iconography & visual motifs
 
 The app has a **custom hand-drawn icon set** (no more raw emoji for structural UI) plus a
-**tulip favicon**. When touching the UI or adding icons, stay inside this system.
+**heart + soundwave favicon**. When touching the UI or adding icons, stay inside this system.
 
-### The tulip mark 🌷 (favicon + hero)
-The mascot is a soft tulip: pink bloom (gradient `#ffc8df→#ff92be`, center petal `#ffb6d5`,
-seams `#ff89bb`, a white highlight ellipse) on a green stem/leaves (gradient
-`#a6e0bd→#79c797`). The **favicon** wraps it in an iOS-style squircle over the brand gradient
-`#ffd6ea→#d3c4ff`. Files live in `dashboard-react/public/`: `favicon.svg` (scalable primary),
+### The Euphonia mark 💗 (favicon + hero)
+The mascot is a heart (warmth) with a soundwave arcing off it (voice) — pink heart
+(gradient `#ffc8df→#ff92be`, a white highlight ellipse) with three lavender
+(`#b6a2f0`, fading opacity) concentric arcs suggesting sound carrying outward. The
+**favicon** wraps it in an iOS-style squircle over the brand gradient `#ffd6ea→#d3c4ff`.
+Files live in `dashboard-react/public/`: `favicon.svg` (scalable primary),
 `favicon-16/32.png`, `favicon.ico` (multi-res), `apple-touch-icon.png` (180² **full-bleed** —
 iOS masks its own corners). Wired in `index.html` with `<link>`s + `theme-color #ffd6ea`. The
-same flower (no square, viewBox cropped tight to the bloom) is the hero `<TulipIcon>`.
+same mark (no background, viewBox cropped tight to the heart+wave) is the hero `<EuphoniaIcon>`.
 
 ### The icon set — `src/components/icons.tsx`
 Self-contained **inline-SVG React components**, one per section heading, replacing the old
 leading emoji. Exports + where they're used (in `App.tsx`):
-`TulipIcon` (hero), `BowIcon` (Latest take), `SparkleIcon` (Resonance),
+`EuphoniaIcon` (hero), `BowIcon` (Latest take), `SparkleIcon` (Resonance),
 `ContourIcon` (Register & phrasing), `InsightIcon` (Insights), `TrendsIcon` (Trends),
 `CardsIcon` (All recordings), `BulbIcon` (What do these mean?).
 
@@ -110,11 +111,11 @@ the color convention — a register crash is masculine register. Keep that meani
 - **Style:** soft, rounded, 2-tone fills; favor **filled shapes over thin lines** so they
   keep visual mass at ~20px; self-contained glyphs (no background square — the favicon is the
   only squircle). Center the visual weight in the box.
-- **Per-component:** namespace any gradient/filter `id` (e.g. `tulipPetal`, not `grad`) so
+- **Per-component:** namespace any gradient/filter `id` (e.g. `euphoniaHeart`, not `grad`) so
   multiple instances don't collide; size in `em`; mark decorative ones `aria-hidden`.
 - **All-or-nothing cohesion:** the section icons are a *set*. Don't mix one custom icon with
   emoji siblings — match the family or leave the whole row as emoji.
-- **The woven-in expressive emoji** (💕 🌱 💗 📣 in sentences, the 🌸 banner, 🌟 picker star,
+- **The woven-in expressive emoji** (💕 ✨ 💗 📣 in sentences, the 💗 banner, 🌟 picker star,
   footer 🩷) are the cozy *voice*, not structural iconography — keep them inline. They can be
   *upgraded* to custom art via the emoji-replacement system below, but only when worth it;
   unmapped emoji render as their normal glyph and that's fine.

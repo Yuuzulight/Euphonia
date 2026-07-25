@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld("voiceGarden", {
+contextBridge.exposeInMainWorld("euphonia", {
   createRecording: (payload: {
     audioBase64: string;
     mimeType: string;

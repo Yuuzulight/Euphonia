@@ -18,6 +18,7 @@ ds-bundle/
 
 # Node
 node_modules/
+*.tsbuildinfo
 
 # Claude Code worktrees
 .claude/worktrees/
@@ -26,7 +27,7 @@ node_modules/
 .design-sync/
 
 # generated starter package (use make-starter.sh)
-voice-garden-starter.zip
+euphonia-starter.zip
 
 # reference-build audio cache (regenerate via scripts/build_reference_set.py)
 .refcache/

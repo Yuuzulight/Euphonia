@@ -84,7 +84,7 @@ const annotations: RecordingAnnotations = {
           </Drill>
 
           <p style={{ marginTop: 12, fontSize: 12.5, color: "var(--ink-soft)" }}>
-            End warm and forward-looking — a finishing move, not a rebuild. 🌸
+            End warm and forward-looking — a finishing move, not a rebuild. 💗
           </p>
         </InsightCard>
       );
