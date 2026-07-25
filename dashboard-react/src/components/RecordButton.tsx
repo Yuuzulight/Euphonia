@@ -57,7 +57,12 @@ export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
       )}
       {state === "recording" && <button onClick={stop}>⏹️ stop &amp; analyze</button>}
       {state === "saving" && <span>analyzing… 🌸</span>}
-      {state === "error" && <span>couldn't save that take 🌧️ — try again</span>}
+      {state === "error" && (
+        <>
+          <span>couldn't save that take 🌧️ — try again</span>
+          <button onClick={() => setState("idle")}>try again</button>
+        </>
+      )}
     </div>
   );
 }
