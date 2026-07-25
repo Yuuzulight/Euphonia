@@ -15,10 +15,17 @@ export function GeneratedInsight({
 
   useEffect(() => {
     setStatus("loading");
-    window.euphonia.insights.get(recording.id).then((cached) => {
-      setInsight(cached);
-      setStatus("idle");
-    });
+    window.euphonia.insights
+      .get(recording.id)
+      .then((cached) => {
+        setInsight(cached);
+        setStatus("idle");
+      })
+      .catch((e) => {
+        console.error(e);
+        setInsight(null);
+        setStatus("idle");
+      });
   }, [recording.id]);
 
   async function generate() {

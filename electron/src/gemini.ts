@@ -47,7 +47,13 @@ function cachePath(recordingId: number): string {
 export function readCachedInsight(recordingId: number): GeneratedInsight | null {
   const file = cachePath(recordingId);
   if (!fs.existsSync(file)) return null;
-  return JSON.parse(fs.readFileSync(file, "utf-8"));
+  try {
+    return JSON.parse(fs.readFileSync(file, "utf-8"));
+  } catch {
+    // Truncated/corrupt cache file (e.g. interrupted write) — treat like
+    // "no cache yet" instead of throwing and wedging the renderer forever.
+    return null;
+  }
 }
 
 function buildPrompt(r: RecordingSummary): string {
