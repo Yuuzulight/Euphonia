@@ -8,13 +8,18 @@ export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
   const chunksRef = useRef<Blob[]>([]);
 
   async function start() {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    chunksRef.current = [];
-    recorder.ondataavailable = (e) => chunksRef.current.push(e.data);
-    recorder.start();
-    recorderRef.current = recorder;
-    setState("recording");
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => chunksRef.current.push(e.data);
+      recorder.start();
+      recorderRef.current = recorder;
+      setState("recording");
+    } catch (e) {
+      console.error(e);
+      setState("error");
+    }
   }
 
   async function stop() {

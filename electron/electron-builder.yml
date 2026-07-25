@@ -9,10 +9,21 @@ files:
 extraResources:
   - from: ../dashboard-react/dist
     to: dashboard
+    # dashboard-react/dist mirrors whatever's in dashboard-react/public/ at
+    # build time, which can include real recordings if the build machine has
+    # ever run the CLI dev workflow (uv run analyze.py with no --output-root).
+    # Exclude them so a builder's own voice data never ships in the installer.
+    filter:
+      - "**/*"
+      - "!recordings.json"
+      - "!audio/**"
+      - "!analysis/**"
   - from: ../dist-sidecar
     to: sidecar
   - from: resources/ffmpeg
     to: ffmpeg
+  - from: resources/licenses
+    to: licenses
 win:
   target: nsis
   # No code-signing cert available; this also skips a winCodeSign download
