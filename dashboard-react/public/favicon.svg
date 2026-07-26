@@ -1,26 +1,14 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0.1" y1="0" x2="0.9" y2="1">
-      <stop offset="0" stop-color="#ffd6ea"/>
-      <stop offset="1" stop-color="#d3c4ff"/>
-    </linearGradient>
-    <linearGradient id="heart" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffc8df"/>
-      <stop offset="1" stop-color="#ff92be"/>
+      <stop offset="0" stop-color="#d6ecff"/>
+      <stop offset="1" stop-color="#ffd6ea"/>
     </linearGradient>
   </defs>
   <rect x="16" y="16" width="480" height="480" rx="130" fill="url(#bg)"/>
-  <!-- heart (warmth) with a soundwave (voice) — the "Euphonia" mark -->
-  <path d="M256,232
-           C226,180 158,180 158,236
-           C158,296 200,336 256,396
-           C312,336 354,296 354,236
-           C354,180 286,180 256,232
-           Z" fill="url(#heart)"/>
-  <ellipse cx="216" cy="222" rx="16" ry="22" fill="#ffffff" opacity="0.5"/>
-  <g stroke="#b6a2f0" stroke-width="14" fill="none" stroke-linecap="round">
-    <path d="M336,206 A34,34 0 0 1 336,278" opacity="0.95"/>
-    <path d="M356,182 A62,62 0 0 1 356,302" opacity="0.75"/>
-    <path d="M376,158 A90,90 0 0 1 376,326" opacity="0.55"/>
-  </g>
+  <rect x="102.40" y="221.07" width="48.92" height="69.85" rx="24.46" fill="#78c3f5"/>
+  <rect x="166.97" y="197.79" width="48.92" height="116.42" rx="24.46" fill="#ffa0c3"/>
+  <rect x="231.54" y="172.84" width="48.92" height="166.32" rx="24.46" fill="#fffafc"/>
+  <rect x="296.11" y="197.79" width="48.92" height="116.42" rx="24.46" fill="#ffa0c3"/>
+  <rect x="360.68" y="221.07" width="48.92" height="69.85" rx="24.46" fill="#78c3f5"/>
 </svg>

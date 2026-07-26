@@ -76,17 +76,31 @@ Defined in `dashboard-react/src/zones.ts`:
 ## Iconography & visual motifs
 
 The app has a **custom hand-drawn icon set** (no more raw emoji for structural UI) plus a
-**heart + soundwave favicon**. When touching the UI or adding icons, stay inside this system.
+**soundwave favicon**. When touching the UI or adding icons, stay inside this system.
 
-### The Euphonia mark 💗 (favicon + hero)
-The mascot is a heart (warmth) with a soundwave arcing off it (voice) — pink heart
-(gradient `#ffc8df→#ff92be`, a white highlight ellipse) with three lavender
-(`#b6a2f0`, fading opacity) concentric arcs suggesting sound carrying outward. The
-**favicon** wraps it in an iOS-style squircle over the brand gradient `#ffd6ea→#d3c4ff`.
-Files live in `dashboard-react/public/`: `favicon.svg` (scalable primary),
-`favicon-16/32.png`, `favicon.ico` (multi-res), `apple-touch-icon.png` (180² **full-bleed** —
-iOS masks its own corners). Wired in `index.html` with `<link>`s + `theme-color #ffd6ea`. The
-same mark (no background, viewBox cropped tight to the heart+wave) is the hero `<EuphoniaIcon>`.
+### The Euphonia mark 🎵 (favicon + hero)
+The mascot is a 5-bar soundwave — rounded vertical bars in a waveform envelope
+(short–taller–tallest–taller–short), echoing the app's own themed `WaveformPlayer`
+(also rounded bars). The bar colors, left to right, follow the **trans pride flag's
+actual 5-stripe order**: light blue `#78c3f5`, light pink `#ffa0c3`, white `#fffafc`,
+light pink `#ffa0c3`, light blue `#78c3f5` — a deliberate, literal choice, not just a
+palette pull. The **favicon** wraps the bars in an iOS-style squircle over a
+blue→pink brand gradient `#d6ecff→#ffd6ea`. Files live in `dashboard-react/public/`:
+`favicon.svg` (scalable primary, generated programmatically — see below),
+`favicon-16/32.png`, `favicon.ico` (multi-res), `apple-touch-icon.png` (180²
+**full-bleed** — iOS masks its own corners). Wired in `index.html` with `<link>`s +
+`theme-color #d6ecff`. The same mark (no background, viewBox cropped tight to the
+bars) is the hero `<EuphoniaIcon>` in `src/components/icons.tsx`. The Windows app
+icon (`electron/build/icon.ico`) is the same squircle-wrapped version at 16/32/48/256.
+
+**Regenerating this mark:** it's produced by a small Python/Pillow script (not
+committed — it was scratch tooling), not hand-drawn SVG. If you need to resize,
+recolor, or add a bar, easiest is to reconstruct the geometry in Python (rounded
+rects: `gap_frac=0.32` of bar width, `max_h = bar_w * 1.7`, height fractions
+`[0.42, 0.70, 1.0, 0.70, 0.42]`) and emit both PNG (for favicons) and SVG (for
+`favicon.svg`/`icons.tsx`) from the *same* numbers so they never drift apart — see
+the `hero_svg_viewbox`-style pattern (compute the bars' bounding box, use it as
+the SVG `viewBox`) rather than hand-authoring bezier paths.
 
 ### The icon set — `src/components/icons.tsx`
 Self-contained **inline-SVG React components**, one per section heading, replacing the old
@@ -111,7 +125,7 @@ the color convention — a register crash is masculine register. Keep that meani
 - **Style:** soft, rounded, 2-tone fills; favor **filled shapes over thin lines** so they
   keep visual mass at ~20px; self-contained glyphs (no background square — the favicon is the
   only squircle). Center the visual weight in the box.
-- **Per-component:** namespace any gradient/filter `id` (e.g. `euphoniaHeart`, not `grad`) so
+- **Per-component:** namespace any gradient/filter `id` after the icon (e.g. `sparkleGlow`, not `grad`) so
   multiple instances don't collide; size in `em`; mark decorative ones `aria-hidden`.
 - **All-or-nothing cohesion:** the section icons are a *set*. Don't mix one custom icon with
   emoji siblings — match the family or leave the whole row as emoji.

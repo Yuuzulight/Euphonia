@@ -1,6 +1,7 @@
 # ffmpeg.exe sourced from: https://github.com/GyanD/codexffmpeg/releases/download/8.1.2/ffmpeg-8.1.2-full_build.zip
-appId: com.voicegarden.desktop
+appId: com.euphonia.desktop
 productName: Euphonia
+icon: resources/icon.ico
 directories:
   output: release
 files:

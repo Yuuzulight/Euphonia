@@ -146,30 +146,23 @@ export function BulbIcon(p: IconProps = {}) {
   );
 }
 
-/** 💗 → the Euphonia mark: a heart with a soundwave (matches the favicon) — hero mark */
+/** 🎵 → the Euphonia mark: a 5-bar soundwave in trans-flag order (matches the
+ * favicon) — hero mark. Bar colors left-to-right follow the trans pride
+ * flag's actual stripe order (blue, pink, white, pink, blue), echoing both
+ * "voice" (the app's own themed waveform player uses the same rounded-bar
+ * look) and the people this app is for. */
 export function EuphoniaIcon(p: IconProps = {}) {
-  // viewBox cropped tight to the mark's bounding box so it fills the icon
-  // instead of floating small in a wider field.
-  const { children, ...rest } = svgProps("120 150 300 280", { size: "1.15em", ...p });
+  // viewBox cropped tight to the bars' bounding box so the mark fills the
+  // icon instead of floating small in a wider field.
+  const { children, ...rest } = svgProps("-11 76 421 249", { size: "1.15em", ...p });
   return (
     <svg {...rest}>
       {children}
-      <defs>
-        <linearGradient id="euphoniaHeart" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffc8df" />
-          <stop offset="1" stopColor="#ff92be" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M256,232 C226,180 158,180 158,236 C158,296 200,336 256,396 C312,336 354,296 354,236 C354,180 286,180 256,232 Z"
-        fill="url(#euphoniaHeart)"
-      />
-      <ellipse cx="216" cy="222" rx="16" ry="22" fill="#ffffff" opacity="0.5" />
-      <g stroke="#b6a2f0" strokeWidth="14" fill="none" strokeLinecap="round">
-        <path d="M336 206 A34 34 0 0 1 336 278" opacity="0.95" />
-        <path d="M356 182 A62 62 0 0 1 356 302" opacity="0.75" />
-        <path d="M376 158 A90 90 0 0 1 376 326" opacity="0.55" />
-      </g>
+      <rect x="12" y="157.25" width="59.87" height="85.5" rx="29.94" fill="#78c3f5" />
+      <rect x="91.03" y="128.75" width="59.87" height="142.5" rx="29.94" fill="#ffa0c3" />
+      <rect x="170.06" y="98.22" width="59.87" height="203.57" rx="29.94" fill="#fffafc" />
+      <rect x="249.1" y="128.75" width="59.87" height="142.5" rx="29.94" fill="#ffa0c3" />
+      <rect x="328.13" y="157.25" width="59.87" height="85.5" rx="29.94" fill="#78c3f5" />
     </svg>
   );
 }
