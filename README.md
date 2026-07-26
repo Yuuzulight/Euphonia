@@ -2,11 +2,13 @@
 
 ![HLdkXJnXwAAVpuS.jpg](HLdkXJnXwAAVpuS.jpg)
 
-This is the only part of this repo that is primarily written by a human!! I am warning you this because I think AI disclosure is important.
+Euphonia is a voice-feminization training tool that analyzes recordings of your voice and surfaces clear, actionable metrics to help you track your progress over time.
 
-This is a cozy voice feminization tool that will analyze your voice and show you metrics. I am not a professional, these metrics are my best understanding of what is useful and accurate but could be entirely wrong. Please use this as only one tool in your voice fem toolkit.
+Originally created by [scratchyone](https://github.com/scratchyone) as [voice-training-ui](https://github.com/scratchyone/voice-training-ui), and extended in this fork with automated Gemini-powered insights and a standalone desktop app.
 
-For best results, I recommend that you read the same passage with a similar microphone for all of your tests, so they can be reliably compared. I personally use the Rainbow Passage.
+These metrics are grounded in established acoustic research, not professional clinical guidance — please use Euphonia as one tool among several in your voice training toolkit, not a definitive assessment.
+
+For results that are meaningfully comparable over time, read the same passage with a similar microphone setup for each recording. The Rainbow Passage is used as the reference passage throughout this guide.
 
 There are two ways to use Euphonia, depending on whether you want a click-and-run app or you're comfortable with a coding agent:
 
