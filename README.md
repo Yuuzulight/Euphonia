@@ -12,18 +12,50 @@ There are two ways to use Euphonia, depending on whether you want a click-and-ru
 
 ## Desktop app (recommended if you just want to use it)
 
-Euphonia is available as a Windows desktop app — no coding agent, no terminal, nothing to install except the app itself. It:
-
-- Records a take right in the app (just click the mic button)
-- Runs the same acoustic analysis (pitch, resonance, register, jitter/shimmer, etc.) locally, via a bundled analyzer — nothing is uploaded anywhere for the metrics themselves
-- Writes you a short, personalized, encouraging insight per take using the free Gemini API (optional — everything else works with no key at all; see the in-app setup guide, or [`docs/gemini-api-key.md`](docs/gemini-api-key.md))
-- Keeps all your recordings and data on your own machine, in your own user folder — no accounts, no server, nothing sent anywhere except (optionally) Google's Gemini API for the written insight
+Euphonia is available as a Windows desktop app — no coding agent, no terminal, nothing to install except the app itself. All your recordings and data stay on your own machine, in your own user folder — no accounts, no server, nothing sent anywhere except (optionally) Google's Gemini API for the written insight.
 
 **Currently Windows-only.** (The original design considered a macOS build too, but only Windows has actually been built so far — if you're on a Mac, use the developer workflow below for now.)
 
-**Getting it:** grab the latest installer from the project's Releases page, or build it yourself — see "Building the desktop app" below.
+### 1. Install it
 
-**The "Windows protected your PC" warning:** the installer isn't code-signed (no certificate — not worth the cost for a small group of friends), so Windows SmartScreen will flag it as from an unrecognized publisher the first time it's run. This is expected, not a sign anything's broken. Click **"More info"**, then **"Run anyway"** to proceed.
+1. Go to the [**Releases page**](../../releases) and download the latest `Euphonia Setup *.exe`.
+2. Run the installer.
+3. Windows will show a blue **"Windows protected your PC"** warning — the installer isn't code-signed (no certificate; not worth the cost for a small group of friends), so this is expected, not a sign anything's broken. Click **"More info"**, then **"Run anyway"**.
+4. The installer runs with no further prompts and launches Euphonia when done.
+
+### 2. First launch: set up your Gemini key (optional)
+
+On first launch, a setup screen appears offering to add a free **Gemini API key**. This key is only used to write your per-recording insight — everything else in the app (recording, all the metrics, charts, reference comparisons) works with no key at all. You can skip this and add it later.
+
+To get a free key:
+1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
+2. Sign in with a Google account.
+3. Click **Create API key**.
+4. Copy the key and paste it into Euphonia's setup screen (or **Settings** — the ⚙️ button in the top-right of the app — any time later).
+
+Gemini's free tier is rate-limited but plenty for occasional personal use. The key is stored encrypted on your machine (via Windows' own credential encryption) and is never sent anywhere except Google's Gemini API.
+
+Click **"Skip for now"** if you'd rather set this up later — you can reopen this same screen anytime from **Settings**.
+
+### 3. Record your first take
+
+1. Type a short label for what you're practicing (e.g. "Rainbow Passage, morning") in the box next to the record button.
+2. Click **🎙️ record**, allow microphone access if Windows asks, and read your passage.
+3. Click **⏹️ stop & analyze** when you're done. The app analyzes the recording locally (a few seconds) and adds it to your dashboard.
+
+For results you can actually compare over time, read the *same* passage with a *similar* microphone setup each time — I use the Rainbow Passage myself.
+
+### 4. Read your results
+
+The dashboard shows, for your latest take: pitch, resonance (formants), loudness, steadiness (jitter/shimmer), vocal weight, and a register/phrasing breakdown (where your voice stays in or falls out of your target range). Click any metric card to see the full scale with your past takes and real reference voices plotted on it, so you can see where you sit. The **"What do these mean?"** section at the bottom of the dashboard explains each metric in plain language. Every number is meant as a compass, not a judge — a hint toward what to work on next, never a verdict.
+
+### 5. Get a written insight for a take
+
+If you added a Gemini key, click **✨ generate insight** under "Insights for this take" to get a short, personalized, encouraging write-up of what's working and one concrete thing to try next. This is generated once per take and cached — it won't call the API again for the same recording.
+
+### 6. Revisit settings later
+
+Click the **⚙️** button in the top-right corner any time to add, change, or view your Gemini key setup again.
 
 ## Developer / coding-agent workflow
 
