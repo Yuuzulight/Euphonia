@@ -8,6 +8,18 @@ If she shares a recording or asks how a take went, use the **`analyze-voice` ski
 (`.claude/skills/analyze-voice/SKILL.md`). It's the operating manual for the whole
 workflow; this file is the why and the shape.
 
+**Two ways this project runs, and this file covers both:**
+1. **The dev/coding-agent workflow** (below, and the original design of this repo) —
+   `uv run analyze.py` + `npm run dev`, with a coding agent hand-authoring each
+   recording's insight via the annotation slot system. Use this when you're working
+   *in* this codebase.
+2. **The packaged Electron desktop app** — the same dashboard and analyzer, wrapped
+   so a non-technical friend can install and run it standalone, with insights
+   generated automatically via the Gemini API instead of a coding agent. See the
+   **"Desktop app (Electron)"** section below for its architecture; the rest of this
+   file (annotation system, icon conventions, color rules, analysis methodology)
+   applies to both.
+
 ---
 
 ## Initial setup (first run — read this first if the project is fresh)
@@ -356,6 +368,110 @@ the top sections + which annotation file loads.
 
 ---
 
+## Desktop app (Electron)
+
+The Electron app in `electron/` wraps this same dashboard + analyzer so it can be
+installed and run standalone, no coding agent, no server, no accounts. Full
+implementation history (10 tasks + a final-review hardening pass) lives in
+`docs/superpowers/plans/2026-07-25-voice-garden-desktop-app.md` and
+`docs/superpowers/specs/2026-07-25-voice-garden-desktop-design.md` — read those for
+the "why" behind each decision below; this section is the current-state summary.
+
+### Architecture
+
+```
+electron/src/main.ts        creates the BrowserWindow, registers the app:// protocol
+                             and IPC handlers, denies external window-open/navigate
+                             (shell.openExternal instead — see main.ts)
+electron/src/protocol.ts    the app:// custom protocol:
+                             - static paths (JS/CSS/HTML, reference.json, favicons)
+                               → served from the built dashboard-react bundle
+                             - dynamic paths (recordings.json, audio/*, analysis/*)
+                               → redirected to the OS per-user data dir instead
+                             Path-containment checked via resolveWithinBase()
+                             (see scripts/test_protocol_paths.js) — this is the one
+                             security-critical function in the Electron layer.
+electron/src/paths.ts       getUserDataRoot()/getAudioDir()/getAnalysisDir()/
+                             getRecordingsJsonPath()/getRendererDistDir() — the only
+                             place that knows where userData lives (dev vs packaged).
+electron/src/sidecar.ts     spawns analyze.py: `uv run analyze.py` in dev,
+                             the PyInstaller-frozen `resources/sidecar/analyze.exe`
+                             when packaged (branches on app.isPackaged).
+electron/src/settings.ts    Gemini API key storage via Electron's safeStorage
+                             (OS-level encryption — DPAPI on Windows). No electron-
+                             store/keytar dependency.
+electron/src/gemini.ts      calls the Gemini API (model: gemini-flash-latest — see
+                             the comment there for why not a pinned version), caches
+                             the structured JSON result to
+                             analysis/<id>-insight.json.
+electron/src/ipcHandlers.ts registers every IPC channel (see below).
+electron/src/preload.ts     contextBridge.exposeInMainWorld("euphonia", {...}) —
+                             the ONLY thing exposed to the renderer.
+```
+
+This is why almost none of `dashboard-react/src` needed to change to become a
+desktop app: `App.tsx`'s `fetch(BASE_URL + "recordings.json")` behaves identically
+whether `recordings.json` comes from `dashboard-react/public/` (browser dev) or the
+OS userData dir via `app://` (Electron) — the protocol layer absorbs the difference.
+
+### The `window.euphonia` IPC surface
+
+Renderer-side type: `dashboard-react/src/vg-bridge.ts` (`EuphoniaBridge`). Current
+surface:
+- `createRecording({ audioBase64, mimeType, label, note? }): Promise<void>` —
+  Task 3/4. Writes a temp file, spawns the sidecar with `--output-root <userData>`.
+- `settings.getStatus(): Promise<{ hasKey: boolean }>` /
+  `settings.setKey(key: string): Promise<void>` /
+  `settings.clearKey(): Promise<void>` — Task 5. The key itself never crosses into
+  the renderer; only `hasKey` does.
+- `insights.get(recordingId: number): Promise<GeneratedInsight | null>` — pure
+  cache read, no network call.
+- `insights.generate(recording: Recording): Promise<GeneratedInsight>` — real
+  Gemini API call; throws `Error("NO_API_KEY")` (matched via
+  `e.message.includes("NO_API_KEY")` in `GeneratedInsight.tsx`) if no key is set.
+
+### Data storage
+
+No database. Same file layout as the dev workflow's `dashboard-react/public/`, just
+rooted at the OS userData dir instead:
+```
+<userData>/
+  recordings.json
+  audio/<id>.<ext>
+  analysis/<id>.json
+  analysis/<id>-insight.json   (cached Gemini output)
+  gemini-key.enc               (safeStorage-encrypted API key)
+```
+`reference.json`/`reference-audio/*` ship read-only inside the packaged bundle
+(under `resources/dashboard/`), unchanged from the dev workflow.
+
+### Building & running
+
+See the root `README.md`'s "Building the desktop app" section for the exact
+commands. In short: `dashboard-react` build → `uv run scripts/build_sidecar.py`
+(produces `dist-sidecar/analyze.exe`, gitignored) → stage a static ffmpeg binary at
+`electron/resources/ffmpeg/ffmpeg.exe` (gitignored, fetch your own — see the source
+URL comment in `electron/electron-builder.yml`) → `electron` build → `electron-builder`.
+`dist-sidecar/`, `electron/resources/ffmpeg/`, and `electron/release/` are all
+gitignored build output; only `electron/resources/licenses/` and
+`electron/resources/icon.ico` are real, committed assets.
+
+To iterate without a full package build: `cd electron && npm run build && npx electron .`
+— this uses the `uv run analyze.py` dev path (needs `ffmpeg` on PATH) and reads/writes
+whatever's in your real OS userData dir for this app (`%APPDATA%/euphonia-electron/`
+on Windows, derived from `electron/package.json`'s `name`).
+
+### Known gaps (see the plan/spec docs' final-review notes for the full list)
+
+- Windows-only. macOS was in the original design intent; never built.
+- No auto-update, no code-signing cert (by design, for a small-friend-group v1).
+- A handful of deferred Minor findings from the implementation's review passes
+  (CSS duplication, a couple of missing edge-case guards, etc.) — see
+  `.superpowers/sdd/2026-07-25-voice-garden-desktop-app/final-review-fix-report.md`
+  for the ones that came out of the final review specifically.
+
+---
+
 ## File map
 
 - `analyze.py` — the analyzer (parselmouth). Standard metrics + register/phrasing detail.
@@ -377,6 +493,24 @@ the top sections + which annotation file loads.
     **`MetricModal.tsx`** (the reference-comparison modal — see its section above).
   - `src/annotations/` — `AnnotationsProvider` (context + `Note`/`Region`), `lib/`
     (reusable), `entries/` (per-recording, authored by you).
+  - `src/vg-bridge.ts` — typed `window.euphonia` accessor + `blobToBase64` helper
+    (Electron only; unused in plain browser dev).
+  - `src/components/RecordButton.tsx`, `GeneratedInsight.tsx`, `OnboardingModal.tsx`
+    — Electron-only UI (in-app recording, rendered Gemini insight, first-run/Settings
+    modal). See "Desktop app (Electron)" above.
+- `electron/` — the desktop app. `src/` (see "Desktop app (Electron)" above for what
+  each file does), `electron-builder.yml` (packaging config), `resources/icon.ico`
+  + `resources/licenses/` (real, committed assets), `resources/ffmpeg/` (gitignored,
+  fetched manually — see the source URL comment in `electron-builder.yml`).
+- `scripts/` — `build_sidecar.py` (freezes `analyze.py` via PyInstaller),
+  `_rthook_utf8_stdio.py` (a PyInstaller runtime hook fixing a Windows-only frozen-exe
+  stdio encoding bug), `test_analyze_paths.py` + `test_protocol_paths.js` (the two
+  small committed regression checks — `analyze.py`'s `resolve_paths()` branching and
+  `protocol.ts`'s path-containment security check).
+- `docs/gemini-api-key.md` — the Gemini key setup guide; single source of truth,
+  also rendered inline in the desktop app's onboarding modal.
+- `docs/superpowers/` — the design spec and implementation plan for the desktop app
+  (full architecture rationale, task-by-task history, final-review findings).
 - `/tmp/vctk-ref/audio/` — **NOT in the repo.** The downloaded VCTK American clips used to
   generate `public/reference.json` + `reference-audio/` previews. See the "Reference voices"
   section above for how to regenerate.
@@ -388,9 +522,13 @@ the top sections + which annotation file loads.
 
 - **Python: use `uv`, never `pip`.** `uv run analyze.py …`, `uv add …`. Lint with
   `uvx ruff check .` and keep it clean (fix auto-fixable; don't over-refactor).
-- **Run the dashboard:** `cd dashboard-react && npm run dev` → http://localhost:5173/.
-  It fetches `public/*` at runtime (cache-busted), so new analyses show on refresh — no
-  rebuild. `npm run build` = `tsc -b && vite build`.
+- **Run the dashboard (browser dev):** `cd dashboard-react && npm run dev` →
+  http://localhost:5173/. It fetches `public/*` at runtime (cache-busted), so new
+  analyses show on refresh — no rebuild. `npm run build` = `tsc -b && vite build`.
+- **Run the desktop app (Electron dev):** `cd electron && npm install && npm run build
+  && npx electron .` — spawns `analyze.py` via `uv run` (needs `ffmpeg` on PATH), reads/
+  writes the real OS userData dir for this app. See "Desktop app (Electron)" above and
+  the root `README.md` for the full packaging build (`electron-builder`).
 - **Screenshotting the live UI** (for `visual-iteration`): **Playwright** is a devDependency.
   Use the system Chrome (no browser download): `chromium.launch({ channel: "chrome" })`. Run the
   script **from `dashboard-react/`** so ESM resolves `playwright`. Needed for canvas/JS-rendered
