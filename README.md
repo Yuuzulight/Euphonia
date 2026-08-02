@@ -51,6 +51,10 @@ The built-in insight above is deliberately simple and reliable — it can't misr
 
 Once a key is added, any take showing the built-in insight will offer a **"✨ upgrade to an AI-written insight"** button to swap in the richer version. The key is stored encrypted on your machine and is never sent anywhere except Google's Gemini API. Nothing else in the app changes or requires this — it's purely an upgrade, not a setup step.
 
+### 6. Delete a take (or everything)
+
+Every recording card in **All recordings** has a small 🗑️ button — click it, then confirm, to remove that take and its audio permanently. To clear your whole history at once, open **⚙️ Settings** and use **delete all recordings** in the danger zone at the bottom. Both ask for confirmation first and can't be undone.
+
 ## Developer / coding-agent workflow
 
 This is how the project was originally built, and it's still how you'd customize it, add features, or get the deeper hand-authored insight style (see `CLAUDE.md`) instead of the desktop app's automated (template or Gemini) insights.
