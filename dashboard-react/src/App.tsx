@@ -20,6 +20,7 @@ import { RecordingCard } from "./components/RecordingCard";
 import { CheatSheet } from "./components/CheatSheet";
 import { RegisterSection } from "./components/RegisterSection";
 import { RecordButton } from "./components/RecordButton";
+import { TitleBar } from "./components/TitleBar";
 import { GeneratedInsight } from "./components/GeneratedInsight";
 import { OnboardingModal } from "./components/OnboardingModal";
 import {
@@ -61,6 +62,30 @@ export function App() {
 
   useEffect(refetchRecordings, []);
 
+  // auto-hiding scrollbar: fades in while actively scrolling (see
+  // html.is-scrolling in index.css), fades back out shortly after.
+  useEffect(() => {
+    let hideTimer: ReturnType<typeof setTimeout>;
+    function onScroll() {
+      document.documentElement.classList.add("is-scrolling");
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        document.documentElement.classList.remove("is-scrolling");
+      }, 900);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(hideTimer);
+    };
+  }, []);
+
+  async function handleDeleteRecording(id: number) {
+    await window.euphonia.deleteRecording(id);
+    if (selectedId === id) setSelectedId(null);
+    refetchRecordings();
+  }
+
   // No proactive first-launch prompt: insights work instantly with no key
   // (see GeneratedInsight/insights.ts — Gemini is an opt-in upgrade, not a
   // requirement), so there's nothing that needs setting up before the app
@@ -91,9 +116,11 @@ export function App() {
     R.map((r) => ({ label: r.id, y: sel(r) }));
 
   return (
-    <div className="wrap">
+    <>
+      <TitleBar />
+      <div className="wrap">
       <header className="hero">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div style={{ position: "relative" }}>
           <div>
             <h1>
               <EuphoniaIcon title="Euphonia" /> Euphonia
@@ -101,15 +128,10 @@ export function App() {
             <p>finding the sound that feels like you 💗✨</p>
           </div>
           <button
+            className="settings-btn"
             onClick={() => setShowOnboarding(true)}
-            style={{
-              background: "none",
-              border: "none",
-              fontSize: "1.5rem",
-              cursor: "pointer",
-              padding: "0.5rem",
-            }}
             title="Settings"
+            style={{ position: "absolute", top: 0, right: 0 }}
           >
             ⚙️
           </button>
@@ -387,7 +409,7 @@ export function App() {
                 style={{ cursor: "pointer" }}
                 title="click to view this take above"
               >
-                <RecordingCard r={r} />
+                <RecordingCard r={r} onDelete={() => handleDeleteRecording(r.id)} />
               </div>
             ))
           )}
@@ -421,8 +443,13 @@ export function App() {
       <OnboardingModal
         open={showOnboarding}
         onClose={() => setShowOnboarding(false)}
+        onAllDeleted={() => {
+          setSelectedId(null);
+          refetchRecordings();
+        }}
       />
-    </div>
+      </div>
+    </>
   );
 }
 

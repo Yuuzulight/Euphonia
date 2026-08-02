@@ -25,6 +25,8 @@ extraResources:
     to: ffmpeg
   - from: resources/licenses
     to: licenses
+  - from: resources/icon.ico
+    to: icon.ico
 win:
   target: nsis
   # No code-signing cert available; this also skips a winCodeSign download

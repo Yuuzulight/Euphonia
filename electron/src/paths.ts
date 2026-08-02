@@ -26,3 +26,14 @@ export function getRendererDistDir(): string {
   }
   return path.join(__dirname, "..", "..", "dashboard-react", "dist");
 }
+
+// The window/taskbar icon. In dev this is electron/resources/icon.ico
+// directly; when packaged, electron-builder also copies it to the resources
+// root (see extraResources in electron-builder.yml) since a raw Electron.exe
+// (dev) doesn't carry the icon the way the built Euphonia.exe does.
+export function getIconPath(): string {
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, "icon.ico");
+  }
+  return path.join(__dirname, "..", "resources", "icon.ico");
+}

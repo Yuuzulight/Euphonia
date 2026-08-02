@@ -18,6 +18,35 @@
 }
 html {
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  /* invisible at rest — App.tsx toggles .is-scrolling on <html> while the
+     page is actively scrolling, showing it only while it's actually needed.
+     This build of Chromium renders the standard `scrollbar-color` property
+     (not the ::-webkit-scrollbar-* pseudo-elements below) for this window,
+     so that's the one that actually has to change to hide/show the thumb. */
+  scrollbar-color: transparent transparent;
+}
+html.is-scrolling {
+  scrollbar-color: var(--pink) transparent;
+}
+/* kept as a fallback for engines that use the legacy pseudo-elements
+   instead of scrollbar-color. */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+}
+html.is-scrolling::-webkit-scrollbar-thumb {
+  background-color: var(--pink);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 body {
   margin: 0;
@@ -32,6 +61,23 @@ body {
   min-height: 100vh;
   line-height: 1.5;
 }
+/* desktop app custom title bar — paired with the native titleBarOverlay in
+   electron/src/main.ts, same height/color, so the OS window controls read
+   as part of one continuous themed bar instead of sitting on plain gray. */
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px;
+  background: var(--pink-soft);
+  color: #7a5a92;
+  font-size: 13px;
+  font-weight: 700;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
 .wrap {
   max-width: 1040px;
   margin: 0 auto;
@@ -55,6 +101,21 @@ header.hero p {
   font-size: 15px;
 }
 
+.settings-btn {
+  background: none;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.settings-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: rotate(20deg);
+}
+
 .latest-banner {
   background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(10px) saturate(1.1);
@@ -68,6 +129,104 @@ header.hero p {
   margin-top: 16px;
   box-shadow: 0 6px 18px rgba(186, 142, 196, 0.22);
   font-size: 14px;
+}
+
+/* ---- record panel (take label + start/stop) ---- */
+.record-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px auto 0;
+  max-width: 520px;
+}
+.record-panel input[type="text"] {
+  flex: 1 1 240px;
+  min-width: 0;
+  padding: 11px 16px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.record-panel input[type="text"]::placeholder {
+  color: var(--ink-soft);
+}
+.record-panel input[type="text"]:focus {
+  outline: none;
+  border-color: var(--pink);
+  background: #fff;
+}
+.record-panel button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--pink), var(--lav));
+  box-shadow: 0 4px 14px rgba(176, 106, 150, 0.35);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+.record-panel button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(176, 106, 150, 0.45);
+}
+.record-panel button:active {
+  transform: translateY(0) scale(0.97);
+}
+/* recording in progress — a warmer color + a soft pulse so it reads as "live" */
+.record-panel button.is-recording {
+  background: linear-gradient(135deg, #ff8a80, #ff6f9c);
+  animation: record-pulse 1.6s ease-in-out infinite;
+}
+@keyframes record-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 111, 156, 0.45); }
+  50% { box-shadow: 0 0 0 10px rgba(255, 111, 156, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .record-panel button.is-recording {
+    animation: none;
+  }
+}
+.record-panel .saving {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  background: var(--pink-bg);
+  padding: 10px 18px;
+  border-radius: 999px;
+}
+.record-panel .rec-error {
+  font-size: 13px;
+  color: #c84545;
+  background: #ffe8e8;
+  border: 1.5px solid #ffcccc;
+  padding: 8px 16px;
+  border-radius: 999px;
+}
+.record-panel .retry {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1.5px solid #f0dcea;
+  box-shadow: none;
+}
+.record-panel .retry:hover {
+  background: #fafafa;
+  box-shadow: none;
+  transform: none;
 }
 
 section {
@@ -332,6 +491,73 @@ section {
   color: var(--ink-soft);
   font-style: italic;
 }
+
+/* ---- delete a take / delete everything (shared confirm styling) ---- */
+.rec-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 5px 7px;
+  border-radius: 50%;
+  opacity: 0.55;
+  transition: opacity 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+.rec-delete:hover {
+  opacity: 1;
+  background: #ffe8e8;
+  transform: scale(1.08);
+}
+.rec-confirm,
+.danger-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #c84545;
+  background: #ffe8e8;
+  border: 1.5px solid #ffcccc;
+  border-radius: 12px;
+  padding: 9px 13px;
+}
+.rec-confirm-yes {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #fff;
+  background: #e05d5d;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.rec-confirm-yes:hover:not(:disabled) {
+  background: #c84545;
+}
+.rec-confirm-no {
+  border: 1.5px solid #f0dcea;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--ink-soft);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.rec-confirm-no:hover:not(:disabled) {
+  background: #fafafa;
+}
+.rec-confirm-yes:disabled,
+.rec-confirm-no:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 /* ---- themed waveform player (wavesurfer) ---- */
 .player {
   display: flex;
@@ -654,6 +880,54 @@ a.legend-link {
   font-weight: 700;
   background: var(--pink-bg);
   color: #b06a96;
+}
+
+/* "generate insight" — primary CTA, same gradient pill as the record button */
+.insight-placeholder button {
+  margin-top: 14px;
+  padding: 11px 22px;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--pink), var(--lav));
+  box-shadow: 0 4px 14px rgba(176, 106, 150, 0.35);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+.insight-placeholder button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(176, 106, 150, 0.45);
+}
+.insight-placeholder button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* "upgrade to an AI-written insight" — secondary/optional, so an outline
+   pill rather than the bold gradient CTA above (mirrors .modal button's
+   ghost-vs-gradient pairing). */
+.insight button {
+  padding: 7px 16px;
+  border: 1.5px solid var(--pink);
+  border-radius: 999px;
+  background: #fff;
+  color: #b06a96;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.insight button:hover:not(:disabled) {
+  background: var(--pink-bg);
+}
+.insight button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 /* ── click-to-expand metric reference modal ──────────────────────────── */
@@ -1289,4 +1563,33 @@ a.legend-link {
   font-size: 13px;
   color: #c84545;
   line-height: 1.4;
+}
+
+.danger-zone {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1.5px dashed #f0dcea;
+}
+.danger-zone-label {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.danger-btn {
+  border: 1.5px solid #ffcccc;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #c84545;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.danger-btn:hover {
+  background: #ffe8e8;
 }

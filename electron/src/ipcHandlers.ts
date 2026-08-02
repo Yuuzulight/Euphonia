@@ -7,6 +7,7 @@ import { runAnalyze } from "./sidecar";
 import { getApiKey, setApiKey, clearApiKey } from "./settings";
 import type { RecordingSummary } from "./gemini";
 import { generateInsight, regenerateWithGemini, readCachedInsight } from "./insights";
+import { deleteRecording, deleteAllRecordings } from "./recordings";
 
 interface CreateRecordingPayload {
   audioBase64: string;
@@ -35,6 +36,9 @@ export function registerIpcHandlers(): void {
       fs.rmSync(tempPath, { force: true });
     }
   });
+
+  ipcMain.handle("recordings:delete", (_event, id: number) => deleteRecording(id));
+  ipcMain.handle("recordings:deleteAll", () => deleteAllRecordings());
 
   ipcMain.handle("settings:getStatus", () => ({ hasKey: getApiKey() !== null }));
   ipcMain.handle("settings:setKey", (_event, key: string) => setApiKey(key));

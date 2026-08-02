@@ -1,8 +1,17 @@
+import { useState } from "react";
 import type { Recording } from "../types";
 import { fmt } from "../zones";
 import { WaveformPlayer } from "./WaveformPlayer";
 
-export function RecordingCard({ r }: { r: Recording }) {
+export function RecordingCard({
+  r,
+  onDelete,
+}: {
+  r: Recording;
+  onDelete?: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+
   return (
     <div className="rec">
       <div className="top">
@@ -10,10 +19,47 @@ export function RecordingCard({ r }: { r: Recording }) {
           <span className="num">{r.id}</span>
           <span className="label-txt">{r.label}</span>
         </div>
-        <span className="date">
-          {r.date} · {fmt(r.duration_s, "s")}
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span className="date">
+            {r.date} · {fmt(r.duration_s, "s")}
+          </span>
+          {onDelete && !confirming && (
+            <button
+              className="rec-delete"
+              title="delete this take"
+              onClick={(e) => {
+                e.stopPropagation();
+                setConfirming(true);
+              }}
+            >
+              🗑️
+            </button>
+          )}
+        </div>
       </div>
+      {confirming && (
+        <div className="rec-confirm">
+          <span>delete take #{r.id}? this can't be undone.</span>
+          <button
+            className="rec-confirm-yes"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.();
+            }}
+          >
+            yes, delete
+          </button>
+          <button
+            className="rec-confirm-no"
+            onClick={(e) => {
+              e.stopPropagation();
+              setConfirming(false);
+            }}
+          >
+            cancel
+          </button>
+        </div>
+      )}
       <div className="metrics">
         <div className="chip">
           <b>{fmt(r.pitch.mean_hz)}</b>

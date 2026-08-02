@@ -10,13 +10,18 @@ const GUIDE_STEPS = [
 export function OnboardingModal({
   open,
   onClose,
+  onAllDeleted,
 }: {
   open: boolean;
   onClose: () => void;
+  onAllDeleted: () => void;
 }) {
   const [key, setKey] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteConfirming, setDeleteConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   if (!open) return null;
 
@@ -34,6 +39,22 @@ export function OnboardingModal({
         err instanceof Error
           ? err.message
           : "couldn't save key — check that encryption is available"
+      );
+    }
+  }
+
+  async function deleteAll() {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await window.euphonia.deleteAllRecordings();
+      setDeleting(false);
+      setDeleteConfirming(false);
+      onAllDeleted();
+    } catch (err) {
+      setDeleting(false);
+      setDeleteError(
+        err instanceof Error ? err.message : "couldn't delete recordings"
       );
     }
   }
@@ -74,6 +95,30 @@ export function OnboardingModal({
           <button onClick={save} disabled={saving || !key.trim()}>
             {saving ? "saving…" : "save key"}
           </button>
+        </div>
+
+        <div className="danger-zone">
+          <p className="danger-zone-label">danger zone</p>
+          {!deleteConfirming ? (
+            <button className="danger-btn" onClick={() => setDeleteConfirming(true)}>
+              🗑️ delete all recordings
+            </button>
+          ) : (
+            <div className="danger-confirm">
+              <span>delete every recording? this can't be undone.</span>
+              <button className="rec-confirm-yes" onClick={deleteAll} disabled={deleting}>
+                {deleting ? "deleting…" : "yes, delete everything"}
+              </button>
+              <button
+                className="rec-confirm-no"
+                onClick={() => setDeleteConfirming(false)}
+                disabled={deleting}
+              >
+                cancel
+              </button>
+            </div>
+          )}
+          {deleteError && <p className="modal-error">{deleteError}</p>}
         </div>
       </div>
     </div>

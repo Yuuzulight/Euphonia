@@ -7,6 +7,8 @@ export interface EuphoniaBridge {
     label: string;
     note?: string;
   }): Promise<void>;
+  deleteRecording(id: number): Promise<void>;
+  deleteAllRecordings(): Promise<void>;
   settings: {
     getStatus(): Promise<{ hasKey: boolean }>;
     setKey(key: string): Promise<void>;
