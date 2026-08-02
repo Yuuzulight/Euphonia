@@ -380,9 +380,13 @@ the "why" behind each decision below; this section is the current-state summary.
 ### Architecture
 
 ```
-electron/src/main.ts        creates the BrowserWindow, registers the app:// protocol
-                             and IPC handlers, denies external window-open/navigate
-                             (shell.openExternal instead — see main.ts)
+electron/src/main.ts        creates the BrowserWindow (hidden native titlebar +
+                             a themed titleBarOverlay — the dashboard renders its own
+                             draggable title row, see TitleBar.tsx below — and no
+                             default File/Edit/... menu, via Menu.setApplicationMenu),
+                             registers the app:// protocol and IPC handlers, denies
+                             external window-open/navigate (shell.openExternal
+                             instead — see main.ts)
 electron/src/protocol.ts    the app:// custom protocol:
                              - static paths (JS/CSS/HTML, reference.json, favicons)
                                → served from the built dashboard-react bundle
@@ -429,6 +433,10 @@ electron/src/insights.ts    the orchestrator: Gemini if a key is set and the cal
                              analysis/<id>-insight.json cache, including the
                              `source: "template" | "gemini"` field the renderer uses
                              to offer the "upgrade to AI" button.
+electron/src/recordings.ts  deleteRecording(id)/deleteAllRecordings() — read/rewrite
+                             recordings.json plus remove the matching audio, analysis,
+                             and cached-insight files. No sidecar involvement (unlike
+                             creation, deletion is pure file/JSON bookkeeping).
 electron/src/ipcHandlers.ts registers every IPC channel (see below).
 electron/src/preload.ts     contextBridge.exposeInMainWorld("euphonia", {...}) —
                              the ONLY thing exposed to the renderer.
@@ -445,6 +453,12 @@ Renderer-side type: `dashboard-react/src/vg-bridge.ts` (`EuphoniaBridge`). Curre
 surface:
 - `createRecording({ audioBase64, mimeType, label, note? }): Promise<void>` —
   Task 3/4. Writes a temp file, spawns the sidecar with `--output-root <userData>`.
+- `deleteRecording(id: number): Promise<void>` — removes one recording's entry,
+  audio file, analysis file, and cached insight. Shown as a 🗑️ on each
+  `RecordingCard`, gated behind an inline (not native-dialog) confirm.
+- `deleteAllRecordings(): Promise<void>` — wipes `recordings.json` back to `[]`
+  and removes the whole `audio/`/`analysis/` dirs. Lives in the Settings modal's
+  "danger zone", same inline-confirm pattern.
 - `settings.getStatus(): Promise<{ hasKey: boolean }>` /
   `settings.setKey(key: string): Promise<void>` /
   `settings.clearKey(): Promise<void>` — Task 5. The key itself never crosses into
@@ -527,11 +541,14 @@ on Windows, derived from `electron/package.json`'s `name`).
     (reusable), `entries/` (per-recording, authored by you).
   - `src/vg-bridge.ts` — typed `window.euphonia` accessor + `blobToBase64` helper
     (Electron only; unused in plain browser dev).
-  - `src/components/RecordButton.tsx`, `GeneratedInsight.tsx`, `OnboardingModal.tsx`
-    — Electron-only UI (in-app recording, rendered insight incl. the "upgrade to
-    AI" affordance, the optional Gemini-key Settings modal — NOT shown on first
-    launch; reachable any time via the ⚙️ header button). See "Desktop app
-    (Electron)" above.
+  - `src/components/RecordButton.tsx`, `GeneratedInsight.tsx`, `OnboardingModal.tsx`,
+    `TitleBar.tsx` — Electron-only UI (in-app recording, rendered insight incl. the
+    "upgrade to AI" affordance, the Settings modal — optional Gemini key plus the
+    "delete all recordings" danger zone, NOT shown on first launch; reachable any
+    time via the ⚙️ header button — and the draggable custom title row that pairs
+    with main.ts's titleBarOverlay). `RecordingCard.tsx` also has a per-take 🗑️
+    delete button (inline confirm, no native dialog). See "Desktop app (Electron)"
+    above.
 - `electron/` — the desktop app. `src/` (see "Desktop app (Electron)" above for what
   each file does), `electron-builder.yml` (packaging config), `resources/icon.ico`
   + `resources/licenses/` (real, committed assets), `resources/ffmpeg/` (gitignored,
