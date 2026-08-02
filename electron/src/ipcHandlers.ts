@@ -1,4 +1,4 @@
-import { ipcMain } from "electron";
+import { ipcMain, BrowserWindow } from "electron";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -7,7 +7,8 @@ import { runAnalyze } from "./sidecar";
 import { getApiKey, setApiKey, clearApiKey } from "./settings";
 import type { RecordingSummary } from "./gemini";
 import { generateInsight, regenerateWithGemini, readCachedInsight } from "./insights";
-import { deleteRecording, deleteAllRecordings } from "./recordings";
+import { deleteRecording, deleteAllRecordings, exportRecordings } from "./recordings";
+import { installUpdate } from "./updater";
 
 interface CreateRecordingPayload {
   audioBase64: string;
@@ -23,7 +24,7 @@ function extFromMimeType(mimeType: string): string {
   return ".m4a";
 }
 
-export function registerIpcHandlers(): void {
+export function registerIpcHandlers(win: BrowserWindow): void {
   ipcMain.handle("recordings:create", async (_event, payload: CreateRecordingPayload) => {
     const tempPath = path.join(
       os.tmpdir(),
@@ -39,6 +40,9 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle("recordings:delete", (_event, id: number) => deleteRecording(id));
   ipcMain.handle("recordings:deleteAll", () => deleteAllRecordings());
+  ipcMain.handle("recordings:export", () => exportRecordings(win));
+
+  ipcMain.handle("updates:install", () => installUpdate());
 
   ipcMain.handle("settings:getStatus", () => ({ hasKey: getApiKey() !== null }));
   ipcMain.handle("settings:setKey", (_event, key: string) => setApiKey(key));

@@ -3,10 +3,11 @@ import path from "node:path";
 import { registerAppProtocolScheme, registerAppProtocolHandler } from "./protocol";
 import { registerIpcHandlers } from "./ipcHandlers";
 import { getIconPath } from "./paths";
+import { checkForUpdates } from "./updater";
 
 registerAppProtocolScheme();
 
-function createWindow(): void {
+function createWindow(): BrowserWindow {
   const win = new BrowserWindow({
     width: 1200,
     height: 900,
@@ -44,13 +45,16 @@ function createWindow(): void {
       shell.openExternal(url);
     }
   });
+
+  return win;
 }
 
 app.whenReady().then(() => {
   Menu.setApplicationMenu(null);
   registerAppProtocolHandler();
-  registerIpcHandlers();
-  createWindow();
+  const win = createWindow();
+  registerIpcHandlers(win);
+  checkForUpdates(win);
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

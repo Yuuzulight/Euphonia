@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build dashboard-react
+        working-directory: dashboard-react
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build electron main process
+        working-directory: electron
+        run: |
+          npm ci
+          npm run build
+
+      - name: Test protocol path containment (resolveWithinBase)
+        run: node scripts/test_protocol_paths.js
+
+      - uses: astral-sh/setup-uv@v3
+
+      - name: Test analyze.py path resolution
+        run: |
+          uv sync
+          uv run scripts/test_analyze_paths.py

@@ -1,5 +1,15 @@
 import type { GeneratedInsight, Recording } from "./types";
 
+// Mirrors electron/src/updater.ts's UpdateStatus — kept in sync manually
+// (same pattern as zones.ts's intentional duplication) since the renderer
+// can't import from electron/src directly.
+export type UpdateStatus =
+  | { state: "checking" }
+  | { state: "available"; version: string }
+  | { state: "not-available" }
+  | { state: "downloading"; percent: number }
+  | { state: "downloaded"; version: string };
+
 export interface EuphoniaBridge {
   createRecording(payload: {
     audioBase64: string;
@@ -9,6 +19,7 @@ export interface EuphoniaBridge {
   }): Promise<void>;
   deleteRecording(id: number): Promise<void>;
   deleteAllRecordings(): Promise<void>;
+  exportRecordings(): Promise<{ canceled: boolean; path?: string }>;
   settings: {
     getStatus(): Promise<{ hasKey: boolean }>;
     setKey(key: string): Promise<void>;
@@ -18,6 +29,10 @@ export interface EuphoniaBridge {
     get(recordingId: number): Promise<GeneratedInsight | null>;
     generate(recording: Recording): Promise<GeneratedInsight>;
     regenerateWithGemini(recording: Recording): Promise<GeneratedInsight>;
+  };
+  updates: {
+    onStatus(callback: (status: UpdateStatus) => void): () => void;
+    install(): Promise<void>;
   };
 }
 

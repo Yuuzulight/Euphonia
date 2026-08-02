@@ -22,6 +22,9 @@ export function OnboardingModal({
   const [deleteConfirming, setDeleteConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [exportPath, setExportPath] = useState<string | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   if (!open) return null;
 
@@ -39,6 +42,22 @@ export function OnboardingModal({
         err instanceof Error
           ? err.message
           : "couldn't save key — check that encryption is available"
+      );
+    }
+  }
+
+  async function exportBackup() {
+    setExporting(true);
+    setExportError(null);
+    setExportPath(null);
+    try {
+      const result = await window.euphonia.exportRecordings();
+      setExporting(false);
+      if (!result.canceled && result.path) setExportPath(result.path);
+    } catch (err) {
+      setExporting(false);
+      setExportError(
+        err instanceof Error ? err.message : "couldn't export recordings"
       );
     }
   }
@@ -97,6 +116,15 @@ export function OnboardingModal({
           </button>
         </div>
 
+        <div className="backup-zone">
+          <p className="danger-zone-label">back up</p>
+          <button className="backup-btn" onClick={exportBackup} disabled={exporting}>
+            {exporting ? "saving…" : "💾 export all recordings"}
+          </button>
+          {exportPath && <p className="backup-success">saved to {exportPath}</p>}
+          {exportError && <p className="modal-error">{exportError}</p>}
+        </div>
+
         <div className="danger-zone">
           <p className="danger-zone-label">danger zone</p>
           {!deleteConfirming ? (
@@ -105,7 +133,7 @@ export function OnboardingModal({
             </button>
           ) : (
             <div className="danger-confirm">
-              <span>delete every recording? this can't be undone.</span>
+              <span>delete every recording? this can't be undone — export a backup above first if you want to keep them.</span>
               <button className="rec-confirm-yes" onClick={deleteAll} disabled={deleting}>
                 {deleting ? "deleting…" : "yes, delete everything"}
               </button>

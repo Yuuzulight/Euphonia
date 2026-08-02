@@ -25,6 +25,8 @@ Euphonia is available as a Windows desktop app — no coding agent, no terminal,
 3. Windows will show a blue **"Windows protected your PC"** warning — the installer isn't code-signed (no certificate; not worth the cost for a small group of friends), so this is expected, not a sign anything's broken. Click **"More info"**, then **"Run anyway"**.
 4. The installer runs with no further prompts and launches Euphonia when done.
 
+From then on, Euphonia checks for new versions in the background and downloads them automatically — you'll see a small toast in the corner when one's ready, with a **"restart to update"** button. No need to revisit the Releases page yourself.
+
 ### 2. Record your first take — no setup needed
 
 1. Type a short label for what you're practicing (e.g. "Rainbow Passage, morning") in the box next to the record button.
@@ -51,9 +53,11 @@ The built-in insight above is deliberately simple and reliable — it can't misr
 
 Once a key is added, any take showing the built-in insight will offer a **"✨ upgrade to an AI-written insight"** button to swap in the richer version. The key is stored encrypted on your machine and is never sent anywhere except Google's Gemini API. Nothing else in the app changes or requires this — it's purely an upgrade, not a setup step.
 
-### 6. Delete a take (or everything)
+### 6. Back up, or delete, your recordings
 
-Every recording card in **All recordings** has a small 🗑️ button — click it, then confirm, to remove that take and its audio permanently. To clear your whole history at once, open **⚙️ Settings** and use **delete all recordings** in the danger zone at the bottom. Both ask for confirmation first and can't be undone.
+Open **⚙️ Settings** and click **💾 export all recordings** any time to save a full copy of your recordings, audio, and analysis to a folder of your choosing — a plain folder, not a locked-in format, so you can move or archive it however you like.
+
+To remove a single take, use the small 🗑️ button on its card in **All recordings**. To clear your whole history at once, use **delete all recordings** in the Settings danger zone. Both ask for confirmation first and can't be undone — back up first with the export button above if you want to keep anything.
 
 ## Developer / coding-agent workflow
 

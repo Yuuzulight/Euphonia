@@ -21,6 +21,7 @@ import { CheatSheet } from "./components/CheatSheet";
 import { RegisterSection } from "./components/RegisterSection";
 import { RecordButton } from "./components/RecordButton";
 import { TitleBar } from "./components/TitleBar";
+import { UpdateBanner } from "./components/UpdateBanner";
 import { GeneratedInsight } from "./components/GeneratedInsight";
 import { OnboardingModal } from "./components/OnboardingModal";
 import {
@@ -118,6 +119,7 @@ export function App() {
   return (
     <>
       <TitleBar />
+      <UpdateBanner />
       <div className="wrap">
       <header className="hero">
         <div style={{ position: "relative" }}>

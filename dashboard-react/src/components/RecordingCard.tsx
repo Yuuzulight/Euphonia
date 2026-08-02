@@ -39,7 +39,10 @@ export function RecordingCard({
       </div>
       {confirming && (
         <div className="rec-confirm">
-          <span>delete take #{r.id}? this can't be undone.</span>
+          <span>
+            delete take #{r.id}? this can't be undone
+            {r.audio ? " — you can download the audio below first if you want to keep it." : "."}
+          </span>
           <button
             className="rec-confirm-yes"
             onClick={(e) => {

@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld("euphonia", {
   }) => ipcRenderer.invoke("recordings:create", payload),
   deleteRecording: (id: number) => ipcRenderer.invoke("recordings:delete", id),
   deleteAllRecordings: () => ipcRenderer.invoke("recordings:deleteAll"),
+  exportRecordings: () => ipcRenderer.invoke("recordings:export"),
   settings: {
     getStatus: () => ipcRenderer.invoke("settings:getStatus"),
     setKey: (key: string) => ipcRenderer.invoke("settings:setKey", key),
@@ -19,5 +20,13 @@ contextBridge.exposeInMainWorld("euphonia", {
     generate: (recording: unknown) => ipcRenderer.invoke("insights:generate", recording),
     regenerateWithGemini: (recording: unknown) =>
       ipcRenderer.invoke("insights:regenerateWithGemini", recording),
+  },
+  updates: {
+    onStatus: (callback: (status: unknown) => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, status: unknown) => callback(status);
+      ipcRenderer.on("updates:status", listener);
+      return () => ipcRenderer.removeListener("updates:status", listener);
+    },
+    install: () => ipcRenderer.invoke("updates:install"),
   },
 });

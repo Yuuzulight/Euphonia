@@ -27,9 +27,27 @@ extraResources:
     to: licenses
   - from: resources/icon.ico
     to: icon.ico
+# Lets electron-updater (see src/updater.ts) find new releases: it reads
+# app-update.yml (baked in from this at build time) to know where to check,
+# and compares against latest.yml, which this same config makes
+# electron-builder generate alongside the installer. We still publish
+# manually via `gh release create` (see CLAUDE.md) rather than
+# `electron-builder --publish always` — this block only affects what gets
+# generated locally, not any automatic upload.
+publish:
+  provider: github
+  owner: Yuuzulight
+  repo: Euphonia
 win:
   target: nsis
   # No code-signing cert available; this also skips a winCodeSign download
   # that fails to extract on this machine (dylib symlinks need Windows
   # Developer Mode/admin, which we won't enable just to build unsigned).
   signAndEditExecutable: false
+nsis:
+  # electron-builder's own latest.yml (for electron-updater) references this
+  # exact hyphenated name. The default artifactName has spaces, which GitHub
+  # then mangles to dots on upload — a three-way filename mismatch that
+  # would make auto-update silently fail to find the release asset. Keep
+  # this in sync with whatever `gh release create` actually uploads.
+  artifactName: ${productName}-Setup-${version}.${ext}

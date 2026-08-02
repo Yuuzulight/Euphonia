@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { dialog, BrowserWindow } from "electron";
 import { getUserDataRoot, getRecordingsJsonPath, getAudioDir, getAnalysisDir } from "./paths";
 
 interface RecordingEntry {
@@ -43,4 +44,37 @@ export function deleteAllRecordings(): void {
   fs.rmSync(getAudioDir(), { recursive: true, force: true });
   fs.rmSync(getAnalysisDir(), { recursive: true, force: true });
   writeRecordings([]);
+}
+
+// Copies recordings.json + audio/ + analysis/ into a timestamped folder
+// wherever the user picks — a plain folder, not a zip, so this needs no new
+// dependency. Meant as the "back up before you delete" escape hatch.
+export async function exportRecordings(
+  win: BrowserWindow | null,
+): Promise<{ canceled: boolean; path?: string }> {
+  const options: Electron.OpenDialogOptions = {
+    title: "Choose a folder to save your backup",
+    properties: ["openDirectory", "createDirectory"],
+  };
+  const result = win
+    ? await dialog.showOpenDialog(win, options)
+    : await dialog.showOpenDialog(options);
+  if (result.canceled || result.filePaths.length === 0) return { canceled: true };
+
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const destRoot = path.join(result.filePaths[0], `euphonia-backup-${stamp}`);
+  fs.mkdirSync(destRoot, { recursive: true });
+
+  const recordingsJson = getRecordingsJsonPath();
+  if (fs.existsSync(recordingsJson)) {
+    fs.copyFileSync(recordingsJson, path.join(destRoot, "recordings.json"));
+  }
+  if (fs.existsSync(getAudioDir())) {
+    fs.cpSync(getAudioDir(), path.join(destRoot, "audio"), { recursive: true });
+  }
+  if (fs.existsSync(getAnalysisDir())) {
+    fs.cpSync(getAnalysisDir(), path.join(destRoot, "analysis"), { recursive: true });
+  }
+
+  return { canceled: false, path: destRoot };
 }

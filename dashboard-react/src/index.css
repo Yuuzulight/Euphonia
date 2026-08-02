@@ -78,6 +78,46 @@ body {
   user-select: none;
 }
 
+/* quiet auto-update toast — bottom-right, out of the way of everything else */
+.update-banner {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 340px;
+  background: var(--card);
+  border: 2px solid #fff;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 12px 16px;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.update-banner button {
+  flex: none;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--pink), var(--lav));
+  box-shadow: 0 3px 10px rgba(176, 106, 150, 0.3);
+  transition: transform 0.14s ease;
+}
+.update-banner button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.update-banner button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .wrap {
   max-width: 1040px;
   margin: 0 auto;
@@ -1563,6 +1603,41 @@ a.legend-link {
   font-size: 13px;
   color: #c84545;
   line-height: 1.4;
+}
+
+.backup-zone {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1.5px dashed #f0dcea;
+}
+.backup-btn {
+  border: 1.5px solid var(--lav-soft);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #7a5a92;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.backup-btn:hover:not(:disabled) {
+  background: var(--lav-bg);
+}
+.backup-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.backup-success {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: #3f9c78;
+  background: #eafaf3;
+  border: 1.5px solid #cdeee0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  word-break: break-all;
 }
 
 .danger-zone {

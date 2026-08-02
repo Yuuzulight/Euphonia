@@ -437,6 +437,18 @@ electron/src/recordings.ts  deleteRecording(id)/deleteAllRecordings() — read/r
                              recordings.json plus remove the matching audio, analysis,
                              and cached-insight files. No sidecar involvement (unlike
                              creation, deletion is pure file/JSON bookkeeping).
+                             exportRecordings(win) — opens a native "choose a folder"
+                             dialog and copies recordings.json + audio/ + analysis/
+                             into a timestamped subfolder there (fs.cpSync, no zip
+                             dependency). The "back up" affordance next to delete.
+electron/src/updater.ts     electron-updater wired to GitHub Releases. Packaged
+                             builds only (app.isPackaged guard — there's no real
+                             feed to check in dev). Pushes UpdateStatus events to
+                             the renderer over "updates:status" as it checks/
+                             downloads; a failed check just logs to console, never
+                             surfaces as a user-facing error (see comment in the
+                             file). installUpdate() → autoUpdater.quitAndInstall(),
+                             invoked from UpdateBanner.tsx's "restart to update".
 electron/src/ipcHandlers.ts registers every IPC channel (see below).
 electron/src/preload.ts     contextBridge.exposeInMainWorld("euphonia", {...}) —
                              the ONLY thing exposed to the renderer.
@@ -459,6 +471,14 @@ surface:
 - `deleteAllRecordings(): Promise<void>` — wipes `recordings.json` back to `[]`
   and removes the whole `audio/`/`analysis/` dirs. Lives in the Settings modal's
   "danger zone", same inline-confirm pattern.
+- `exportRecordings(): Promise<{ canceled: boolean; path?: string }>` — native
+  folder picker + copy, see `recordings.ts` above. Settings modal's "back up"
+  section, referenced by name from the delete-all confirm text.
+- `updates.onStatus(callback): () => void` — subscribes to push events from
+  `updater.ts`; returns an unsubscribe function (used in `UpdateBanner.tsx`'s
+  `useEffect` cleanup). `updates.install(): Promise<void>` — triggers
+  `autoUpdater.quitAndInstall()`; only ever called once a "downloaded" status
+  has been seen.
 - `settings.getStatus(): Promise<{ hasKey: boolean }>` /
   `settings.setKey(key: string): Promise<void>` /
   `settings.clearKey(): Promise<void>` — Task 5. The key itself never crosses into
@@ -502,6 +522,23 @@ URL comment in `electron/electron-builder.yml`) → `electron` build → `electr
 gitignored build output; only `electron/resources/licenses/` and
 `electron/resources/icon.ico` are real, committed assets.
 
+**CI**: `.github/workflows/ci.yml` runs on every push/PR to `main` — builds both
+npm packages and runs the two regression scripts above (`test_protocol_paths.js`,
+`test_analyze_paths.py` via `uv`). It does not build the installer (no Windows
+runner, no ffmpeg/PyInstaller staging) — that stays a manual local step.
+
+**Releasing** (for auto-update, via `electron-updater`/`updater.ts`, to actually
+find new versions): `electron-builder.yml`'s `nsis.artifactName` is pinned to
+`${productName}-Setup-${version}.${ext}` (hyphens) specifically because
+electron-builder's own generated `latest.yml` references that exact name, and
+GitHub mangles spaces (the old default) to dots on upload — a silent three-way
+mismatch that breaks update checks if `artifactName` and the actual uploaded
+filename ever drift apart. When creating a release, upload `latest.yml` and the
+`.exe.blockmap` from `electron/release/` as release assets *alongside* the
+installer — `gh release create v0.3.0 "electron/release/Euphonia-Setup-0.3.0.exe"
+"electron/release/latest.yml" "electron/release/Euphonia-Setup-0.3.0.exe.blockmap"`.
+Skipping `latest.yml` means existing installs never see the new version.
+
 To iterate without a full package build: `cd electron && npm run build && npx electron .`
 — this uses the `uv run analyze.py` dev path (needs `ffmpeg` on PATH) and reads/writes
 whatever's in your real OS userData dir for this app (`%APPDATA%/euphonia-electron/`
@@ -542,16 +579,20 @@ on Windows, derived from `electron/package.json`'s `name`).
   - `src/vg-bridge.ts` — typed `window.euphonia` accessor + `blobToBase64` helper
     (Electron only; unused in plain browser dev).
   - `src/components/RecordButton.tsx`, `GeneratedInsight.tsx`, `OnboardingModal.tsx`,
-    `TitleBar.tsx` — Electron-only UI (in-app recording, rendered insight incl. the
-    "upgrade to AI" affordance, the Settings modal — optional Gemini key plus the
-    "delete all recordings" danger zone, NOT shown on first launch; reachable any
-    time via the ⚙️ header button — and the draggable custom title row that pairs
-    with main.ts's titleBarOverlay). `RecordingCard.tsx` also has a per-take 🗑️
-    delete button (inline confirm, no native dialog). See "Desktop app (Electron)"
-    above.
+    `TitleBar.tsx`, `UpdateBanner.tsx` — Electron-only UI (in-app recording, rendered
+    insight incl. the "upgrade to AI" affordance, the Settings modal — optional
+    Gemini key plus "back up" (export) and "delete all recordings" (danger zone),
+    NOT shown on first launch; reachable any time via the ⚙️ header button — the
+    draggable custom title row that pairs with main.ts's titleBarOverlay, and a
+    quiet bottom-right toast for auto-update progress). `RecordingCard.tsx` also
+    has a per-take 🗑️ delete button (inline confirm, no native dialog). See
+    "Desktop app (Electron)" above.
+- `.github/workflows/ci.yml` — build + regression-test check on push/PR (see
+  "Building & running" above). Does not build the installer.
 - `electron/` — the desktop app. `src/` (see "Desktop app (Electron)" above for what
-  each file does), `electron-builder.yml` (packaging config), `resources/icon.ico`
-  + `resources/licenses/` (real, committed assets), `resources/ffmpeg/` (gitignored,
+  each file does), `electron-builder.yml` (packaging config, incl. `publish`/
+  `nsis.artifactName` for `electron-updater`), `resources/icon.ico` +
+  `resources/licenses/` (real, committed assets), `resources/ffmpeg/` (gitignored,
   fetched manually — see the source URL comment in `electron-builder.yml`).
 - `scripts/` — `build_sidecar.py` (freezes `analyze.py` via PyInstaller),
   `_rthook_utf8_stdio.py` (a PyInstaller runtime hook fixing a Windows-only frozen-exe
