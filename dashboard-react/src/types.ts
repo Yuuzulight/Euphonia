@@ -96,6 +96,9 @@ export interface GeneratedInsight {
   focus_area: string;
   tip: string;
   generated_at: string;
+  // "template": instant, zero-setup, always available. "gemini": richer,
+  // personalized, opt-in — only produced when the user has added a key.
+  source: "template" | "gemini";
 }
 
 // The heavy per-recording analysis at public/analysis/<id>.json.

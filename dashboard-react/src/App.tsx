@@ -61,12 +61,11 @@ export function App() {
 
   useEffect(refetchRecordings, []);
 
-  // check if user has an API key on mount, show onboarding if not
-  useEffect(() => {
-    window.euphonia.settings.getStatus().then(({ hasKey }) => {
-      if (!hasKey) setShowOnboarding(true);
-    });
-  }, []);
+  // No proactive first-launch prompt: insights work instantly with no key
+  // (see GeneratedInsight/insights.ts — Gemini is an opt-in upgrade, not a
+  // requirement), so there's nothing that needs setting up before the app
+  // is usable. The key setup screen stays reachable any time via the
+  // Settings button below.
 
   // reference voices (real men/women) — degrade gracefully if missing.
   useEffect(() => {
@@ -309,7 +308,7 @@ export function App() {
                 · custom analysis of what to work on next
               </span>
             </h2>
-            <GeneratedInsight recording={active} onNeedsApiKey={() => setShowOnboarding(true)} />
+            <GeneratedInsight recording={active} />
           </section>
 
           <Region id="region.bottom" />

@@ -400,10 +400,35 @@ electron/src/sidecar.ts     spawns analyze.py: `uv run analyze.py` in dev,
 electron/src/settings.ts    Gemini API key storage via Electron's safeStorage
                              (OS-level encryption — DPAPI on Windows). No electron-
                              store/keytar dependency.
+electron/src/zones.ts       metric → zone classification (fem/masc/neutral,
+                             light/heavy, steady/rough, etc.) — a deliberate port of
+                             dashboard-react/src/zones.ts's thresholds (see its own
+                             comment for why it's duplicated, not shared). Used by
+                             BOTH the Gemini prompt and the template generator below,
+                             so a metric's direction/meaning is never re-derived from
+                             a raw number by anything that isn't this one table.
 electron/src/gemini.ts      calls the Gemini API (model: gemini-flash-latest — see
-                             the comment there for why not a pinned version), caches
-                             the structured JSON result to
-                             analysis/<id>-insight.json.
+                             the comment there for why not a pinned version). Its
+                             prompt hands over each metric PRE-CLASSIFIED into its
+                             zone (not just a raw number) — some directions are
+                             genuinely non-obvious (vocal weight is inverted from
+                             what you'd guess), and this was a real, measured
+                             reliability problem when prototyped against small local
+                             models (see the plan doc's history) — no caching, no
+                             fallback logic; that's insights.ts's job.
+electron/src/templateInsight.ts  deterministic, zero-network insight generator —
+                             reads the same zones.ts table, so it can't get a
+                             metric's direction wrong or silently drop one the way a
+                             model can. This is the DEFAULT insight (always
+                             available, no setup, no key) — Gemini is an opt-in
+                             upgrade, not a requirement.
+electron/src/insights.ts    the orchestrator: Gemini if a key is set and the call
+                             succeeds, template otherwise (and template on ANY
+                             Gemini failure — a bad/rate-limited key degrades
+                             gracefully instead of showing an error). Owns the
+                             analysis/<id>-insight.json cache, including the
+                             `source: "template" | "gemini"` field the renderer uses
+                             to offer the "upgrade to AI" button.
 electron/src/ipcHandlers.ts registers every IPC channel (see below).
 electron/src/preload.ts     contextBridge.exposeInMainWorld("euphonia", {...}) —
                              the ONLY thing exposed to the renderer.
@@ -426,9 +451,16 @@ surface:
   the renderer; only `hasKey` does.
 - `insights.get(recordingId: number): Promise<GeneratedInsight | null>` — pure
   cache read, no network call.
-- `insights.generate(recording: Recording): Promise<GeneratedInsight>` — real
-  Gemini API call; throws `Error("NO_API_KEY")` (matched via
-  `e.message.includes("NO_API_KEY")` in `GeneratedInsight.tsx`) if no key is set.
+- `insights.generate(recording: Recording): Promise<GeneratedInsight>` — the
+  default path (`insights.ts`): Gemini if a key works, the zero-setup template
+  otherwise. **Never throws** — there's always a valid instant result, since
+  nothing about getting an insight should require setup.
+- `insights.regenerateWithGemini(recording: Recording): Promise<GeneratedInsight>`
+  — explicit "upgrade" path, always calls Gemini, throws `Error("NO_API_KEY")`
+  if there's no key. Only ever invoked from a UI affordance that's itself gated
+  on `hasKey` (`GeneratedInsight.tsx`'s "✨ upgrade to an AI-written insight"
+  button, shown only when the cached insight's `source === "template"` AND a
+  key is present) — the throw path is a safety guard, not a normal occurrence.
 
 ### Data storage
 
@@ -496,8 +528,10 @@ on Windows, derived from `electron/package.json`'s `name`).
   - `src/vg-bridge.ts` — typed `window.euphonia` accessor + `blobToBase64` helper
     (Electron only; unused in plain browser dev).
   - `src/components/RecordButton.tsx`, `GeneratedInsight.tsx`, `OnboardingModal.tsx`
-    — Electron-only UI (in-app recording, rendered Gemini insight, first-run/Settings
-    modal). See "Desktop app (Electron)" above.
+    — Electron-only UI (in-app recording, rendered insight incl. the "upgrade to
+    AI" affordance, the optional Gemini-key Settings modal — NOT shown on first
+    launch; reachable any time via the ⚙️ header button). See "Desktop app
+    (Electron)" above.
 - `electron/` — the desktop app. `src/` (see "Desktop app (Electron)" above for what
   each file does), `electron-builder.yml` (packaging config), `resources/icon.ico`
   + `resources/licenses/` (real, committed assets), `resources/ffmpeg/` (gitignored,

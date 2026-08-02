@@ -5,7 +5,8 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { runAnalyze } from "./sidecar";
 import { getApiKey, setApiKey, clearApiKey } from "./settings";
-import { generateInsight, readCachedInsight, type RecordingSummary } from "./gemini";
+import type { RecordingSummary } from "./gemini";
+import { generateInsight, regenerateWithGemini, readCachedInsight } from "./insights";
 
 interface CreateRecordingPayload {
   audioBase64: string;
@@ -42,5 +43,8 @@ export function registerIpcHandlers(): void {
   ipcMain.handle("insights:get", (_event, recordingId: number) => readCachedInsight(recordingId));
   ipcMain.handle("insights:generate", (_event, recording: RecordingSummary) =>
     generateInsight(recording),
+  );
+  ipcMain.handle("insights:regenerateWithGemini", (_event, recording: RecordingSummary) =>
+    regenerateWithGemini(recording),
   );
 }

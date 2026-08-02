@@ -1,7 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
-import { getAnalysisDir } from "./paths";
 import { getApiKey } from "./settings";
+import { PITCH_ZONES, F2_ZONES, HNR_ZONES, JITTER_ZONES, WEIGHT_ZONES, zoneOf } from "./zones";
 
 export interface RecordingSummary {
   id: number;
@@ -15,14 +13,6 @@ export interface RecordingSummary {
     offset_sub_pct: number | null;
     phrases_landed_pct: number | null;
   };
-}
-
-export interface GeneratedInsight {
-  summary: string;
-  strengths: string[];
-  focus_area: string;
-  tip: string;
-  generated_at: string;
 }
 
 // "gemini-2.5-flash" (per the task brief) 404s as "no longer available to new
@@ -40,44 +30,55 @@ const RESPONSE_SCHEMA = {
   required: ["summary", "strengths", "focus_area", "tip"],
 };
 
-function cachePath(recordingId: number): string {
-  return path.join(getAnalysisDir(), `${recordingId}-insight.json`);
-}
-
-export function readCachedInsight(recordingId: number): GeneratedInsight | null {
-  const file = cachePath(recordingId);
-  if (!fs.existsSync(file)) return null;
-  try {
-    return JSON.parse(fs.readFileSync(file, "utf-8"));
-  } catch {
-    // Truncated/corrupt cache file (e.g. interrupted write) — treat like
-    // "no cache yet" instead of throwing and wedging the renderer forever.
-    return null;
-  }
+function zoneLabel(name: string | null, meaning: string): string {
+  return name ? `${name} (${meaning})` : "n/a";
 }
 
 function buildPrompt(r: RecordingSummary): string {
+  // Each metric is handed over pre-classified into its zone (same thresholds
+  // as dashboard-react's own color-coded cards — see electron/src/zones.ts),
+  // not just a raw number. Some of these directions are genuinely
+  // non-obvious (vocal weight is inverted from what you'd guess), and a
+  // model left to infer that itself can get it backwards — feeding it the
+  // already-correct verdict turns "must know domain thresholds" into "turn
+  // an already-correct fact into prose," which is a much more reliable task.
+  const pitchZone = zoneOf(PITCH_ZONES, r.pitch.mean_hz);
+  const f2Zone = zoneOf(F2_ZONES, r.formants.f2_hz);
+  const hnrZone = zoneOf(HNR_ZONES, r.voice_quality.hnr_db);
+  const jitterZone = zoneOf(JITTER_ZONES, r.voice_quality.jitter_pct);
+  const weightZone = zoneOf(WEIGHT_ZONES, r.weight?.h1a3c_db);
+
   return `You are a warm, encouraging voice-feminization coach. Numbers are a
 compass, not a judge — always pair any weakness with one concrete, doable
 next step, and end warm. Never use the word "masculine" as a generic
 put-down; it only applies literally to register crashes.
 
-This take (#${r.id}, "${r.label}"):
-- pitch mean: ${r.pitch.mean_hz ?? "n/a"} Hz
-- resonance F2: ${r.formants.f2_hz ?? "n/a"} Hz
-- clarity (HNR): ${r.voice_quality.hnr_db ?? "n/a"} dB
-- steadiness (jitter): ${r.voice_quality.jitter_pct ?? "n/a"}%
-- weight (spectral tilt): ${r.weight?.h1a3c_db ?? "n/a"} dB
-- % time in register: ${r.register?.in_register_pct ?? "n/a"}%
-- sub-register at phrase endings: ${r.register?.offset_sub_pct ?? "n/a"}%
-- phrase endings landed in register: ${r.register?.phrases_landed_pct ?? "n/a"}%
+This take (#${r.id}, "${r.label}"). Each metric includes its value AND its
+pre-classified zone — trust the zone label as the correct interpretation,
+don't re-derive it from the raw number yourself:
+
+- pitch: ${r.pitch.mean_hz ?? "n/a"} Hz — zone: ${zoneLabel(pitchZone, "fem = feminine/good end, masc = deeper/needs-work end, neutral = in between")}
+- resonance F2: ${r.formants.f2_hz ?? "n/a"} Hz — zone: ${zoneLabel(f2Zone, "bright = feminine/good end, deeper = needs-work end")}
+- clarity (HNR): ${r.voice_quality.hnr_db ?? "n/a"} dB — zone: ${zoneLabel(hnrZone, "clear = good, breathy = room to grow")}
+- steadiness (jitter): ${r.voice_quality.jitter_pct ?? "n/a"}% — zone: ${zoneLabel(jitterZone, "steady = good, rough = room to grow")}
+- vocal weight (spectral tilt): ${r.weight?.h1a3c_db ?? "n/a"} dB — zone: ${zoneLabel(weightZone, "light = feminine/good end, heavy = needs-work end — smaller numbers are BETTER here, trust the zone label over your instinct about the number")}
+- % time in register: ${r.register?.in_register_pct ?? "n/a"}% (higher is better)
+- sub-register at phrase endings: ${r.register?.offset_sub_pct ?? "n/a"}% (lower is better — this is usually the biggest lever)
+- phrase endings landed in register: ${r.register?.phrases_landed_pct ?? "n/a"}% (higher is better)
 
 Write a short summary (2-3 sentences), 2-3 genuine strengths, one clear
 focus_area naming the single most clockable thing to work on, and one
-concrete tip (a specific, doable exercise).`;
+concrete tip (a specific, doable exercise). Base your interpretation on the
+zone labels given above, not on assumptions about whether a raw number
+"sounds" high or low.`;
 }
 
-export async function generateInsight(r: RecordingSummary): Promise<GeneratedInsight> {
+/** Calls the real Gemini API. Throws if there's no key, if the request
+ * fails, or if the response can't be parsed — callers decide what to do
+ * with that (insights.ts falls back to the template generator). */
+export async function generateFromGemini(
+  r: RecordingSummary,
+): Promise<{ summary: string; strengths: string[]; focus_area: string; tip: string }> {
   const apiKey = getApiKey();
   if (!apiKey) throw new Error("NO_API_KEY");
 
@@ -101,10 +102,5 @@ export async function generateInsight(r: RecordingSummary): Promise<GeneratedIns
   const data = await res.json();
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error("Gemini API returned no content");
-  const parsed = JSON.parse(text) as Omit<GeneratedInsight, "generated_at">;
-
-  const insight: GeneratedInsight = { ...parsed, generated_at: new Date().toISOString() };
-  fs.mkdirSync(getAnalysisDir(), { recursive: true });
-  fs.writeFileSync(cachePath(r.id), JSON.stringify(insight, null, 2));
-  return insight;
+  return JSON.parse(text);
 }

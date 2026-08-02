@@ -41,8 +41,11 @@ export function OnboardingModal({
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="modal onboarding">
-        <h2>💗 welcome to Euphonia</h2>
-        <p>add a free Gemini key to get written insights per take:</p>
+        <h2>💗 Gemini key (optional)</h2>
+        <p>
+          Euphonia already writes a short insight for every take — no setup needed.
+          Add a free Gemini key for a richer, more personalized version instead:
+        </p>
         <ol>
           {GUIDE_STEPS.map(([step, link], i) => (
             <li key={i}>
@@ -67,7 +70,7 @@ export function OnboardingModal({
         />
         {error && <p className="modal-error">{error}</p>}
         <div className="modal-actions">
-          <button onClick={onClose}>skip for now</button>
+          <button onClick={onClose}>close</button>
           <button onClick={save} disabled={saving || !key.trim()}>
             {saving ? "saving…" : "save key"}
           </button>

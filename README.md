@@ -14,7 +14,7 @@ There are two ways to use Euphonia, depending on whether you want a click-and-ru
 
 ## Desktop app (recommended if you just want to use it)
 
-Euphonia is available as a Windows desktop app — no coding agent, no terminal, nothing to install except the app itself. All your recordings and data stay on your own machine, in your own user folder — no accounts, no server, nothing sent anywhere except (optionally) Google's Gemini API for the written insight.
+Euphonia is available as a Windows desktop app — no coding agent, no terminal, no account, no API key. Install it, open it, record a take — everything works instantly, including a written insight for every take, with zero setup. All your recordings and data stay on your own machine, in your own user folder.
 
 **Currently Windows-only.** (The original design considered a macOS build too, but only Windows has actually been built so far — if you're on a Mac, use the developer workflow below for now.)
 
@@ -25,21 +25,7 @@ Euphonia is available as a Windows desktop app — no coding agent, no terminal,
 3. Windows will show a blue **"Windows protected your PC"** warning — the installer isn't code-signed (no certificate; not worth the cost for a small group of friends), so this is expected, not a sign anything's broken. Click **"More info"**, then **"Run anyway"**.
 4. The installer runs with no further prompts and launches Euphonia when done.
 
-### 2. First launch: set up your Gemini key (optional)
-
-On first launch, a setup screen appears offering to add a free **Gemini API key**. This key is only used to write your per-recording insight — everything else in the app (recording, all the metrics, charts, reference comparisons) works with no key at all. You can skip this and add it later.
-
-To get a free key:
-1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
-2. Sign in with a Google account.
-3. Click **Create API key**.
-4. Copy the key and paste it into Euphonia's setup screen (or **Settings** — the ⚙️ button in the top-right of the app — any time later).
-
-Gemini's free tier is rate-limited but plenty for occasional personal use. The key is stored encrypted on your machine (via Windows' own credential encryption) and is never sent anywhere except Google's Gemini API.
-
-Click **"Skip for now"** if you'd rather set this up later — you can reopen this same screen anytime from **Settings**.
-
-### 3. Record your first take
+### 2. Record your first take — no setup needed
 
 1. Type a short label for what you're practicing (e.g. "Rainbow Passage, morning") in the box next to the record button.
 2. Click **🎙️ record**, allow microphone access if Windows asks, and read your passage.
@@ -47,21 +33,27 @@ Click **"Skip for now"** if you'd rather set this up later — you can reopen th
 
 For results you can actually compare over time, read the *same* passage with a *similar* microphone setup each time — I use the Rainbow Passage myself.
 
-### 4. Read your results
+### 3. Read your results
 
 The dashboard shows, for your latest take: pitch, resonance (formants), loudness, steadiness (jitter/shimmer), vocal weight, and a register/phrasing breakdown (where your voice stays in or falls out of your target range). Click any metric card to see the full scale with your past takes and real reference voices plotted on it, so you can see where you sit. The **"What do these mean?"** section at the bottom of the dashboard explains each metric in plain language. Every number is meant as a compass, not a judge — a hint toward what to work on next, never a verdict.
 
-### 5. Get a written insight for a take
+### 4. Get a written insight for a take
 
-If you added a Gemini key, click **✨ generate insight** under "Insights for this take" to get a short, personalized, encouraging write-up of what's working and one concrete thing to try next. This is generated once per take and cached — it won't call the API again for the same recording.
+Click **✨ generate insight** under "Insights for this take" to get a short, honest write-up of what's working and the single clearest thing to try next — generated instantly, with no setup and no account, from the same metrics shown above. It's generated once per take and cached, so opening the same take again doesn't regenerate it.
 
-### 6. Revisit settings later
+### 5. (Optional) Upgrade to richer, AI-written insights
 
-Click the **⚙️** button in the top-right corner any time to add, change, or view your Gemini key setup again.
+The built-in insight above is deliberately simple and reliable — it can't misread your numbers, but it also can't vary its phrasing much. If you'd like more personalized, varied writing instead, add a free **Gemini API key**:
+
+1. Click the **⚙️** button in the top-right corner, any time.
+2. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey), sign in with a Google account, and click **Create API key**.
+3. Copy the key and paste it into the Settings screen.
+
+Once a key is added, any take showing the built-in insight will offer a **"✨ upgrade to an AI-written insight"** button to swap in the richer version. The key is stored encrypted on your machine and is never sent anywhere except Google's Gemini API. Nothing else in the app changes or requires this — it's purely an upgrade, not a setup step.
 
 ## Developer / coding-agent workflow
 
-This is how the project was originally built, and it's still how you'd customize it, add features, or get the deeper hand-authored insight style (see `CLAUDE.md`) instead of the desktop app's automated Gemini insights.
+This is how the project was originally built, and it's still how you'd customize it, add features, or get the deeper hand-authored insight style (see `CLAUDE.md`) instead of the desktop app's automated (template or Gemini) insights.
 
 Open your coding agent of choice and ask it to read `CLAUDE.md`. It will give you a summary of how to use this application and work with you to analyze your voice. `CLAUDE.md` also documents the desktop app's architecture in depth if you want to build on it.
 

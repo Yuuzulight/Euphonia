@@ -15,6 +15,7 @@ export interface EuphoniaBridge {
   insights: {
     get(recordingId: number): Promise<GeneratedInsight | null>;
     generate(recording: Recording): Promise<GeneratedInsight>;
+    regenerateWithGemini(recording: Recording): Promise<GeneratedInsight>;
   };
 }
 

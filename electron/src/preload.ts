@@ -15,5 +15,7 @@ contextBridge.exposeInMainWorld("euphonia", {
   insights: {
     get: (recordingId: number) => ipcRenderer.invoke("insights:get", recordingId),
     generate: (recording: unknown) => ipcRenderer.invoke("insights:generate", recording),
+    regenerateWithGemini: (recording: unknown) =>
+      ipcRenderer.invoke("insights:regenerateWithGemini", recording),
   },
 });
