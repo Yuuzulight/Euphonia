@@ -10,7 +10,7 @@ These metrics are grounded in established acoustic research, not professional cl
 
 For results that are meaningfully comparable over time, read the same passage with a similar microphone setup for each recording. The Rainbow Passage is used as the reference passage throughout this guide.
 
-There are two ways to use Euphonia, depending on whether you want a click-and-run app or you're comfortable with a coding agent:
+There are three ways to use Euphonia, depending on your platform and how comfortable you are with a coding agent:
 
 ## Desktop app (recommended if you just want to use it)
 
@@ -58,6 +58,14 @@ Once a key is added, any take showing the built-in insight will offer a **"✨ u
 Open **⚙️ Settings** and click **💾 export all recordings** any time to save a full copy of your recordings, audio, and analysis to a folder of your choosing — a plain folder, not a locked-in format, so you can move or archive it however you like.
 
 To remove a single take, use the small 🗑️ button on its card in **All recordings**. To clear your whole history at once, use **delete all recordings** in the Settings danger zone. Both ask for confirmation first and can't be undone — back up first with the export button above if you want to keep anything.
+
+## Browser version (works on macOS, Linux, and mobile too)
+
+**[yuuzulight.github.io/Euphonia](https://yuuzulight.github.io/Euphonia/)** — no install, no account, works on any platform with a modern browser (desktop or mobile).
+
+This runs the exact same Praat voice-analysis engine as the desktop app, compiled to WebAssembly — everything happens locally in your browser tab, nothing is uploaded anywhere, and it works offline once the page has loaded once. Recordings are stored in your browser's local storage (IndexedDB) instead of a file on disk, so they stay on that device and in that browser — export a backup (⚙️ Settings → 💾 export all recordings) if you want to move them elsewhere or keep a copy.
+
+Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis. The one thing the desktop app has that this doesn't (yet) is auto-update — refresh the page for the latest version.
 
 ## Developer / coding-agent workflow
 

@@ -546,12 +546,98 @@ on Windows, derived from `electron/package.json`'s `name`).
 
 ### Known gaps (see the plan/spec docs' final-review notes for the full list)
 
-- Windows-only. macOS was in the original design intent; never built.
-- No auto-update, no code-signing cert (by design, for a small-friend-group v1).
+- Windows-only. macOS was in the original design intent; never built as a
+  desktop app — the browser version below covers that gap instead.
+- No code-signing cert (by design, for a small-friend-group v1; see the
+  SignPath/Azure Trusted Signing/Certum research if this changes).
 - A handful of deferred Minor findings from the implementation's review passes
   (CSS duplication, a couple of missing edge-case guards, etc.) — see
   `.superpowers/sdd/2026-07-25-voice-garden-desktop-app/final-review-fix-report.md`
   for the ones that came out of the final review specifically.
+
+---
+
+## Browser version (WASM)
+
+**Live at [yuuzulight.github.io/Euphonia](https://yuuzulight.github.io/Euphonia/)**,
+deployed by `.github/workflows/deploy-pages.yml` on every push to `main`
+(`gh api repos/Yuuzulight/Euphonia/pages -f build_type=workflow` turned Pages
+on; `vite.config.ts`'s existing `base: "./"` needed no changes for the
+project-page subpath). This is `dashboard-react` running **completely
+standalone** — no Electron, no server — with real Praat analysis via a custom
+WASM build of `praat-parselmouth`, not a reimplementation. Verified
+numerically identical to the native desktop build for the same input audio
+(see the feasibility write-up in session history if you need the how/why).
+
+```
+dashboard-react/public/wasm/
+  praat_parselmouth-...-pyemscripten_2026_0_wasm32.whl
+                             the custom WASM build (~15MB). Built via
+                             pyodide-build + emsdk in WSL2 — see "Rebuilding
+                             the WASM wheel" below if it ever needs redoing.
+  analysis_core.py           analyze.py's analyze() + analyze_register()
+                             pipelines, ported verbatim (same Praat calls,
+                             same parameters) so results are directly
+                             comparable to the desktop app's. Executed
+                             in-browser via Pyodide, not reimplemented in JS.
+dashboard-react/src/wasm/
+  pyodideEngine.ts           lazy-loads Pyodide + the wheel from a CDN
+                             (jsdelivr, version-pinned to match the wheel's
+                             ABI) + analysis_core.py; analyzeWav() runs both
+                             analysis passes in one Python round-trip.
+  wavEncode.ts                Web Audio API decode/resample/PCM16-WAV encode
+                             — replaces analyze.py's ffmpeg shell-out, since
+                             browsers can't spawn ffmpeg. Format-agnostic
+                             (decodeAudioData handles whatever codec the
+                             browser's MediaRecorder produced).
+dashboard-react/src/browser/
+  browserBridge.ts           implements the SAME EuphoniaBridge interface
+                             the Electron preload script does (vg-bridge.ts)
+                             — so RecordButton, GeneratedInsight,
+                             RecordingCard, and OnboardingModal all work
+                             completely unmodified in both contexts.
+  installBridge.ts           installs browserBridge as window.euphonia ONLY
+                             if no real Electron bridge is already present.
+                             Imported once, at the very top of main.tsx.
+  db.ts                      IndexedDB standing in for <userData>/
+                             recordings.json + audio/ + analysis/*.json —
+                             recordings, audio blobs, register/phrasing
+                             detail, and cached insights, each their own
+                             object store. Blob/detail URLs are resolved
+                             fresh per session (getAudioObjectUrl /
+                             getDetailObjectUrl), not persisted as strings.
+  templateInsight.ts, gemini.ts
+                             ported from electron/src/, reusing dashboard-
+                             react's own zones.ts. The Gemini key lives in
+                             localStorage — there's no browser equivalent of
+                             Electron's safeStorage, so this is a known,
+                             deliberate security trade-off, not an oversight.
+```
+
+**Why `WaveformPlayer.tsx` and `AnnotationsProvider.tsx` both got a small
+edit**: both fetch a `Recording` field (`audio`, `detail`) that's normally a
+relative path prefixed with `BASE_URL`. Browser-mode recordings pass a
+`blob:` object URL instead (see `db.ts` above) — both now check for an
+absolute URL (`blob:`/`data:`/`http(s):`) and use it as-is when present,
+untouched otherwise. This is the only place browser mode required editing
+existing, previously-Electron-only-assumption code.
+
+**Rebuilding the WASM wheel** (only needed if `analyze.py`'s dependencies or
+Praat itself need to move forward): in WSL2 — `pip install pyodide-build`,
+`emsdk install`/`activate` (version from `pyodide config get
+emscripten_version`), `pip install cmake ninja` (avoids needing `apt`/sudo),
+clone `YannickJadoul/Parselmouth` with `--recursive`, `pyodide build` inside
+it. One real upstream bug was hit and patched: a stale hand-written `extern
+"C"` declaration in `praat/sys/HyperPage.cpp` was missing a parameter the
+`FORM` macro's real signature has — harmless for native linkers, a hard
+`wasm-ld` link failure. Fixed by adding the missing `Editor optionalEditor`
+parameter to both the declaration and its call site, matching every other
+`FORM`-generated function.
+
+**Known gaps vs. the desktop app**: Gemini key in `localStorage`, not
+OS-encrypted storage (documented above). No auto-update — refreshing the
+page always gets the latest deploy. No offline/PWA support yet, so the first
+load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
 
 ---
 
@@ -576,19 +662,28 @@ on Windows, derived from `electron/package.json`'s `name`).
     **`MetricModal.tsx`** (the reference-comparison modal — see its section above).
   - `src/annotations/` — `AnnotationsProvider` (context + `Note`/`Region`), `lib/`
     (reusable), `entries/` (per-recording, authored by you).
-  - `src/vg-bridge.ts` — typed `window.euphonia` accessor + `blobToBase64` helper
-    (Electron only; unused in plain browser dev).
-  - `src/components/RecordButton.tsx`, `GeneratedInsight.tsx`, `OnboardingModal.tsx`,
-    `TitleBar.tsx`, `UpdateBanner.tsx` — Electron-only UI (in-app recording, rendered
-    insight incl. the "upgrade to AI" affordance, the Settings modal — optional
-    Gemini key plus "back up" (export) and "delete all recordings" (danger zone),
-    NOT shown on first launch; reachable any time via the ⚙️ header button — the
-    draggable custom title row that pairs with main.ts's titleBarOverlay, and a
-    quiet bottom-right toast for auto-update progress). `RecordingCard.tsx` also
-    has a per-take 🗑️ delete button (inline confirm, no native dialog). See
-    "Desktop app (Electron)" above.
+  - `src/vg-bridge.ts` — typed `window.euphonia` accessor + `blobToBase64` helper +
+    the `EuphoniaBridge` interface. Satisfied by EITHER the Electron preload
+    script OR `src/browser/browserBridge.ts` (see "Browser version (WASM)"
+    above) — components below don't know or care which.
+  - `src/components/RecordButton.tsx`, `GeneratedInsight.tsx`, `OnboardingModal.tsx`
+    — work identically in Electron and the browser version (in-app recording,
+    rendered insight incl. the "upgrade to AI" affordance, the Settings modal
+    — optional Gemini key plus "back up" (export) and "delete all recordings"
+    (danger zone)). `RecordingCard.tsx` also has a per-take 🗑️ delete button
+    (inline confirm, no native dialog).
+  - `src/components/TitleBar.tsx`, `UpdateBanner.tsx` — Electron-only chrome
+    (draggable title row pairing with main.ts's titleBarOverlay; auto-update
+    toast) — conditionally hidden in App.tsx when `isBrowserMode`.
+  - `src/components/EngineStatusBadge.tsx` — browser-only equivalent, shows
+    the WASM engine's loading/ready state.
+  - `src/wasm/`, `src/browser/`, `public/wasm/` — see "Browser version (WASM)"
+    above.
 - `.github/workflows/ci.yml` — build + regression-test check on push/PR (see
   "Building & running" above). Does not build the installer.
+- `.github/workflows/deploy-pages.yml` — builds and publishes the browser
+  version to GitHub Pages on every push to `main` (see "Browser version
+  (WASM)" above).
 - `electron/` — the desktop app. `src/` (see "Desktop app (Electron)" above for what
   each file does), `electron-builder.yml` (packaging config, incl. `publish`/
   `nsis.artifactName` for `electron-updater`), `resources/icon.ico` +
