@@ -65,7 +65,14 @@ export function AnnotationsProvider({
     }
     setDetail(null);
     let alive = true;
-    fetch(`${import.meta.env.BASE_URL}${recording.detail}?t=${Date.now()}`)
+    // Browser-mode recordings pass a blob: object URL (see browser/db.ts) —
+    // fetch it as-is; blob: URLs are opaque tokens, not paths, so neither
+    // the BASE_URL prefix nor a cache-busting query string apply to them.
+    const isAbsolute = /^(blob:|data:|https?:)/.test(recording.detail);
+    const url = isAbsolute
+      ? recording.detail
+      : `${import.meta.env.BASE_URL}${recording.detail}?t=${Date.now()}`;
+    fetch(url)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((d: RecordingDetail) => alive && setDetail(d))
       .catch(() => alive && setDetail(null));

@@ -6,9 +6,8 @@
 // goes through IndexedDB (./db.ts) instead of the OS filesystem.
 //
 // Known gaps vs. the desktop app (by design, for this feasibility slice):
-// register/phrasing analysis isn't ported (analyze_register in analyze.py),
-// so those fields are simply absent; the Gemini key lives in localStorage,
-// not OS-encrypted storage; auto-update doesn't apply to a web deploy.
+// the Gemini key lives in localStorage, not OS-encrypted storage; auto-
+// update doesn't apply to a web deploy.
 
 import type { EuphoniaBridge } from "../vg-bridge";
 import type { Recording } from "../types";
@@ -25,19 +24,26 @@ function base64ToBlob(base64: string, mimeType: string): Blob {
   return new Blob([bytes], { type: mimeType });
 }
 
-/** Recording metadata + a fresh (this-session-only) object URL for playback. */
+/** Recording metadata + fresh (this-session-only) object URLs for playback
+ * and the register/phrasing detail JSON. */
 export async function loadRecordingsWithAudio(): Promise<Recording[]> {
   const rows = await db.getAllRecordings();
   return Promise.all(
-    rows.map(async (r) => ({ ...r, audio: await db.getAudioObjectUrl(r.id) })),
+    rows.map(async (r) => ({
+      ...r,
+      audio: await db.getAudioObjectUrl(r.id),
+      detail: (await db.getDetailObjectUrl(r.id)) ?? undefined,
+    })),
   );
 }
+
+const REGISTER_FLOOR_HZ = 130.0;
 
 export const browserBridge: EuphoniaBridge = {
   async createRecording({ audioBase64, mimeType, label, note }) {
     const blob = base64ToBlob(audioBase64, mimeType);
     const wav = await blobToMonoWav(blob);
-    const metrics = await analyzeWav(wav);
+    const { metrics, register, detail } = await analyzeWav(wav, REGISTER_FLOOR_HZ);
     const id = await db.nextRecordingId();
     const rec: Recording = {
       id,
@@ -52,10 +58,11 @@ export const browserBridge: EuphoniaBridge = {
       voice_quality: metrics.voice_quality,
       intensity: metrics.intensity,
       weight: metrics.weight,
-      // register/phrasing analysis isn't ported for this prototype slice.
+      register,
     };
     await db.putRecording(rec);
     await db.putAudioBlob(id, blob, mimeType);
+    await db.putDetail(id, detail);
   },
 
   async deleteRecording(id) {

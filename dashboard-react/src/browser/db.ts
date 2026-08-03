@@ -3,13 +3,14 @@
 // wrapper over the native IndexedDB API -- no new dependency for what's a
 // handful of get/put/delete operations across three small object stores.
 
-import type { Recording, GeneratedInsight } from "../types";
+import type { Recording, GeneratedInsight, RecordingDetail } from "../types";
 
 const DB_NAME = "euphonia-browser";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_RECORDINGS = "recordings";
 const STORE_AUDIO = "audio";
 const STORE_INSIGHTS = "insights";
+const STORE_DETAILS = "details";
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -24,6 +25,9 @@ function openDb(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains(STORE_INSIGHTS)) {
         db.createObjectStore(STORE_INSIGHTS, { keyPath: "id" });
+      }
+      if (!db.objectStoreNames.contains(STORE_DETAILS)) {
+        db.createObjectStore(STORE_DETAILS, { keyPath: "id" });
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -61,6 +65,7 @@ export async function deleteRecordingRow(id: number): Promise<void> {
   await tx(db, STORE_RECORDINGS, "readwrite", (s) => s.delete(id));
   await tx(db, STORE_AUDIO, "readwrite", (s) => s.delete(id));
   await tx(db, STORE_INSIGHTS, "readwrite", (s) => s.delete(id));
+  await tx(db, STORE_DETAILS, "readwrite", (s) => s.delete(id));
 }
 
 export async function clearAll(): Promise<void> {
@@ -68,6 +73,7 @@ export async function clearAll(): Promise<void> {
   await tx(db, STORE_RECORDINGS, "readwrite", (s) => s.clear());
   await tx(db, STORE_AUDIO, "readwrite", (s) => s.clear());
   await tx(db, STORE_INSIGHTS, "readwrite", (s) => s.clear());
+  await tx(db, STORE_DETAILS, "readwrite", (s) => s.clear());
 }
 
 export async function nextRecordingId(): Promise<number> {
@@ -100,4 +106,22 @@ export async function getInsight(id: number): Promise<GeneratedInsight | null> {
 export async function putInsight(id: number, insight: GeneratedInsight): Promise<void> {
   const db = await openDb();
   await tx(db, STORE_INSIGHTS, "readwrite", (s) => s.put({ ...insight, id }));
+}
+
+export async function putDetail(id: number, detail: RecordingDetail): Promise<void> {
+  const db = await openDb();
+  await tx(db, STORE_DETAILS, "readwrite", (s) => s.put({ ...detail, id }));
+}
+
+/** Blob URL of the detail JSON, so AnnotationsProvider's fetch() works
+ * unmodified (see the isAbsolute check added there) -- per-session only. */
+export async function getDetailObjectUrl(id: number): Promise<string | null> {
+  const db = await openDb();
+  const row = await tx<(RecordingDetail & { id: number }) | undefined>(
+    db, STORE_DETAILS, "readonly", (s) => s.get(id),
+  );
+  if (!row) return null;
+  const { id: _drop, ...detail } = row;
+  const blob = new Blob([JSON.stringify(detail)], { type: "application/json" });
+  return URL.createObjectURL(blob);
 }

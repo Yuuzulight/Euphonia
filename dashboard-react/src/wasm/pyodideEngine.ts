@@ -7,6 +7,8 @@
 // This is the browser-mode equivalent of electron/src/sidecar.ts (which
 // spawns the frozen analyze.exe as a subprocess instead).
 
+import type { Register, RecordingDetail } from "../types";
+
 // Pyodide's own type declarations aren't installed as a dependency here (the
 // runtime loads from a CDN <script> tag) -- minimal shape of what's used.
 interface PyodideInterface {
@@ -93,14 +95,28 @@ export interface StandardMetrics {
   weight: { h1a3c_db: number | null; h1a3_db: number | null; tilt_db_khz: number | null };
 }
 
-/** Runs the ported analyze.py pipeline on a WAV file's raw bytes. */
-export async function analyzeWav(wavBytes: Uint8Array): Promise<StandardMetrics> {
+export interface FullAnalysisResult {
+  metrics: StandardMetrics;
+  register: Register;
+  detail: RecordingDetail;
+}
+
+/**
+ * Runs the ported analyze.py + analyze_register() pipelines on a WAV file's
+ * raw bytes, in one Pyodide round-trip (both need the same parsed Sound).
+ */
+export async function analyzeWav(
+  wavBytes: Uint8Array,
+  registerFloor = 130.0,
+): Promise<FullAnalysisResult> {
   const pyodide = await getEngine();
   pyodide.FS.writeFile("/rec.wav", wavBytes);
   const resultJson = await pyodide.runPythonAsync(`
 import parselmouth, json
 sound = parselmouth.Sound("/rec.wav")
-json.dumps(analyze(sound))
+metrics = analyze(sound)
+detail, register = analyze_register(sound, ${registerFloor})
+json.dumps({"metrics": metrics, "register": register, "detail": detail})
 `);
   return JSON.parse(resultJson as string);
 }

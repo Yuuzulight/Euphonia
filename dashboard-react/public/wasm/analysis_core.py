@@ -1,9 +1,9 @@
-# Ported verbatim from analyze.py's analyze() pipeline (pitch, formants, voice
-# quality, intensity, spectral weight) -- same Praat calls, same parameters, so
-# results are directly comparable to the desktop app's native output. The only
-# things NOT ported here are file I/O, ffmpeg conversion (browser does this via
-# Web Audio API instead), and the register/phrasing detail pass -- out of scope
-# for this feasibility prototype.
+# Ported verbatim from analyze.py's analyze() + analyze_register() pipelines
+# (pitch, formants, voice quality, intensity, spectral weight, register/
+# phrasing) -- same Praat calls, same parameters, so results are directly
+# comparable to the desktop app's native output. The only things NOT ported
+# here are file I/O and ffmpeg conversion (browser does WAV conversion via
+# the Web Audio API instead -- see wasm/wavEncode.ts).
 
 import math
 import statistics
@@ -267,3 +267,104 @@ def analyze(sound):
         },
         "weight": spectral_weight(sound),
     }
+
+
+SEMITONE_REF = 100.0
+DEFAULT_REGISTER_FLOOR = 130.0
+
+
+def hz_to_st(hz, ref=SEMITONE_REF):
+    return 12.0 * math.log2(hz / ref)
+
+
+def sd(values):
+    return statistics.stdev(values) if len(values) >= 2 else None
+
+
+def segment_phrases(sound):
+    intensity = sound.to_intensity(minimum_pitch=PITCH_FLOOR)
+    grid = call(
+        intensity, "To TextGrid (silences)", -25.0, 0.1, 0.05, "silent", "sounding"
+    )
+    spans = []
+    n_int = int(call(grid, "Get number of intervals", 1))
+    for i in range(1, n_int + 1):
+        if call(grid, "Get label of interval", 1, i) == "sounding":
+            t0 = call(grid, "Get start time of interval", 1, i)
+            t1 = call(grid, "Get end time of interval", 1, i)
+            spans.append((t0, t1))
+    return spans
+
+
+def analyze_register(sound, floor):
+    pitch = sound.to_pitch(0.01, PITCH_FLOOR, PITCH_CEILING)
+    f0 = pitch.selected_array["frequency"]
+    times = pitch.xs()
+    duration = sound.get_total_duration()
+
+    frames_t = [round(float(t), 3) for t in times]
+    frames_hz = [round(float(h), 1) if h > 0 else None for h in f0]
+    voiced = [(float(t), float(h)) for t, h in zip(times, f0) if h > 0]
+
+    spans = segment_phrases(sound)
+    phrases = []
+    bins = {"onset": [0, 0], "mid": [0, 0], "offset": [0, 0]}
+    for t0, t1 in spans:
+        pv = [(t, h) for (t, h) in voiced if t0 <= t <= t1]
+        if not pv:
+            continue
+        dur = (t1 - t0) or 1e-9
+        onset_win = [h for (t, h) in pv if t - t0 <= 0.08] or [pv[0][1]]
+        offset_win = [h for (t, h) in pv if t1 - t <= 0.12] or [pv[-1][1]]
+        onset_hz = statistics.fmean(onset_win)
+        offset_hz = statistics.fmean(offset_win)
+        hzs = [h for (_, h) in pv]
+        phrases.append({
+            "start": round(t0, 3),
+            "end": round(t1, 3),
+            "onset_hz": round(onset_hz, 1),
+            "offset_hz": round(offset_hz, 1),
+            "min_hz": round(min(hzs), 1),
+            "started_in_register": onset_hz >= floor,
+            "ended_in_register": offset_hz >= floor,
+            "sub_register_pct": round(100 * sum(h < floor for h in hzs) / len(hzs), 1),
+        })
+        for t, h in pv:
+            rel = (t - t0) / dur
+            b = "onset" if rel < 1 / 3 else "mid" if rel < 2 / 3 else "offset"
+            bins[b][1] += 1
+            if h < floor:
+                bins[b][0] += 1
+
+    def pct(b):
+        return round(100 * b[0] / b[1], 1) if b[1] else None
+
+    all_hz = [h for (_, h) in voiced]
+    in_reg = [h for h in all_hz if h >= floor]
+    in_register_pct = round(100 * len(in_reg) / len(all_hz), 1) if all_hz else None
+    semitones_sd = clean(sd([hz_to_st(h) for h in all_hz]))
+    in_register_semitones_sd = clean(sd([hz_to_st(h) for h in in_reg]))
+    landed = sum(p["ended_in_register"] for p in phrases)
+    landed_pct = round(100 * landed / len(phrases)) if phrases else None
+
+    headline = {
+        "floor_hz": floor,
+        "in_register_pct": in_register_pct,
+        "semitones_sd": semitones_sd,
+        "in_register_semitones_sd": in_register_semitones_sd,
+        "onset_sub_pct": pct(bins["onset"]),
+        "mid_sub_pct": pct(bins["mid"]),
+        "offset_sub_pct": pct(bins["offset"]),
+        "phrases_landed_pct": landed_pct,
+        "n_phrases": len(phrases),
+    }
+    detail = {
+        "register_floor_hz": floor,
+        "semitone_ref_hz": SEMITONE_REF,
+        "duration_s": round(duration, 2),
+        "time_step": 0.01,
+        "frames": {"t": frames_t, "hz": frames_hz},
+        "phrases": phrases,
+        "summary": headline,
+    }
+    return detail, headline
