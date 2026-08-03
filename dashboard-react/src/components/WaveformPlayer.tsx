@@ -82,7 +82,11 @@ export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
   );
 
   if (!src) return null;
-  const url = `${import.meta.env.BASE_URL}${src}`;
+  // Browser-mode recordings pass a blob: object URL (see browser/db.ts) —
+  // use it as-is; only relative paths (the Electron/dev-server case) get
+  // the BASE_URL prefix.
+  const isAbsolute = /^(blob:|data:|https?:)/.test(src);
+  const url = isAbsolute ? src : `${import.meta.env.BASE_URL}${src}`;
   const ext = src.split(".").pop() || "m4a";
 
   return (

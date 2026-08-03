@@ -24,6 +24,9 @@ import { TitleBar } from "./components/TitleBar";
 import { UpdateBanner } from "./components/UpdateBanner";
 import { GeneratedInsight } from "./components/GeneratedInsight";
 import { OnboardingModal } from "./components/OnboardingModal";
+import { EngineStatusBadge } from "./components/EngineStatusBadge";
+import { isBrowserMode } from "./browser/installBridge";
+import { loadRecordingsWithAudio } from "./browser/browserBridge";
 import {
   AnnotationsProvider,
   Note,
@@ -52,11 +55,13 @@ export function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   function refetchRecordings() {
-    fetch(`${import.meta.env.BASE_URL}recordings.json?t=${Date.now()}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
+    const load = isBrowserMode
+      ? loadRecordingsWithAudio()
+      : fetch(`${import.meta.env.BASE_URL}recordings.json?t=${Date.now()}`).then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        });
+    load
       .then((data: Recording[]) => setRecordings([...data].sort((a, b) => a.id - b.id)))
       .catch((e) => setError(String(e)));
   }
@@ -118,8 +123,9 @@ export function App() {
 
   return (
     <>
-      <TitleBar />
-      <UpdateBanner />
+      {!isBrowserMode && <TitleBar />}
+      {!isBrowserMode && <UpdateBanner />}
+      {isBrowserMode && <EngineStatusBadge />}
       <div className="wrap">
       <header className="hero">
         <div style={{ position: "relative" }}>

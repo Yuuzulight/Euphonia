@@ -118,6 +118,22 @@ body {
   cursor: not-allowed;
 }
 
+/* browser-prototype-only: shows the WASM engine is real & loading/ready */
+.engine-badge {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 90;
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a5a92;
+  background: var(--lav-bg);
+  border: 2px solid #fff;
+  border-radius: 999px;
+  padding: 8px 16px;
+  box-shadow: var(--shadow);
+}
+
 .wrap {
   max-width: 1040px;
   margin: 0 auto;
