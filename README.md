@@ -61,11 +61,13 @@ To remove a single take, use the small 🗑️ button on its card in **All recor
 
 ## Browser version (works on macOS, Linux, and mobile too)
 
-**[yuuzulight.github.io/Euphonia](https://yuuzulight.github.io/Euphonia/)** — no install, no account, works on any platform with a modern browser (desktop or mobile).
+**[yuuzulight.github.io/Euphonia](https://yuuzulight.github.io/Euphonia/)** — no install, no account, works on any platform with a modern browser, phone included.
 
 This runs the exact same Praat voice-analysis engine as the desktop app, compiled to WebAssembly — everything happens locally in your browser tab, nothing is uploaded anywhere, and it works offline once the page has loaded once. Recordings are stored in your browser's local storage (IndexedDB) instead of a file on disk, so they stay on that device and in that browser — export a backup (⚙️ Settings → 💾 export all recordings) if you want to move them elsewhere or keep a copy.
 
 Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis. The one thing the desktop app has that this doesn't (yet) is auto-update — refresh the page for the latest version.
+
+**Mobile:** the layout and full record → analyze → results flow have been tested and confirmed working at phone-sized screens on the live site, so this isn't just "should probably work" — it's been checked. The one thing that's only been verified in principle, not on an actual phone yet, is microphone capture itself; if that ever misbehaves on your specific device, [open an issue](../../issues).
 
 ## Developer / coding-agent workflow
 
