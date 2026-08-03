@@ -527,17 +527,18 @@ npm packages and runs the two regression scripts above (`test_protocol_paths.js`
 `test_analyze_paths.py` via `uv`). It does not build the installer (no Windows
 runner, no ffmpeg/PyInstaller staging) — that stays a manual local step.
 
-**Releasing** (for auto-update, via `electron-updater`/`updater.ts`, to actually
-find new versions): `electron-builder.yml`'s `nsis.artifactName` is pinned to
-`${productName}-Setup-${version}.${ext}` (hyphens) specifically because
-electron-builder's own generated `latest.yml` references that exact name, and
-GitHub mangles spaces (the old default) to dots on upload — a silent three-way
-mismatch that breaks update checks if `artifactName` and the actual uploaded
-filename ever drift apart. When creating a release, upload `latest.yml` and the
-`.exe.blockmap` from `electron/release/` as release assets *alongside* the
-installer — `gh release create v0.3.0 "electron/release/Euphonia-Setup-0.3.0.exe"
-"electron/release/latest.yml" "electron/release/Euphonia-Setup-0.3.0.exe.blockmap"`.
-Skipping `latest.yml` means existing installs never see the new version.
+**Releasing** (so `electron-updater`/`updater.ts` can actually find new
+versions): `electron-builder.yml`'s `nsis.artifactName` is pinned to
+`${productName}-Setup-${version}.${ext}` (hyphens). Reason: electron-builder's
+generated `latest.yml` references that exact filename, and GitHub mangles
+spaces — the old default — to dots on upload. Left alone, that's a silent
+three-way mismatch that quietly breaks update checks the moment the pinned
+name and the uploaded name drift apart. When creating a release, upload
+`latest.yml` and the `.exe.blockmap` from `electron/release/` as release
+assets *alongside* the installer — `gh release create v0.3.0
+"electron/release/Euphonia-Setup-0.3.0.exe" "electron/release/latest.yml"
+"electron/release/Euphonia-Setup-0.3.0.exe.blockmap"`. Skip `latest.yml` and
+existing installs never see the new version.
 
 To iterate without a full package build: `cd electron && npm run build && npx electron .`
 — this uses the `uv run analyze.py` dev path (needs `ffmpeg` on PATH) and reads/writes
@@ -564,10 +565,11 @@ deployed by `.github/workflows/deploy-pages.yml` on every push to `main`
 (`gh api repos/Yuuzulight/Euphonia/pages -f build_type=workflow` turned Pages
 on; `vite.config.ts`'s existing `base: "./"` needed no changes for the
 project-page subpath). This is `dashboard-react` running **completely
-standalone** — no Electron, no server — with real Praat analysis via a custom
-WASM build of `praat-parselmouth`, not a reimplementation. Verified
-numerically identical to the native desktop build for the same input audio
-(see the feasibility write-up in session history if you need the how/why).
+standalone** — no Electron, no server. Real Praat analysis, too, via a
+custom WASM build of `praat-parselmouth` rather than a from-scratch port —
+checked against the native desktop build on the same input audio and the
+numbers came out identical (see the feasibility write-up in session history
+for the how/why).
 
 ```
 dashboard-react/public/wasm/
@@ -609,9 +611,9 @@ dashboard-react/src/browser/
   templateInsight.ts, gemini.ts
                              ported from electron/src/, reusing dashboard-
                              react's own zones.ts. The Gemini key lives in
-                             localStorage — there's no browser equivalent of
-                             Electron's safeStorage, so this is a known,
-                             deliberate security trade-off, not an oversight.
+                             localStorage since there's no browser
+                             equivalent of Electron's safeStorage — a known
+                             trade-off, made deliberately, not missed.
 ```
 
 **Why `WaveformPlayer.tsx` and `AnnotationsProvider.tsx` both got a small
