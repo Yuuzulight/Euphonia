@@ -123,14 +123,18 @@ body {
   position: fixed;
   right: 16px;
   bottom: 16px;
+  left: 16px;
   z-index: 90;
+  max-width: 340px;
+  margin-left: auto;
   font-size: 12px;
   font-weight: 700;
+  line-height: 1.4;
   color: #7a5a92;
   background: var(--lav-bg);
   border: 2px solid #fff;
-  border-radius: 999px;
-  padding: 8px 16px;
+  border-radius: 16px;
+  padding: 10px 16px;
   box-shadow: var(--shadow);
 }
 
