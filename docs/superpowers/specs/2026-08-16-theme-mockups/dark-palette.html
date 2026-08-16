@@ -1,0 +1,237 @@
+<h2>Which dark palette should Euphonia wear?</h2>
+<p class="subtitle">Each block below is a real slice of your dashboard — title bar, a stat card with zone bar and pill, the resonance chart, the waveform player, and the insight button — repainted in a candidate palette. Click the one that reads best to you.</p>
+
+<style>
+  .eu {
+    border-radius: 18px;
+    overflow: hidden;
+    font-family: ui-rounded, "Quicksand", system-ui, sans-serif;
+    border: 1px solid rgba(128,128,128,.25);
+  }
+  .eu-tb {
+    height: 34px; display: flex; align-items: center; gap: 6px;
+    padding: 0 12px; font-size: 12px; font-weight: 700;
+    background: var(--tb); color: var(--tbink);
+  }
+  .eu-body { background: var(--bg); padding: 14px; display: grid; gap: 12px; }
+  .eu-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 12px 14px; box-shadow: var(--shadow);
+  }
+  .eu-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+    text-transform: lowercase; color: var(--inks); margin-bottom: 4px;
+  }
+  .eu-pill {
+    padding: 2px 9px; border-radius: 999px; font-size: 9.5px; font-weight: 800;
+    background: var(--mint); color: #3a2d44; text-transform: none;
+  }
+  .eu-val { font-size: 27px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+  .eu-val small { font-size: 12px; font-weight: 700; color: var(--inks); }
+  .eu-zone {
+    position: relative; height: 9px; border-radius: 999px; margin: 10px 0 7px;
+    background: linear-gradient(90deg, var(--lav) 0%, var(--mint) 42%, var(--butter) 72%, var(--pink) 100%);
+  }
+  .eu-zone i {
+    position: absolute; top: -4px; width: 3px; height: 17px; border-radius: 2px;
+    background: var(--ink); box-shadow: 0 0 0 2px var(--card);
+  }
+  .eu-sub { font-size: 10.5px; color: var(--inks); }
+  .eu-btn {
+    border: none; border-radius: 999px; padding: 9px 16px; width: 100%;
+    font-family: inherit; font-size: 12px; font-weight: 800; color: var(--btnink);
+    background: linear-gradient(135deg, var(--pink), var(--lav));
+    box-shadow: 0 3px 10px var(--btnglow); cursor: pointer;
+  }
+  .eu-name { font-size: 12px; font-weight: 800; margin-bottom: 2px; }
+  .eu-why { font-size: 11.5px; line-height: 1.45; opacity: .82; }
+</style>
+
+<div class="cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;align-items:start">
+
+  <!-- ===== CURRENT LIGHT (reference, not selectable) ===== -->
+  <div style="opacity:.95">
+    <div class="label" style="margin-bottom:6px">today — for reference</div>
+    <div class="eu" style="
+      --tb:#ffd9ea; --tbink:#7a5a92;
+      --bg:radial-gradient(600px 300px at 15% -5%, #ffd9ea, transparent 60%), radial-gradient(550px 350px at 95% 0%, #e4dbff, transparent 55%), linear-gradient(160deg, #fff0f7, #f5f0ff);
+      --card:#fffafd; --line:#fff; --ink:#6b5876; --inks:#9d8ba8;
+      --pink:#ffb6d5; --lav:#c9b6ff; --mint:#b8ecd8; --butter:#ffe9a8;
+      --shadow:0 8px 24px rgba(186,142,196,.18); --btnink:#fff; --btnglow:rgba(176,106,150,.3)">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">in range</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <div class="eu-card">
+          <div class="eu-label"><span>resonance over time</span></div>
+          <svg viewBox="0 0 240 54" style="width:100%;height:54px;display:block">
+            <polyline points="4,40 28,34 52,37 76,26 100,29 124,18 148,22 172,14 196,19 216,11 236,15"
+              fill="none" stroke="#c9b6ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="4,46 28,44 52,45 76,41 100,43 124,38 148,40 172,36 196,38 216,34 236,36"
+              fill="none" stroke="#ffb6d5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="eu-card" style="padding:12px">
+          <svg viewBox="0 0 240 34" style="width:100%;height:34px;display:block">
+            <g fill="#bfa9e6">
+              <rect x="2" y="13" width="3" height="8" rx="1.5"/><rect x="9" y="9" width="3" height="16" rx="1.5"/><rect x="16" y="4" width="3" height="26" rx="1.5"/><rect x="23" y="11" width="3" height="12" rx="1.5"/><rect x="30" y="6" width="3" height="22" rx="1.5"/><rect x="37" y="14" width="3" height="6" rx="1.5"/><rect x="44" y="8" width="3" height="18" rx="1.5"/><rect x="51" y="2" width="3" height="30" rx="1.5"/><rect x="58" y="10" width="3" height="14" rx="1.5"/><rect x="65" y="13" width="3" height="8" rx="1.5"/><rect x="72" y="5" width="3" height="24" rx="1.5"/><rect x="79" y="11" width="3" height="12" rx="1.5"/><rect x="86" y="7" width="3" height="20" rx="1.5"/><rect x="93" y="14" width="3" height="6" rx="1.5"/>
+            </g>
+            <g fill="#ff9ec5">
+              <rect x="100" y="9" width="3" height="16" rx="1.5"/><rect x="107" y="3" width="3" height="28" rx="1.5"/><rect x="114" y="12" width="3" height="10" rx="1.5"/><rect x="121" y="6" width="3" height="22" rx="1.5"/><rect x="128" y="13" width="3" height="8" rx="1.5"/><rect x="135" y="8" width="3" height="18" rx="1.5"/><rect x="142" y="15" width="3" height="4" rx="1.5"/><rect x="149" y="10" width="3" height="14" rx="1.5"/><rect x="156" y="4" width="3" height="26" rx="1.5"/><rect x="163" y="12" width="3" height="10" rx="1.5"/><rect x="170" y="7" width="3" height="20" rx="1.5"/><rect x="177" y="14" width="3" height="6" rx="1.5"/><rect x="184" y="9" width="3" height="16" rx="1.5"/><rect x="191" y="13" width="3" height="8" rx="1.5"/><rect x="198" y="5" width="3" height="24" rx="1.5"/><rect x="205" y="11" width="3" height="12" rx="1.5"/><rect x="212" y="14" width="3" height="6" rx="1.5"/><rect x="219" y="10" width="3" height="14" rx="1.5"/><rect x="226" y="15" width="3" height="5" rx="1.5"/><rect x="233" y="13" width="3" height="8" rx="1.5"/>
+            </g>
+            <rect x="99" y="0" width="2" height="34" rx="1" fill="#ff89bb"/>
+          </svg>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== A — DUSK PLUM ===== -->
+  <div class="card" data-choice="dusk" onclick="toggleSelect(this)" style="cursor:pointer;padding:0;background:none;border:none">
+    <div class="label" style="margin-bottom:6px">A — dusk plum &nbsp;·&nbsp; recommended</div>
+    <div class="eu" style="
+      --tb:#251d33; --tbink:#c8b6dd;
+      --bg:radial-gradient(600px 300px at 15% -5%, #2c1f38, transparent 62%), radial-gradient(550px 350px at 95% 0%, #221f3d, transparent 58%), linear-gradient(160deg, #171220, #14131f);
+      --card:#221b2e; --line:rgba(255,255,255,.07); --ink:#ece3f5; --inks:#a294b4;
+      --pink:#f093c2; --lav:#b6a2f2; --mint:#86d8b8; --butter:#e9cb84;
+      --shadow:0 8px 22px rgba(0,0,0,.45); --btnink:#241a2e; --btnglow:rgba(0,0,0,.4)">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">in range</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <div class="eu-card">
+          <div class="eu-label"><span>resonance over time</span></div>
+          <svg viewBox="0 0 240 54" style="width:100%;height:54px;display:block">
+            <polyline points="4,40 28,34 52,37 76,26 100,29 124,18 148,22 172,14 196,19 216,11 236,15"
+              fill="none" stroke="#b6a2f2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="4,46 28,44 52,45 76,41 100,43 124,38 148,40 172,36 196,38 216,34 236,36"
+              fill="none" stroke="#f093c2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="eu-card" style="padding:12px">
+          <svg viewBox="0 0 240 34" style="width:100%;height:34px;display:block">
+            <g fill="#7d6aa8">
+              <rect x="2" y="13" width="3" height="8" rx="1.5"/><rect x="9" y="9" width="3" height="16" rx="1.5"/><rect x="16" y="4" width="3" height="26" rx="1.5"/><rect x="23" y="11" width="3" height="12" rx="1.5"/><rect x="30" y="6" width="3" height="22" rx="1.5"/><rect x="37" y="14" width="3" height="6" rx="1.5"/><rect x="44" y="8" width="3" height="18" rx="1.5"/><rect x="51" y="2" width="3" height="30" rx="1.5"/><rect x="58" y="10" width="3" height="14" rx="1.5"/><rect x="65" y="13" width="3" height="8" rx="1.5"/><rect x="72" y="5" width="3" height="24" rx="1.5"/><rect x="79" y="11" width="3" height="12" rx="1.5"/><rect x="86" y="7" width="3" height="20" rx="1.5"/><rect x="93" y="14" width="3" height="6" rx="1.5"/>
+            </g>
+            <g fill="#f093c2">
+              <rect x="100" y="9" width="3" height="16" rx="1.5"/><rect x="107" y="3" width="3" height="28" rx="1.5"/><rect x="114" y="12" width="3" height="10" rx="1.5"/><rect x="121" y="6" width="3" height="22" rx="1.5"/><rect x="128" y="13" width="3" height="8" rx="1.5"/><rect x="135" y="8" width="3" height="18" rx="1.5"/><rect x="142" y="15" width="3" height="4" rx="1.5"/><rect x="149" y="10" width="3" height="14" rx="1.5"/><rect x="156" y="4" width="3" height="26" rx="1.5"/><rect x="163" y="12" width="3" height="10" rx="1.5"/><rect x="170" y="7" width="3" height="20" rx="1.5"/><rect x="177" y="14" width="3" height="6" rx="1.5"/><rect x="184" y="9" width="3" height="16" rx="1.5"/><rect x="191" y="13" width="3" height="8" rx="1.5"/><rect x="198" y="5" width="3" height="24" rx="1.5"/><rect x="205" y="11" width="3" height="12" rx="1.5"/><rect x="212" y="14" width="3" height="6" rx="1.5"/><rect x="219" y="10" width="3" height="14" rx="1.5"/><rect x="226" y="15" width="3" height="5" rx="1.5"/><rect x="233" y="13" width="3" height="8" rx="1.5"/>
+            </g>
+            <rect x="99" y="0" width="2" height="34" rx="1" fill="#ffa8d0"/>
+          </svg>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:10px 2px 0">
+      <div class="eu-name">Keeps Euphonia's identity</div>
+      <div class="eu-why">The neutrals are tinted plum rather than gray, so it still feels like the same app with the lights off. Softened foreground (not pure white) to cut glare.</div>
+    </div>
+  </div>
+
+  <!-- ===== B — NEUTRAL CHARCOAL ===== -->
+  <div class="card" data-choice="charcoal" onclick="toggleSelect(this)" style="cursor:pointer;padding:0;background:none;border:none">
+    <div class="label" style="margin-bottom:6px">B — neutral charcoal</div>
+    <div class="eu" style="
+      --tb:#1f2229; --tbink:#b8bec9;
+      --bg:radial-gradient(600px 300px at 15% -5%, #1c1f25, transparent 62%), radial-gradient(550px 350px at 95% 0%, #1a1d23, transparent 58%), linear-gradient(160deg, #15171b, #131519);
+      --card:#1e2128; --line:rgba(255,255,255,.08); --ink:#e8eaf0; --inks:#99a0ac;
+      --pink:#ff9ec5; --lav:#c9b6ff; --mint:#b8ecd8; --butter:#ffe9a8;
+      --shadow:0 8px 22px rgba(0,0,0,.5); --btnink:#1a1c22; --btnglow:rgba(0,0,0,.45)">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">in range</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <div class="eu-card">
+          <div class="eu-label"><span>resonance over time</span></div>
+          <svg viewBox="0 0 240 54" style="width:100%;height:54px;display:block">
+            <polyline points="4,40 28,34 52,37 76,26 100,29 124,18 148,22 172,14 196,19 216,11 236,15"
+              fill="none" stroke="#c9b6ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="4,46 28,44 52,45 76,41 100,43 124,38 148,40 172,36 196,38 216,34 236,36"
+              fill="none" stroke="#ff9ec5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="eu-card" style="padding:12px">
+          <svg viewBox="0 0 240 34" style="width:100%;height:34px;display:block">
+            <g fill="#6b6f7d">
+              <rect x="2" y="13" width="3" height="8" rx="1.5"/><rect x="9" y="9" width="3" height="16" rx="1.5"/><rect x="16" y="4" width="3" height="26" rx="1.5"/><rect x="23" y="11" width="3" height="12" rx="1.5"/><rect x="30" y="6" width="3" height="22" rx="1.5"/><rect x="37" y="14" width="3" height="6" rx="1.5"/><rect x="44" y="8" width="3" height="18" rx="1.5"/><rect x="51" y="2" width="3" height="30" rx="1.5"/><rect x="58" y="10" width="3" height="14" rx="1.5"/><rect x="65" y="13" width="3" height="8" rx="1.5"/><rect x="72" y="5" width="3" height="24" rx="1.5"/><rect x="79" y="11" width="3" height="12" rx="1.5"/><rect x="86" y="7" width="3" height="20" rx="1.5"/><rect x="93" y="14" width="3" height="6" rx="1.5"/>
+            </g>
+            <g fill="#ff9ec5">
+              <rect x="100" y="9" width="3" height="16" rx="1.5"/><rect x="107" y="3" width="3" height="28" rx="1.5"/><rect x="114" y="12" width="3" height="10" rx="1.5"/><rect x="121" y="6" width="3" height="22" rx="1.5"/><rect x="128" y="13" width="3" height="8" rx="1.5"/><rect x="135" y="8" width="3" height="18" rx="1.5"/><rect x="142" y="15" width="3" height="4" rx="1.5"/><rect x="149" y="10" width="3" height="14" rx="1.5"/><rect x="156" y="4" width="3" height="26" rx="1.5"/><rect x="163" y="12" width="3" height="10" rx="1.5"/><rect x="170" y="7" width="3" height="20" rx="1.5"/><rect x="177" y="14" width="3" height="6" rx="1.5"/><rect x="184" y="9" width="3" height="16" rx="1.5"/><rect x="191" y="13" width="3" height="8" rx="1.5"/><rect x="198" y="5" width="3" height="24" rx="1.5"/><rect x="205" y="11" width="3" height="12" rx="1.5"/><rect x="212" y="14" width="3" height="6" rx="1.5"/><rect x="219" y="10" width="3" height="14" rx="1.5"/><rect x="226" y="15" width="3" height="5" rx="1.5"/><rect x="233" y="13" width="3" height="8" rx="1.5"/>
+            </g>
+            <rect x="99" y="0" width="2" height="34" rx="1" fill="#ff89bb"/>
+          </svg>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:10px 2px 0">
+      <div class="eu-name">Accents pop hardest</div>
+      <div class="eu-why">Truly neutral gray, so the pastels read as deliberate accents against it. Safest and most conventional — but it could be any app's dark mode.</div>
+    </div>
+  </div>
+
+  <!-- ===== C — TRUE BLACK ===== -->
+  <div class="card" data-choice="black" onclick="toggleSelect(this)" style="cursor:pointer;padding:0;background:none;border:none">
+    <div class="label" style="margin-bottom:6px">C — true black / OLED</div>
+    <div class="eu" style="
+      --tb:#0d0d10; --tbink:#b0b0ba;
+      --bg:linear-gradient(160deg, #000, #000);
+      --card:#101013; --line:rgba(255,255,255,.1); --ink:#f6f6f8; --inks:#8b8b93;
+      --pink:#ff7ab5; --lav:#b79dff; --mint:#6ee7b7; --butter:#fcd34d;
+      --shadow:0 8px 22px rgba(0,0,0,.7); --btnink:#12121a; --btnglow:rgba(0,0,0,.5)">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">in range</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <div class="eu-card">
+          <div class="eu-label"><span>resonance over time</span></div>
+          <svg viewBox="0 0 240 54" style="width:100%;height:54px;display:block">
+            <polyline points="4,40 28,34 52,37 76,26 100,29 124,18 148,22 172,14 196,19 216,11 236,15"
+              fill="none" stroke="#b79dff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="4,46 28,44 52,45 76,41 100,43 124,38 148,40 172,36 196,38 216,34 236,36"
+              fill="none" stroke="#ff7ab5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="eu-card" style="padding:12px">
+          <svg viewBox="0 0 240 34" style="width:100%;height:34px;display:block">
+            <g fill="#5a5a66">
+              <rect x="2" y="13" width="3" height="8" rx="1.5"/><rect x="9" y="9" width="3" height="16" rx="1.5"/><rect x="16" y="4" width="3" height="26" rx="1.5"/><rect x="23" y="11" width="3" height="12" rx="1.5"/><rect x="30" y="6" width="3" height="22" rx="1.5"/><rect x="37" y="14" width="3" height="6" rx="1.5"/><rect x="44" y="8" width="3" height="18" rx="1.5"/><rect x="51" y="2" width="3" height="30" rx="1.5"/><rect x="58" y="10" width="3" height="14" rx="1.5"/><rect x="65" y="13" width="3" height="8" rx="1.5"/><rect x="72" y="5" width="3" height="24" rx="1.5"/><rect x="79" y="11" width="3" height="12" rx="1.5"/><rect x="86" y="7" width="3" height="20" rx="1.5"/><rect x="93" y="14" width="3" height="6" rx="1.5"/>
+            </g>
+            <g fill="#ff7ab5">
+              <rect x="100" y="9" width="3" height="16" rx="1.5"/><rect x="107" y="3" width="3" height="28" rx="1.5"/><rect x="114" y="12" width="3" height="10" rx="1.5"/><rect x="121" y="6" width="3" height="22" rx="1.5"/><rect x="128" y="13" width="3" height="8" rx="1.5"/><rect x="135" y="8" width="3" height="18" rx="1.5"/><rect x="142" y="15" width="3" height="4" rx="1.5"/><rect x="149" y="10" width="3" height="14" rx="1.5"/><rect x="156" y="4" width="3" height="26" rx="1.5"/><rect x="163" y="12" width="3" height="10" rx="1.5"/><rect x="170" y="7" width="3" height="20" rx="1.5"/><rect x="177" y="14" width="3" height="6" rx="1.5"/><rect x="184" y="9" width="3" height="16" rx="1.5"/><rect x="191" y="13" width="3" height="8" rx="1.5"/><rect x="198" y="5" width="3" height="24" rx="1.5"/><rect x="205" y="11" width="3" height="12" rx="1.5"/><rect x="212" y="14" width="3" height="6" rx="1.5"/><rect x="219" y="10" width="3" height="14" rx="1.5"/><rect x="226" y="15" width="3" height="5" rx="1.5"/><rect x="233" y="13" width="3" height="8" rx="1.5"/>
+            </g>
+            <rect x="99" y="0" width="2" height="34" rx="1" fill="#ff7ab5"/>
+          </svg>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:10px 2px 0">
+      <div class="eu-name">Darkest — but not the gentlest</div>
+      <div class="eu-why">Saves power on OLED phones. The catch: pure black behind near-white text is the highest-contrast combination here, which tends to make text shimmer in a dim room — the opposite of "easier on the eyes."</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:22px">
+  <p class="subtitle" style="margin:0">My recommendation is <strong>A</strong>: it's the one that still looks like Euphonia, and it deliberately avoids both pure black and pure white so there's no glare at either end. Nothing here is locked — I can warm it up, cool it down, or push the accents brighter once you've picked a direction.</p>
+</div>

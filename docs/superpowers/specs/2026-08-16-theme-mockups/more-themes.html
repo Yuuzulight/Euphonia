@@ -1,0 +1,214 @@
+<h2>Six more themes worth considering</h2>
+<p class="subtitle">Each one shows a stat card with the <strong>real</strong> zone colors on it — pink/blue/butter stay semantic, so this is how each theme would actually look with live data on screen. You can select more than one; click to toggle.</p>
+
+<style>
+  .eu {
+    border-radius: 16px; overflow: hidden;
+    font-family: ui-rounded, "Quicksand", system-ui, sans-serif;
+    border: 1px solid rgba(128,128,128,.25);
+  }
+  .eu-tb {
+    height: 30px; display: flex; align-items: center; gap: 6px;
+    padding: 0 11px; font-size: 11px; font-weight: 700;
+    background: var(--tb); color: var(--tbink);
+  }
+  .eu-body { background: var(--bg); padding: 12px; display: grid; gap: 10px; }
+  .eu-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 11px 12px; box-shadow: var(--shadow);
+  }
+  .eu-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 10px; font-weight: 700; color: var(--inks); margin-bottom: 3px;
+  }
+  .eu-pill {
+    padding: 2px 8px; border-radius: 999px; font-size: 9px; font-weight: 800;
+    background: var(--zfem); color: #4a3340;
+  }
+  .eu-val { font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+  .eu-val small { font-size: 11px; font-weight: 700; color: var(--inks); }
+  .eu-zone {
+    position: relative; height: 8px; border-radius: 999px; margin: 9px 0 6px;
+    background: linear-gradient(90deg, var(--zmasc) 0%, var(--zmasc) 30%, var(--zneu) 30%, var(--zneu) 46%, var(--zfem) 46%);
+  }
+  .eu-zone i {
+    position: absolute; top: -4px; width: 3px; height: 16px; border-radius: 2px;
+    background: var(--ink); box-shadow: 0 0 0 2px var(--card);
+  }
+  .eu-sub { font-size: 10px; color: var(--inks); }
+  .eu-btn {
+    border: none; border-radius: 999px; padding: 8px 14px; width: 100%;
+    font-family: inherit; font-size: 11px; font-weight: 800; color: var(--btnink);
+    background: var(--btnbg); cursor: pointer;
+  }
+  .eu-name { font-size: 12px; font-weight: 800; margin-bottom: 2px; }
+  .eu-why { font-size: 11px; line-height: 1.45; opacity: .82; }
+  .flag { font-size: 10.5px; font-weight: 700; opacity: .75; margin-top: 4px; }
+</style>
+
+<div class="options" data-multiselect style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;align-items:start">
+
+  <!-- P1 PAPER -->
+  <div class="option" data-choice="paper" onclick="toggleSelect(this)" style="display:block;padding:0;background:none;border:none;cursor:pointer">
+    <div class="label" style="margin-bottom:5px">1 — paper · light</div>
+    <div class="eu" style="
+      --tb:#ece4d6; --tbink:#6b6355;
+      --bg:radial-gradient(500px 260px at 15% -5%, #f6f0e4, transparent 62%), linear-gradient(160deg, #f7f4ee, #f2efe8);
+      --card:#fffdf8; --line:#fff; --ink:#4a453d; --inks:#8b8378;
+      --zmasc:#bcd3f0; --zneu:#ffe9a8; --zfem:#ffb6d5;
+      --shadow:0 6px 18px rgba(140,125,100,.15); --btnbg:linear-gradient(135deg,#d8bd82,#c2a878); --btnink:#fff">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">fem</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:9px 2px 0">
+      <div class="eu-name">Paper</div>
+      <div class="eu-why">Warm oat-cream instead of white. Lower glare than any light theme here, and the pastel zone colors sit on it beautifully — cream is the classic ground for pastels.</div>
+    </div>
+  </div>
+
+  <!-- P2 MIDNIGHT -->
+  <div class="option" data-choice="midnight" onclick="toggleSelect(this)" style="display:block;padding:0;background:none;border:none;cursor:pointer">
+    <div class="label" style="margin-bottom:5px">2 — midnight · dark</div>
+    <div class="eu" style="
+      --tb:#141c30; --tbink:#a8b6d4;
+      --bg:radial-gradient(500px 260px at 15% -5%, #1a2440, transparent 62%), linear-gradient(160deg, #101728, #0d1322);
+      --card:#182036; --line:rgba(255,255,255,.07); --ink:#e3e9f5; --inks:#93a0bd;
+      --zmasc:#a8c8ee; --zneu:#e8d089; --zfem:#f59ec6;
+      --shadow:0 8px 20px rgba(0,0,0,.5); --btnbg:linear-gradient(135deg,#8fa6f0,#b79ae8); --btnink:#141c30">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">fem</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:9px 2px 0">
+      <div class="eu-name">Midnight</div>
+      <div class="eu-why">Deep indigo — the most conventional "calm dark". Reads as serious rather than cozy.</div>
+      <div class="flag">⚠️ Navy chrome sits closest to the blue that means "masculine end". Distinguishable here, but it's the weakest separation of the six.</div>
+    </div>
+  </div>
+
+  <!-- P3 COCOA -->
+  <div class="option" data-choice="cocoa" onclick="toggleSelect(this)" style="display:block;padding:0;background:none;border:none;cursor:pointer">
+    <div class="label" style="margin-bottom:5px">3 — cocoa · dark</div>
+    <div class="eu" style="
+      --tb:#241b17; --tbink:#cdb5a5;
+      --bg:radial-gradient(500px 260px at 15% -5%, #261c18, transparent 62%), linear-gradient(160deg, #191413, #16110f);
+      --card:#211a17; --line:rgba(255,255,255,.07); --ink:#f0e6df; --inks:#ab998e;
+      --zmasc:#a8c8ee; --zneu:#e8d089; --zfem:#f59ec6;
+      --shadow:0 8px 20px rgba(0,0,0,.5); --btnbg:linear-gradient(135deg,#e0a882,#c98f6f); --btnink:#241b17">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">fem</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:9px 2px 0">
+      <div class="eu-name">Cocoa</div>
+      <div class="eu-why">Warm dark brown. The coziest of the dark options and the furthest in hue from every data color, so the charts separate cleanly.</div>
+    </div>
+  </div>
+
+  <!-- P4 AMBER NIGHT -->
+  <div class="option" data-choice="amber" onclick="toggleSelect(this)" style="display:block;padding:0;background:none;border:none;cursor:pointer">
+    <div class="label" style="margin-bottom:5px">4 — amber night · dark</div>
+    <div class="eu" style="
+      --tb:#1f1810; --tbink:#d8bd8a;
+      --bg:linear-gradient(160deg, #16120a, #131007);
+      --card:#1e1810; --line:rgba(255,255,255,.07); --ink:#f3e7cd; --inks:#b0a084;
+      --zmasc:#9dbfe0; --zneu:#efd390; --zfem:#f0a0c0;
+      --shadow:0 8px 20px rgba(0,0,0,.55); --btnbg:linear-gradient(135deg,#e8c37a,#d9a94f); --btnink:#1f1810">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">fem</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:9px 2px 0">
+      <div class="eu-name">Amber night</div>
+      <div class="eu-why">Very warm, almost no blue light — the "practising at 1am without waking yourself up" theme. Strongest candidate if evening use is when you actually record.</div>
+      <div class="flag">⚠️ The warm cast slightly mutes the blue data color. Least accurate for judging fine color differences in charts.</div>
+    </div>
+  </div>
+
+  <!-- P5 FOCUS -->
+  <div class="option" data-choice="focus" onclick="toggleSelect(this)" style="display:block;padding:0;background:none;border:none;cursor:pointer">
+    <div class="label" style="margin-bottom:5px">5 — focus · light or dark</div>
+    <div class="eu" style="
+      --tb:#e6e8ea; --tbink:#4b5058;
+      --bg:linear-gradient(160deg, #f4f5f6, #eef0f2);
+      --card:#ffffff; --line:#eceef0; --ink:#33363b; --inks:#868b93;
+      --zmasc:#bcd3f0; --zneu:#ffe9a8; --zfem:#ffb6d5;
+      --shadow:0 4px 14px rgba(60,70,80,.1); --btnbg:linear-gradient(135deg,#6b7280,#565c66); --btnink:#fff">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">fem</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:9px 2px 0">
+      <div class="eu-name">Focus</div>
+      <div class="eu-why">All chrome goes neutral gray so the <em>only</em> color on screen is your data. The zone bars pop harder here than in any other theme. Could ship in both a light and dark flavor.</div>
+    </div>
+  </div>
+
+  <!-- P6 HIGH CONTRAST -->
+  <div class="option" data-choice="contrast" onclick="toggleSelect(this)" style="display:block;padding:0;background:none;border:none;cursor:pointer">
+    <div class="label" style="margin-bottom:5px">6 — high contrast · accessibility</div>
+    <div class="eu" style="
+      --tb:#000; --tbink:#fff;
+      --bg:#000;
+      --card:#000; --line:#ffffff; --ink:#ffffff; --inks:#d8d8d8;
+      --zmasc:#4da3ff; --zneu:#ffd426; --zfem:#ff5fa8;
+      --shadow:none; --btnbg:#ffe14d; --btnink:#000">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card" style="border-width:2px">
+          <div class="eu-label"><span style="color:#fff">pitch</span><span class="eu-pill" style="background:#ff5fa8;color:#000">fem</span></div>
+          <div class="eu-val">187<small style="color:#d8d8d8"> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%;background:#fff;box-shadow:0 0 0 2px #000"></i></div>
+          <div class="eu-sub" style="color:#d8d8d8">median across the take</div>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:9px 2px 0">
+      <div class="eu-name">High contrast</div>
+      <div class="eu-why">A genuine accessibility theme for low vision — every pairing clears WCAG AAA. Not pretty, and not what you asked for, but it's the one that makes the app usable for people the pastels currently exclude.</div>
+      <div class="flag">⚠️ The only theme that must <em>override</em> the data colors — pastels can't hit AAA. Same hues, saturated. A deliberate exception to the rule in Section 1.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:22px">
+  <p class="subtitle" style="margin:0"><strong>My honest advice on how many to ship:</strong> each extra theme is cheap to define but not free to verify — every one needs a pass over modals, charts, the waveform and the desktop title bar. Four is comfortable. Adding <strong>paper</strong> and <strong>cocoa</strong> would give you a genuinely well-rounded set of six (two light, two dark, plus a warm one at each end) without much risk. I'd treat <strong>high contrast</strong> as a separate piece of work rather than folding it in here — it's an accessibility feature with its own rules, and burying it in a theme sweep is how it ends up half-done.</p>
+</div>
