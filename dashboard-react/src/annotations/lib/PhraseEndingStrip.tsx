@@ -60,7 +60,7 @@ export function PhraseEndingStrip({ detail }: { detail: RecordingDetail }) {
             cy={y(p.offset_hz)}
             r={5}
             fill={zoneColor(p.ended_in_register ? FEM : MASC, colors)}
-            stroke="#fff"
+            stroke={colors.card}
             strokeWidth={1.5}
           >
             <title>
@@ -70,7 +70,7 @@ export function PhraseEndingStrip({ detail }: { detail: RecordingDetail }) {
           </circle>
         </g>
       ))}
-      <text x={pad.l} y={H - 6} fontSize="10" fill="#9d8ba8">
+      <text x={pad.l} y={H - 6} fontSize="10" fill={colors.inkSoft}>
         each dot = a phrase ending · blue = fell out of register
       </text>
     </svg>

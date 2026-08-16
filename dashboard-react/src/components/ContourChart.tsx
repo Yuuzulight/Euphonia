@@ -100,14 +100,14 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
           x2={x(p.end)}
           y1={pad.t}
           y2={pad.t + ih}
-          stroke="#e7ddef"
+          stroke={colors.line}
           strokeWidth={1}
         />
       ))}
 
       {/* y ticks */}
       {yTicks.map((v, k) => (
-        <text key={`y${k}`} x={pad.l - 6} y={y(v) + 3} fontSize="9" fill="#9d8ba8" textAnchor="end">
+        <text key={`y${k}`} x={pad.l - 6} y={y(v) + 3} fontSize="9" fill={colors.inkSoft} textAnchor="end">
           {Math.round(v)}
         </text>
       ))}
@@ -118,7 +118,7 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
           key={`s${k}`}
           d={toPath(s.pts)}
           fill="none"
-          stroke={s.below ? colors.zoneMascInk : "#e07ab0"}
+          stroke={s.below ? colors.zoneMascInk : zoneColor(FEM, colors)}
           strokeWidth={s.below ? 3 : 2.4}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -134,7 +134,7 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
           cy={pad.t + ih + 14}
           r={4.5}
           fill={zoneColor(p.ended_in_register ? FEM : MASC, colors)}
-          stroke="#fff"
+          stroke={colors.card}
           strokeWidth={1.5}
         >
           <title>
@@ -143,10 +143,10 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
           </title>
         </circle>
       ))}
-      <text x={pad.l} y={H - 6} fontSize="10" fill="#9d8ba8">
+      <text x={pad.l} y={H - 6} fontSize="10" fill={colors.inkSoft}>
         time →
       </text>
-      <text x={W - pad.r} y={H - 6} fontSize="10" fill="#9d8ba8" textAnchor="end">
+      <text x={W - pad.r} y={H - 6} fontSize="10" fill={colors.inkSoft} textAnchor="end">
         ● dots = how each phrase landed
       </text>
     </svg>

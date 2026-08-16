@@ -8,6 +8,7 @@ import {
   JITTER_ZONES,
   WEIGHT_ZONES,
   MELODY_ZONES,
+  FEM,
   zoneOf,
   zoneColor,
   fmt,
@@ -47,6 +48,7 @@ import {
 } from "./components/icons";
 
 export function App() {
+  const colors = useThemeColors();
   const [recordings, setRecordings] = useState<Recording[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -150,7 +152,7 @@ export function App() {
         {active && (
           <div className="latest-banner">
             💗 <b>#{active.id}</b> &middot; {active.label} &middot;{" "}
-            <span style={{ color: "#9d8ba8" }}>{active.date}</span>
+            <span style={{ color: "var(--ink-soft)" }}>{active.date}</span>
           </div>
         )}
       </header>
@@ -362,38 +364,38 @@ export function App() {
           <ChartCard
             h="Pitch (avg)"
             cap="pink band = feminine zone (165 Hz+)"
-            color="#e07ab0"
+            color={colors.accent}
             data={mk((r) => r.pitch.mean_hz)}
             band={[165, 260]}
-            bandColor="#ffb6d5"
+            bandColor={zoneColor(FEM, colors)}
           />
           <ChartCard
             h="In-register melody"
             cap="true expressiveness, crashes removed (st)"
-            color="#9b7ad0"
+            color={colors.accent2}
             data={mk((r) => r.register?.in_register_semitones_sd ?? null)}
             bands={MELODY_ZONES}
           />
           <ChartCard
             h="Phrase endings landed"
             cap="% of phrases that stayed in register"
-            color="#5fb89a"
+            color={colors.accent}
             data={mk((r) => r.register?.phrases_landed_pct ?? null)}
             band={[80, 100]}
-            bandColor="#b8ecd8"
+            bandColor={zoneColor("comfy", colors)}
           />
           <ChartCard
             h="Resonance (F2)"
             cap="brightness / vocal-tract size cue"
-            color="#d99a4e"
+            color={colors.accent2}
             data={mk((r) => r.formants.f2_hz)}
             band={[1850, 2400]}
-            bandColor="#c9b6ff"
+            bandColor={colors.accent2}
           />
           <ChartCard
             h="Weight"
             cap="spectral tilt · lower = lighter / more feminine"
-            color="#cf7fb0"
+            color={colors.accent}
             data={mk((r) => r.weight?.h1a3c_db ?? null)}
             bands={WEIGHT_ZONES}
           />

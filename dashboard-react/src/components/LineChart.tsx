@@ -1,3 +1,5 @@
+import { useThemeColors } from "../theme/ThemeProvider";
+
 export interface Point {
   label: number;
   y: number | null | undefined;
@@ -20,7 +22,12 @@ interface Props {
 
 // tiny SVG line chart — faithful port of the vanilla dashboard's lineChart(),
 // plus optional multi-zone shaded backgrounds.
-export function LineChart({ points, color = "#b06a96", band, bandColor, bands }: Props) {
+export function LineChart({ points, color, band, bandColor, bands }: Props) {
+  const colors = useThemeColors();
+  // callers usually pass an explicit (often zone-derived) color; these are
+  // just the chart's own defaults when they don't.
+  const strokeColor = color ?? colors.accent;
+  const fallbackBandColor = bandColor ?? colors.accent;
   const W = 300;
   const H = 130;
   const pad = { l: 34, r: 12, t: 12, b: 24 };
@@ -80,7 +87,7 @@ export function LineChart({ points, color = "#b06a96", band, bandColor, bands }:
           y={y(band[1])}
           width={W - pad.l - pad.r}
           height={y(band[0]) - y(band[1])}
-          fill={bandColor || "#ffb6d5"}
+          fill={fallbackBandColor}
           opacity="0.22"
           rx="4"
         />
@@ -91,7 +98,7 @@ export function LineChart({ points, color = "#b06a96", band, bandColor, bands }:
           x={pad.l - 6}
           y={(y(v) + 3).toFixed(1)}
           fontSize="9"
-          fill="#9d8ba8"
+          fill={colors.inkSoft}
           textAnchor="end"
         >
           {Math.round(v)}
@@ -100,7 +107,7 @@ export function LineChart({ points, color = "#b06a96", band, bandColor, bands }:
       <path
         d={path}
         fill="none"
-        stroke={color}
+        stroke={strokeColor}
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -111,8 +118,8 @@ export function LineChart({ points, color = "#b06a96", band, bandColor, bands }:
           cx={x(p.i).toFixed(1)}
           cy={y(p.y).toFixed(1)}
           r="4"
-          fill="#fff"
-          stroke={color}
+          fill={colors.card}
+          stroke={strokeColor}
           strokeWidth="2.5"
         >
           <title>
@@ -126,7 +133,7 @@ export function LineChart({ points, color = "#b06a96", band, bandColor, bands }:
           x={x(i).toFixed(1)}
           y={H - 7}
           fontSize="9"
-          fill="#9d8ba8"
+          fill={colors.inkSoft}
           textAnchor="middle"
         >
           #{p.label}
