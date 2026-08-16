@@ -9,6 +9,7 @@ import type { RecordingSummary } from "./gemini";
 import { generateInsight, regenerateWithGemini, readCachedInsight } from "./insights";
 import { deleteRecording, deleteAllRecordings, exportRecordings } from "./recordings";
 import { installUpdate } from "./updater";
+import { chromeFor, writeCachedTheme } from "./theme";
 
 interface CreateRecordingPayload {
   audioBase64: string;
@@ -55,4 +56,16 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   ipcMain.handle("insights:regenerateWithGemini", (_event, recording: RecordingSummary) =>
     regenerateWithGemini(recording),
   );
+
+  ipcMain.on("theme:set", (_event, id: string) => {
+    const chrome = chromeFor(id);
+    writeCachedTheme(id);
+    if (!win.isDestroyed()) {
+      win.setTitleBarOverlay({
+        color: chrome.titlebar,
+        symbolColor: chrome.symbol,
+        height: 40,
+      });
+    }
+  });
 }

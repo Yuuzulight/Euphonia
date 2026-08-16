@@ -29,4 +29,5 @@ contextBridge.exposeInMainWorld("euphonia", {
     },
     install: () => ipcRenderer.invoke("updates:install"),
   },
+  setTheme: (id: string) => ipcRenderer.send("theme:set", id),
 });
