@@ -20,7 +20,7 @@ ds-bundle/
 node_modules/
 *.tsbuildinfo
 
-# Claude Code worktrees
+# local agent worktrees
 .claude/worktrees/
 
 # Unrelated local tooling

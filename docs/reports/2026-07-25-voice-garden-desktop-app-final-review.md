@@ -1,6 +1,6 @@
 # Final review fix wave — report
 
-Branch: `fix/final-review-hardening` (worktree: `.claude/worktrees/final-review-fixes`)
+Branch: `fix/final-review-hardening`
 
 ## 1. CRITICAL — Missing window-open handler
 

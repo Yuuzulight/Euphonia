@@ -36,7 +36,7 @@ import { fmt } from "../../zones";
  *   Need a slot somewhere new? Add a <Note id> / <Region id> in the layout
  *   (App.tsx or a component) and document it here.
  *
- * CONVENTIONS (non-negotiable — see CLAUDE.md):
+ * CONVENTIONS (non-negotiable — see ARCHITECTURE.md):
  *   Color rule: blue (MASC) = masculine / fell-out-of-register ONLY, never a
  *   generic "bad". pink (FEM) = good/feminine, butter = neutral, GROW = neutral
  *   "room to grow" for non-gendered skill gaps. Components use the automatic JSX

@@ -1,21 +1,21 @@
-# Euphonia 💗 — project guide for Claude
+# Euphonia 💗 — architecture guide
 
-A cozy, quantitative **voice-feminization training tracker** for Rachel. She records
-herself (usually the Rainbow Passage), tells you what she was practicing, and you
-analyze it and surface — kindly and specifically — what to work on next.
+A cozy, quantitative **voice-feminization training tracker**. You record yourself
+(usually the Rainbow Passage), note what you were practicing, and the analysis
+surfaces — kindly and specifically — what to work on next.
 
-If she shares a recording or asks how a take went, use the **`analyze-voice` skill**
-(`.claude/skills/analyze-voice/SKILL.md`). It's the operating manual for the whole
-workflow; this file is the why and the shape.
+This file is the why and the shape of the project. The step-by-step routine for
+analyzing a take and authoring its insight lives in the **`analyze-voice` skill**
+(`.claude/skills/analyze-voice/SKILL.md`).
 
 **Two ways this project runs, and this file covers both:**
-1. **The dev/coding-agent workflow** (below, and the original design of this repo) —
-   `uv run analyze.py` + `npm run dev`, with a coding agent hand-authoring each
-   recording's insight via the annotation slot system. Use this when you're working
+1. **The dev workflow** (below, and the original design of this repo) —
+   `uv run analyze.py` + `npm run dev`, with each recording's insight hand-authored
+   through the annotation slot system. Use this when you're working
    *in* this codebase.
 2. **The packaged Electron desktop app** — the same dashboard and analyzer, wrapped
    so a non-technical friend can install and run it standalone, with insights
-   generated automatically via the Gemini API instead of a coding agent. See the
+   generated automatically via the Gemini API instead of hand-authored. See the
    **"Desktop app (Electron)"** section below for its architecture; the rest of this
    file (annotation system, icon conventions, color rules, analysis methodology)
    applies to both.
@@ -27,8 +27,7 @@ workflow; this file is the why and the shape.
 This may be a **starter copy**: the app, the `analyze-voice` skill, the reusable
 annotation lib, the shared reference voices (`reference.json`), and an `_example`
 annotation template are all here — but there may be **no recordings yet** (empty
-`recordings.json`). The user adds their own; everything else is structure for you
-to drive.
+`recordings.json`). You add your own; everything else is the structure around them.
 
 **Prerequisites** (install whatever's missing):
 - **ffmpeg** — `brew install ffmpeg` (macOS) / `apt-get install ffmpeg` (Linux). Required by `analyze.py` to read mp3/m4a.
@@ -50,12 +49,10 @@ Refresh the dashboard. Then author that take's insight by following the
 `analyze-voice` skill — copy `dashboard-react/src/annotations/entries/_example.tsx`
 to `00N.tsx` (matching the new recording's id) and fill in the slots.
 
-**Ownership note:** this guide and the skill were written for the original user
-("Rachel"). Treat "the user" as whoever you're working with now — keep the same
-warm, *compass-not-judge* tone and all the conventions below.
-
-If this is your first time running and it is an empty codebase, please use this info provided to give the user an overview of how to operate this codebase. Be supportive and give them a good experience, I trust you Claude <3
-~ Rachel
+**Ownership note:** this guide and the annotation skill were originally written for
+the upstream project's user ("Rachel"), whose name still appears in a few examples
+and reference takes. Read "the user" as whoever this copy belongs to, and keep the
+same warm, *compass-not-judge* tone and all the conventions below.
 
 ---
 
