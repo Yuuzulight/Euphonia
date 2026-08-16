@@ -670,28 +670,65 @@ Inside `<head>`, immediately after the `theme-color` meta tag:
          anything async here means a white flash on every load for dark-theme
          users. Keep the two in sync — it's ~6 lines, same trade as zones.ts. -->
     <script>
+      // Must agree with loadPref()+resolvePref() in src/theme/themeStore.ts for
+      // EVERY stored value, not just well-formed ones. Any disagreement paints one
+      // theme and then snaps to another when React mounts — the exact flash this
+      // script exists to prevent. That means duplicating the per-field family
+      // validation too, not only the mode branch: a dark id smuggled into the
+      // light slot is syntactically valid JSON and never reaches the catch.
+      // scripts/test_theme_tokens.js asserts these two arrays still match the
+      // theme blocks in index.css, so adding a theme cannot silently skip this file.
       (function () {
-        var d = { mode: "auto", light: "blossom", dark: "dusk-plum" };
-        var p = d;
+        var LIGHT = ["blossom", "paper", "light-mint"];
+        var DARK = ["dusk-plum", "dark-mint", "midnight", "cocoa", "amber-night"];
+        var p = null;
         try {
-          p = JSON.parse(localStorage.getItem("euphonia:theme") || "null") || d;
+          var raw = JSON.parse(localStorage.getItem("euphonia:theme") || "null");
+          if (raw && typeof raw === "object") p = raw;
         } catch (e) {
-          // corrupt storage: fall back to the defaults, NOT to light. Hardcoding
-          // blossom here would paint light and then snap dark once React mounts,
-          // which is the exact flash this script exists to prevent.
-          p = d;
+          p = null;
         }
-        var dark =
+        if (!p) p = {};
+        var light = LIGHT.indexOf(p.light) >= 0 ? p.light : "blossom";
+        var dark = DARK.indexOf(p.dark) >= 0 ? p.dark : "dusk-plum";
+        // an unrecognised mode resolves as "auto", matching loadPref's guard
+        var useDark =
           p.mode === "dark" ||
           (p.mode !== "light" &&
             window.matchMedia("(prefers-color-scheme: dark)").matches);
-        document.documentElement.setAttribute(
-          "data-theme",
-          dark ? p.dark || d.dark : p.light || d.light,
-        );
+        document.documentElement.setAttribute("data-theme", useDark ? dark : light);
       })();
     </script>
 ```
+
+- [ ] **Step 4b: Guard the duplicated theme lists**
+
+The inline script now carries a third copy of the theme ids (after `themes.ts` and
+the CSS blocks). Make drift impossible rather than relying on memory — add to
+`scripts/test_theme_tokens.js`, alongside the existing electron cross-check:
+
+```js
+// The pre-paint script in index.html duplicates the family arrays because it
+// runs before any module loads. Adding a theme to the css but not to that file
+// means it can never be applied before first paint — a guaranteed flash.
+function checkPrePaintScript(htmlPath, themeIds, failures) {
+  if (!fs.existsSync(htmlPath)) return;
+  const html = fs.readFileSync(htmlPath, "utf8");
+  const listed = new Set(
+    [...html.matchAll(/"([a-z-]+)"/g)]
+      .map((m) => m[1])
+      .filter((s) => themeIds.has(s)),
+  );
+  for (const id of themeIds) {
+    if (!listed.has(id)) {
+      failures.push(`index.html's pre-paint script does not list theme "${id}"`);
+    }
+  }
+}
+```
+
+Call it from `run()` with the parsed theme ids and
+`dashboard-react/index.html`, in the same place the electron cross-check runs.
 
 - [ ] **Step 5: Verify it applies before paint**
 
