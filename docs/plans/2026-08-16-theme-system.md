@@ -108,12 +108,16 @@ const CONTRAST_PAIRS = [
   ["--on-zone", "--zone-grow", BODY_MIN],
 ];
 
+// Matches any rule whose selector mentions :root or [data-theme=…], so it
+// handles all three forms in use:
+//   :root, [data-theme="blossom"] { … }   [data-theme="paper"] { … }   :root { … }
 function parseThemes(css) {
   const themes = new Map();
-  const blockRe = /:root(?:\[data-theme="([a-z-]+)"\])?\s*\{([^}]*)\}/g;
+  const blockRe = /((?::root|\[data-theme=)[^{}]*?)\s*\{([^}]*)\}/g;
   let m;
   while ((m = blockRe.exec(css)) !== null) {
-    const id = m[1] || "blossom";
+    const named = m[1].match(/data-theme="([a-z-]+)"/);
+    const id = named ? named[1] : "blossom";
     const tokens = new Map();
     const tokenRe = /(--[a-z0-9-]+)\s*:\s*([^;]+);/g;
     let t;
@@ -165,6 +169,16 @@ function run(cssPath, electronThemePath) {
   if (!themes.has("blossom")) {
     failures.push("no :root block found — blossom must be defined on bare :root");
     return failures;
+  }
+
+  // Blossom must actually declare every token the contrast pairs reference,
+  // otherwise those pairs silently skip and the checker passes on a stylesheet
+  // that has not been tokenized at all.
+  const required = new Set(CONTRAST_PAIRS.flatMap(([fg, bg]) => [fg, bg]));
+  for (const token of required) {
+    if (!themes.get("blossom").has(token)) {
+      failures.push(`:root does not define ${token} — required by the contrast checks`);
+    }
   }
 
   const baseline = [...themes.get("blossom").keys()].sort();
@@ -273,15 +287,23 @@ Replace lines 1-14 of `dashboard-react/src/index.css` with:
 
 ```css
 /* Blossom — the default theme. Every other theme in this file overrides these
-   same token names under :root[data-theme="…"]; scripts/test_theme_tokens.js
+   same token names under [data-theme="…"]; scripts/test_theme_tokens.js
    fails the build if any theme's token set drifts from this one.
+
+   The selectors are attribute selectors rather than :root[data-theme] on
+   purpose: that lets any element opt into a theme's tokens, which is how the
+   swatch chips in Settings preview a theme without duplicating its colors.
+   Blossom is listed twice for the same reason — bare :root makes it the
+   default, and [data-theme="blossom"] lets a chip request it explicitly even
+   while another theme is active.
 
    Two groups, and the difference matters:
      CHROME tokens (surfaces, text, accents) are free to change per theme.
      DATA tokens (--zone-*) encode meaning — see the color convention at the
      top of zones.ts. Themes retune them for legibility on their own
      background; they never reassign which color means what. */
-:root {
+:root,
+[data-theme="blossom"] {
   /* chrome — surfaces */
   --bg-base: #f5f0ff;
   --bg-glow-1: #ffd9ea;
@@ -759,20 +781,26 @@ export function useThemeColors(): ThemeColors {
 
 - [ ] **Step 2: Mount it**
 
-In `dashboard-react/src/main.tsx`, wrap the existing root render:
+`dashboard-react/src/main.tsx` becomes exactly:
 
 ```tsx
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import "./browser/installBridge";
+import { App } from "./App";
 import { ThemeProvider } from "./theme/ThemeProvider";
 
-// …existing imports and createRoot call…
-  <React.StrictMode>
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
     <ThemeProvider>
       <App />
     </ThemeProvider>
-  </React.StrictMode>
+  </StrictMode>,
+);
 ```
 
-Keep whatever the file already does around `installBridge` — that import must still run before render.
+Note the named `StrictMode` import — this repo uses the automatic JSX runtime and never imports `React` as a bare default (Global Constraints). The `installBridge` side-effect import must stay above the render.
 
 - [ ] **Step 3: Verify the hook reads real values**
 
@@ -807,7 +835,7 @@ git commit -m "feat: add theme context and live token color hook"
 Transcribe from `docs/specs/2026-08-16-theme-mockups/more-themes.html` (paper) and `mint-theme.html` (M1). Append to `index.css`:
 
 ```css
-:root[data-theme="paper"] {
+[data-theme="paper"] {
   --bg-base: #f2efe8;
   --bg-glow-1: #f6f0e4;
   --bg-glow-2: #efeade;
@@ -839,7 +867,7 @@ Transcribe from `docs/specs/2026-08-16-theme-mockups/more-themes.html` (paper) a
   --zone-strong: #ffd9ea;
   --radius: 22px;
 }
-:root[data-theme="light-mint"] {
+[data-theme="light-mint"] {
   --bg-base: #eef6f2;
   --bg-glow-1: #d9f2e6;
   --bg-glow-2: #e3f1ea;
@@ -878,7 +906,7 @@ Transcribe from `docs/specs/2026-08-16-theme-mockups/more-themes.html` (paper) a
 Data tokens are lifted here so pastels survive a dark card. Midnight brightens `--zone-masc` and deepens its chrome; amber-night cools `--zone-masc` — both per the spec's "Token model" section.
 
 ```css
-:root[data-theme="dusk-plum"] {
+[data-theme="dusk-plum"] {
   --bg-base: #14131f;
   --bg-glow-1: #2c1f38;
   --bg-glow-2: #221f3d;
@@ -910,7 +938,7 @@ Data tokens are lifted here so pastels survive a dark card. Midnight brightens `
   --zone-strong: #eeb0cd;
   --radius: 22px;
 }
-:root[data-theme="dark-mint"] {
+[data-theme="dark-mint"] {
   --bg-base: #0f1614;
   --bg-glow-1: #17281f;
   --bg-glow-2: #16231f;
@@ -942,7 +970,7 @@ Data tokens are lifted here so pastels survive a dark card. Midnight brightens `
   --zone-strong: #eeb0cd;
   --radius: 22px;
 }
-:root[data-theme="midnight"] {
+[data-theme="midnight"] {
   --bg-base: #0d1322;
   --bg-glow-1: #1a2440;
   --bg-glow-2: #151d33;
@@ -975,7 +1003,7 @@ Data tokens are lifted here so pastels survive a dark card. Midnight brightens `
   --zone-strong: #eeb0cd;
   --radius: 22px;
 }
-:root[data-theme="cocoa"] {
+[data-theme="cocoa"] {
   --bg-base: #16110f;
   --bg-glow-1: #261c18;
   --bg-glow-2: #1f1714;
@@ -1007,7 +1035,7 @@ Data tokens are lifted here so pastels survive a dark card. Midnight brightens `
   --zone-strong: #eeb0cd;
   --radius: 22px;
 }
-:root[data-theme="amber-night"] {
+[data-theme="amber-night"] {
   --bg-base: #131007;
   --bg-glow-1: #1f1810;
   --bg-glow-2: #1a150c;
@@ -1640,16 +1668,25 @@ git commit -m "feat: theme the desktop window chrome and cache it for startup"
 ```js
 // Screenshots every theme across the main screens so a card that stayed light
 // is easy to spot. Generated for human review — deliberately asserts nothing.
-// Run: cd dashboard-react && npm run build && node ../scripts/screenshot_themes.mjs
+//
+// Serves the build over http rather than opening dist/index.html directly:
+// Chromium gives file:// pages an opaque origin, where localStorage (which is
+// where the theme preference lives) is unreliable and the reference.json fetch
+// fails outright. `vite preview` is already a script in dashboard-react.
+//
+// Run: cd dashboard-react && npm run build && npx vite preview --port 4173 &
+//      node ../scripts/screenshot_themes.mjs
 import { chromium } from "playwright";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
 
+const BASE_URL = process.env.EUPHONIA_URL || "http://localhost:4173/";
 const root = path.dirname(fileURLToPath(import.meta.url));
-const dist = path.join(root, "..", "dashboard-react", "dist", "index.html");
 const outDir = path.join(root, "..", "screenshots");
 
+// Both families point at the same id so the mode value can't affect the
+// result — whichever way it resolves, it resolves to the theme under test.
 const THEMES = [
   "blossom", "paper", "light-mint",
   "dusk-plum", "dark-mint", "midnight", "cocoa", "amber-night",
@@ -1660,15 +1697,23 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 fs.mkdirSync(outDir, { recursive: true });
 
 for (const theme of THEMES) {
-  await page.goto("file://" + dist);
+  await page.goto(BASE_URL);
   await page.evaluate((t) => {
     localStorage.setItem(
       "euphonia:theme",
-      JSON.stringify({ mode: t.startsWith("dark") || ["dusk-plum","midnight","cocoa","amber-night"].includes(t) ? "dark" : "light", light: t, dark: t }),
+      JSON.stringify({ mode: "light", light: t, dark: t }),
     );
   }, theme);
   await page.reload();
   await page.waitForTimeout(700);
+
+  const applied = await page.evaluate(() =>
+    document.documentElement.getAttribute("data-theme"),
+  );
+  if (applied !== theme) {
+    throw new Error(`expected data-theme="${theme}", page had "${applied}"`);
+  }
+
   await page.screenshot({ path: path.join(outDir, `${theme}-dashboard.png`), fullPage: true });
 
   const gear = page.locator("button.settings-btn");
@@ -1695,9 +1740,17 @@ screenshots/
 
 - [ ] **Step 3: Run it**
 
-Run: `cd dashboard-react && npm run build && node ../scripts/screenshot_themes.mjs`
+Run, in two shells:
 
-Expected: 16 PNGs. Open them and look specifically for a surface that stayed light in a dark theme, unreadable muted text, and whether midnight's zone-bar blue is still distinct from its chrome.
+```bash
+cd dashboard-react && npm run build && npx vite preview --port 4173
+```
+
+```bash
+node scripts/screenshot_themes.mjs
+```
+
+Expected: 16 PNGs. The script throws if the applied `data-theme` doesn't match the one it asked for, so a silent storage failure can't produce sixteen identical screenshots. Open them and look specifically for a surface that stayed light in a dark theme, unreadable muted text, and whether midnight's zone-bar blue is still distinct from its chrome.
 
 - [ ] **Step 4: Fix anything it surfaces, then commit**
 
