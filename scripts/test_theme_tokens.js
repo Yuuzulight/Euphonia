@@ -88,7 +88,25 @@ function contrast(a, b) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-function run(cssPath, electronThemePath) {
+// The pre-paint script in index.html duplicates the family arrays because it
+// runs before any module loads. Adding a theme to the css but not to that file
+// means it can never be applied before first paint — a guaranteed flash.
+function checkPrePaintScript(htmlPath, themeIds, failures) {
+  if (!fs.existsSync(htmlPath)) return;
+  const html = fs.readFileSync(htmlPath, "utf8");
+  const listed = new Set(
+    [...html.matchAll(/"([a-z-]+)"/g)]
+      .map((m) => m[1])
+      .filter((s) => themeIds.has(s)),
+  );
+  for (const id of themeIds) {
+    if (!listed.has(id)) {
+      failures.push(`index.html's pre-paint script does not list theme "${id}"`);
+    }
+  }
+}
+
+function run(cssPath, electronThemePath, htmlPath) {
   // Strip CSS comments before any matching — otherwise a token commented out
   // for debugging still registers as live, and blockRe can wander into a
   // [data-theme="…"] mentioned inside a comment.
@@ -153,6 +171,8 @@ function run(cssPath, electronThemePath) {
     }
   }
 
+  checkPrePaintScript(htmlPath, new Set(themes.keys()), failures);
+
   return failures;
 }
 
@@ -160,7 +180,11 @@ const root = path.join(__dirname, "..");
 const cssArg = process.argv[2]
   ? path.resolve(process.argv[2])
   : path.join(root, "dashboard-react", "src", "index.css");
-const failures = run(cssArg, path.join(root, "electron", "src", "theme.ts"));
+const failures = run(
+  cssArg,
+  path.join(root, "electron", "src", "theme.ts"),
+  path.join(root, "dashboard-react", "index.html"),
+);
 
 if (failures.length) {
   console.error("Theme token check FAILED:");
