@@ -22,6 +22,11 @@ const CONTRAST_PAIRS = [
   ["--on-zone", "--zone-fem", BODY_MIN],
   ["--on-zone", "--zone-neutral", BODY_MIN],
   ["--on-zone", "--zone-grow", BODY_MIN],
+  ["--danger", "--danger-bg", BODY_MIN],
+  ["--success", "--success-bg", BODY_MIN],
+  // --accent alone is too pale for foreground text (see ThemeProvider.tsx's
+  // doc comment on accentEmphasis) — this is the pair that documents why.
+  ["--accent-emphasis", "--card", BODY_MIN],
 ];
 
 // Blossom is the pre-existing palette and the spec freezes it, so these pairs
@@ -38,6 +43,9 @@ const BASELINE_EXCEPTIONS = [
   ["blossom", "--titlebar-ink", "--titlebar-bg"], // 4.42:1
   ["blossom", "--on-accent", "--accent"], // 1.63:1
   ["blossom", "--on-accent", "--accent-2"], // 1.81:1 — pre-existing, found later than the original four
+  ["blossom", "--danger", "--danger-bg"], // 4.09:1
+  ["blossom", "--success", "--success-bg"], // 3.12:1
+  ["blossom", "--accent-emphasis", "--card"], // 3.78:1
 ];
 
 // Matches any rule whose selector mentions :root or [data-theme=…], so it

@@ -22,6 +22,9 @@ export interface ThemeColors {
   zoneMasc: string;
   zoneMascInk: string;
   zoneFem: string;
+  /** a paler fem-family tint, independent from --zone-strong (a loudness
+   *  token) — see icons.tsx's ContourIcon for why this needed its own token. */
+  zoneFemSoft: string;
   zoneNeutral: string;
   zoneGrow: string;
   zoneSoft: string;
@@ -60,12 +63,17 @@ export interface ThemeColors {
   chart5: string;
   /** background wash paired with chart3 (the "phrase endings landed" band). */
   chart3Band: string;
+  /** background wash paired with chart4 — hue-pinned lavender, independent
+   *  from --accent-2 (which is masc-blue in the two mint themes and would
+   *  paint the F2 "bright/feminine" band the wrong color). */
+  chart4Band: string;
 }
 
 const TOKEN_OF: Record<keyof ThemeColors, string> = {
   zoneMasc: "--zone-masc",
   zoneMascInk: "--zone-masc-ink",
   zoneFem: "--zone-fem",
+  zoneFemSoft: "--zone-fem-soft",
   zoneNeutral: "--zone-neutral",
   zoneGrow: "--zone-grow",
   zoneSoft: "--zone-soft",
@@ -93,6 +101,7 @@ const TOKEN_OF: Record<keyof ThemeColors, string> = {
   chart4: "--chart-4",
   chart5: "--chart-5",
   chart3Band: "--chart-3-band",
+  chart4Band: "--chart-4-band",
 };
 
 // One getComputedStyle read per theme change, not per component per render.

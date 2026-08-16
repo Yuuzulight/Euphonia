@@ -393,7 +393,7 @@ export function App() {
             color={colors.chart4}
             data={mk((r) => r.formants.f2_hz)}
             band={[1850, 2400]}
-            bandColor={colors.accent2}
+            bandColor={colors.chart4Band}
           />
           <ChartCard
             h="Weight"

@@ -23,9 +23,26 @@
       // light slot is syntactically valid JSON and never reaches the catch.
       // scripts/test_theme_tokens.js asserts these two arrays still match the
       // theme blocks in index.css, so adding a theme cannot silently skip this file.
+      //
+      // TITLEBAR_BG duplicates each theme's --titlebar-bg (index.css) so the
+      // <meta name="theme-color"> can be set to the resolved theme before
+      // first paint too — mobile browser chrome would otherwise stay the
+      // static fallback color behind every dark theme. Same trade as the
+      // LIGHT/DARK arrays above: no module graph is loaded yet, so this can't
+      // read the CSS custom property, it has to carry its own copy.
       (function () {
         var LIGHT = ["blossom", "paper", "light-mint"];
         var DARK = ["dusk-plum", "dark-mint", "midnight", "cocoa", "amber-night"];
+        var TITLEBAR_BG = {
+          "blossom": "#ffd9ea",
+          "paper": "#ece4d6",
+          "light-mint": "#cfeee0",
+          "dusk-plum": "#251d33",
+          "dark-mint": "#1b2a24",
+          "midnight": "#141c30",
+          "cocoa": "#241b17",
+          "amber-night": "#1f1810",
+        };
         var p = null;
         try {
           var raw = JSON.parse(localStorage.getItem("euphonia:theme") || "null");
@@ -41,7 +58,12 @@
           p.mode === "dark" ||
           (p.mode !== "light" &&
             window.matchMedia("(prefers-color-scheme: dark)").matches);
-        document.documentElement.setAttribute("data-theme", useDark ? dark : light);
+        var theme = useDark ? dark : light;
+        document.documentElement.setAttribute("data-theme", theme);
+        var metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor && TITLEBAR_BG[theme]) {
+          metaThemeColor.setAttribute("content", TITLEBAR_BG[theme]);
+        }
       })();
     </script>
     <title>🎵 Euphonia</title>

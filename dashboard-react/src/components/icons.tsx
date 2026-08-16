@@ -85,8 +85,10 @@ export function ContourIcon(p: IconProps = {}) {
   return (
     <svg {...rest}>
       {children}
-      {/* soft pink fill = the "in-register" hill above the floor (adds mass) */}
-      <path d="M7 40 C16 40 22 14 32 14 C40 14 42 26 47 29 L47 37 L7 37 Z" fill={colors.zoneStrong} />
+      {/* soft pink fill = the "in-register" hill above the floor (adds mass).
+          Uses zoneFemSoft (a dedicated fem-family tint), NOT zoneStrong — this
+          is a pitch/register shape, not the loudness concept zoneStrong means. */}
+      <path d="M7 40 C16 40 22 14 32 14 C40 14 42 26 47 29 L47 37 L7 37 Z" fill={colors.zoneFemSoft} />
       {/* register floor — the line you fall below */}
       <path d="M7 37 H57" stroke={colors.zoneGrow} strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="0.1 7" />
       <path d="M7 40 C16 40 22 14 32 14 C40 14 42 26 47 29" stroke={colors.zoneFem} strokeWidth="6.5" fill="none" strokeLinecap="round" />

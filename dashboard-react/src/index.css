@@ -23,6 +23,7 @@
   --card: #fffafd;
   --card-2: #fff0f7;
   --control-bg: #ffffff;
+  --control-disabled: #f5f5f5;
   --line: #ffffff;
   --line-soft: #f0dcea;
   --shadow: 0 8px 24px rgba(186, 142, 196, 0.18);
@@ -78,6 +79,7 @@
   --chart-4: #d99a4e;
   --chart-5: #cf7fb0;
   --chart-3-band: #b8ecd8;
+  --chart-4-band: #c9b6ff;
   --accent-emphasis: #c75c93;
   --wave-icon: #c0a9d6;
   --ink-faint: #b7a8c2;
@@ -85,6 +87,7 @@
   --zone-masc: #bcd3f0;
   --zone-masc-ink: #5e7fb8;
   --zone-fem: #ffb6d5;
+  --zone-fem-soft: #ffd9ea;
   --zone-neutral: #ffe9a8;
   --zone-grow: #cdc6da;
   --zone-soft: #d7d0e8;
@@ -102,6 +105,7 @@
   --card: #fffdf8;
   --card-2: #f7f4ee;
   --control-bg: #ffffff;
+  --control-disabled: #f7f4ee;
   --line: #ffffff;
   --line-soft: #e5dcc6;
   --shadow: 0 8px 24px rgba(150, 128, 96, 0.18);
@@ -127,11 +131,11 @@
   --accent-2: #a89a84;
   --accent-soft: #b0813a;
   /* chrome — states */
-  --danger: #c8453f;
+  --danger: #bb3b35;
   --danger-bg: #f9e6df;
   --danger-border: #f0c8ba;
   --danger-strong: #d9524a;
-  --success: #3f9c78;
+  --success: #31795d;
   --success-bg: #eaf3e2;
   --success-border: #d3e4bf;
   /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
@@ -151,13 +155,15 @@
   --chart-4: #d99a4e;
   --chart-5: #cf7fb0;
   --chart-3-band: #b8ecd8;
-  --accent-emphasis: #a78323;
+  --chart-4-band: #c9b6ff;
+  --accent-emphasis: #8e6f1e;
   --wave-icon: #b9b093;
   --ink-faint: #937e62;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #bcd3f0;
   --zone-masc-ink: #5e7fb8;
   --zone-fem: #ffb6d5;
+  --zone-fem-soft: #f6d7e2;
   --zone-neutral: #ffe9a8;
   --zone-grow: #cdc6da;
   --zone-soft: #dfd6ea;
@@ -175,6 +181,7 @@
   --card: #fbfffd;
   --card-2: #f2faf6;
   --control-bg: #ffffff;
+  --control-disabled: #f2faf6;
   --line: #ffffff;
   --line-soft: #d3ece1;
   --shadow: 0 8px 24px rgba(100, 138, 118, 0.18);
@@ -200,11 +207,11 @@
   --accent-2: #7fa8c4;
   --accent-soft: #2f8a68;
   /* chrome — states */
-  --danger: #c7473f;
+  --danger: #bd3f37;
   --danger-bg: #fbe9e7;
   --danger-border: #f2c9c4;
   --danger-strong: #d85850;
-  --success: #2f8f66;
+  --success: #287a57;
   --success-bg: #e3f5ea;
   --success-border: #c3e6d2;
   /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
@@ -224,13 +231,15 @@
   --chart-4: #d99a4e;
   --chart-5: #cf7fb0;
   --chart-3-band: #b8ecd8;
-  --accent-emphasis: #189b77;
+  --chart-4-band: #c9b6ff;
+  --accent-emphasis: #148364;
   --wave-icon: #95bab1;
   --ink-faint: #629274;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #bcd3f0;
   --zone-masc-ink: #5e7fb8;
   --zone-fem: #ffb6d5;
+  --zone-fem-soft: #f7cfd6;
   --zone-neutral: #ffe9a8;
   --zone-grow: #cdc6da;
   --zone-soft: #dcd7ee;
@@ -248,6 +257,7 @@
   --card: #221b2e;
   --card-2: #1b1626;
   --control-bg: #3d324f;
+  --control-disabled: #1b1626;
   --line: rgba(255, 255, 255, 0.07);
   --line-soft: rgba(255, 255, 255, 0.14);
   --shadow: 0 8px 24px rgba(7, 5, 10, 0.18);
@@ -298,6 +308,7 @@
   --chart-4: #e6bc89;
   --chart-5: #d897bf;
   --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
   --accent-emphasis: #f296d1;
   --wave-icon: #81699e;
   --ink-faint: #bfb4cf;
@@ -305,6 +316,7 @@
   --zone-masc: #a8c8ee;
   --zone-masc-ink: #5d9fec;
   --zone-fem: #f59ec6;
+  --zone-fem-soft: #eeb0cd;
   --zone-neutral: #e8d089;
   --zone-grow: #b3a9c6;
   --zone-soft: #b9b0d2;
@@ -322,6 +334,7 @@
   --card: #182420;
   --card-2: #131d1a;
   --control-bg: #30443d;
+  --control-disabled: #131d1a;
   --line: rgba(255, 255, 255, 0.07);
   --line-soft: rgba(255, 255, 255, 0.14);
   --shadow: 0 8px 24px rgba(5, 10, 8, 0.18);
@@ -372,6 +385,7 @@
   --chart-4: #e6bc89;
   --chart-5: #d897bf;
   --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
   --accent-emphasis: #90f1d2;
   --wave-icon: #5a8b7f;
   --ink-faint: #abc7b8;
@@ -379,6 +393,7 @@
   --zone-masc: #a8c8ee;
   --zone-masc-ink: #5d9fec;
   --zone-fem: #f59ec6;
+  --zone-fem-soft: #eeb0cd;
   --zone-neutral: #e8d089;
   --zone-grow: #b3a9c6;
   --zone-soft: #b9b0d2;
@@ -396,6 +411,7 @@
   --card: #182036;
   --card-2: #121a2c;
   --control-bg: #2b385b;
+  --control-disabled: #121a2c;
   --line: rgba(255, 255, 255, 0.07);
   --line-soft: rgba(255, 255, 255, 0.14);
   --shadow: 0 8px 24px rgba(5, 7, 10, 0.18);
@@ -446,6 +462,7 @@
   --chart-4: #e6bc89;
   --chart-5: #d897bf;
   --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
   --accent-emphasis: #96a4f2;
   --wave-icon: #5a608b;
   --ink-faint: #b6c1d6;
@@ -453,6 +470,7 @@
   --zone-masc: #c3dcff;
   --zone-masc-ink: #76afff;
   --zone-fem: #f59ec6;
+  --zone-fem-soft: #eeb0cd;
   --zone-neutral: #e8d089;
   --zone-grow: #b3a9c6;
   --zone-soft: #b9b0d2;
@@ -470,6 +488,7 @@
   --card: #211a17;
   --card-2: #1a1411;
   --control-bg: #403530;
+  --control-disabled: #1a1411;
   --line: rgba(255, 255, 255, 0.07);
   --line-soft: rgba(255, 255, 255, 0.14);
   --shadow: 0 8px 24px rgba(10, 7, 5, 0.18);
@@ -520,6 +539,7 @@
   --chart-4: #e6bc89;
   --chart-5: #d897bf;
   --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
   --accent-emphasis: #f1c28e;
   --wave-icon: #8b735a;
   --ink-faint: #c7b4aa;
@@ -527,6 +547,7 @@
   --zone-masc: #a8c8ee;
   --zone-masc-ink: #5d9fec;
   --zone-fem: #f59ec6;
+  --zone-fem-soft: #eeb0cd;
   --zone-neutral: #e8d089;
   --zone-grow: #b3a9c6;
   --zone-soft: #b9b0d2;
@@ -544,6 +565,7 @@
   --card: #1e1810;
   --card-2: #17120b;
   --control-bg: #413525;
+  --control-disabled: #17120b;
   --line: rgba(255, 255, 255, 0.07);
   --line-soft: rgba(255, 255, 255, 0.14);
   --shadow: 0 8px 24px rgba(10, 8, 5, 0.18);
@@ -594,6 +616,7 @@
   --chart-4: #e6bc89;
   --chart-5: #d897bf;
   --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
   --accent-emphasis: #efd780;
   --wave-icon: #8b825a;
   --ink-faint: #c9b9a2;
@@ -601,6 +624,7 @@
   --zone-masc: #a9cdf5;
   --zone-masc-ink: #5aa5f7;
   --zone-fem: #f0a0c0;
+  --zone-fem-soft: #eeb0cd;
   --zone-neutral: #efd390;
   --zone-grow: #b3a9c6;
   --zone-soft: #b9b0d2;
@@ -758,18 +782,27 @@ header.hero p {
 }
 
 .settings-btn {
-  background: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: var(--card);
   border: none;
-  border-radius: 50%;
-  font-size: 1.5rem;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-size: 16px;
   line-height: 1;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0;
   transition: background 0.15s ease, transform 0.15s ease;
 }
 .settings-btn:hover {
   background: rgba(var(--overlay-rgb), 0.6);
   transform: rotate(20deg);
+}
+.settings-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .theme-toggle {
@@ -2120,6 +2153,9 @@ a.legend-link {
 
 .modal {
   width: min(500px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--card);
   border-radius: 26px;
   border: 2px solid var(--line);
@@ -2227,7 +2263,7 @@ a.legend-link {
 
 .modal input[type="password"]:disabled,
 .modal input[type="text"]:disabled {
-  background: var(--card);
+  background: var(--control-disabled);
   color: var(--ink-soft);
 }
 
