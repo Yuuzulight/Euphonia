@@ -1,0 +1,189 @@
+<h2>What does "neutral mint" mean to you?</h2>
+<p class="subtitle">Mint is already one of Euphonia's accent colors, so there are three quite different themes it could become. Dusk plum is on the left for comparison, since mint will sit alongside it in the theme list. Click whichever is closest to what you pictured.</p>
+
+<style>
+  .eu {
+    border-radius: 18px;
+    overflow: hidden;
+    font-family: ui-rounded, "Quicksand", system-ui, sans-serif;
+    border: 1px solid rgba(128,128,128,.25);
+  }
+  .eu-tb {
+    height: 34px; display: flex; align-items: center; gap: 6px;
+    padding: 0 12px; font-size: 12px; font-weight: 700;
+    background: var(--tb); color: var(--tbink);
+  }
+  .eu-body { background: var(--bg); padding: 14px; display: grid; gap: 12px; }
+  .eu-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 12px 14px; box-shadow: var(--shadow);
+  }
+  .eu-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+    color: var(--inks); margin-bottom: 4px;
+  }
+  .eu-pill {
+    padding: 2px 9px; border-radius: 999px; font-size: 9.5px; font-weight: 800;
+    background: var(--mint); color: var(--pillink);
+  }
+  .eu-val { font-size: 27px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+  .eu-val small { font-size: 12px; font-weight: 700; color: var(--inks); }
+  .eu-zone {
+    position: relative; height: 9px; border-radius: 999px; margin: 10px 0 7px;
+    background: linear-gradient(90deg, var(--c2) 0%, var(--mint) 42%, var(--butter) 72%, var(--c4) 100%);
+  }
+  .eu-zone i {
+    position: absolute; top: -4px; width: 3px; height: 17px; border-radius: 2px;
+    background: var(--ink); box-shadow: 0 0 0 2px var(--card);
+  }
+  .eu-sub { font-size: 10.5px; color: var(--inks); }
+  .eu-btn {
+    border: none; border-radius: 999px; padding: 9px 16px; width: 100%;
+    font-family: inherit; font-size: 12px; font-weight: 800; color: var(--btnink);
+    background: linear-gradient(135deg, var(--mint), var(--c2));
+    box-shadow: 0 3px 10px var(--btnglow); cursor: pointer;
+  }
+  .eu-name { font-size: 12px; font-weight: 800; margin-bottom: 2px; }
+  .eu-why { font-size: 11.5px; line-height: 1.45; opacity: .82; }
+</style>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:16px;align-items:start">
+
+  <!-- ===== REFERENCE: DUSK PLUM ===== -->
+  <div style="opacity:.9">
+    <div class="label" style="margin-bottom:6px">already chosen — dusk plum</div>
+    <div class="eu" style="
+      --tb:#251d33; --tbink:#c8b6dd;
+      --bg:radial-gradient(600px 300px at 15% -5%, #2c1f38, transparent 62%), linear-gradient(160deg, #171220, #14131f);
+      --card:#221b2e; --line:rgba(255,255,255,.07); --ink:#ece3f5; --inks:#a294b4;
+      --mint:#86d8b8; --c2:#b6a2f2; --butter:#e9cb84; --c4:#f093c2; --pillink:#24322c;
+      --shadow:0 8px 22px rgba(0,0,0,.45); --btnink:#1c2b24; --btnglow:rgba(0,0,0,.4)">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">in range</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <div class="eu-card">
+          <svg viewBox="0 0 240 44" style="width:100%;height:44px;display:block">
+            <polyline points="4,32 28,27 52,29 76,20 100,23 124,13 148,17 172,10 196,15 216,8 236,11"
+              fill="none" stroke="#b6a2f2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="4,38 28,36 52,37 76,33 100,35 124,31 148,33 172,29 196,31 216,27 236,29"
+              fill="none" stroke="#f093c2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <button class="eu-btn" style="background:linear-gradient(135deg,#f093c2,#b6a2f2);color:#241a2e">✨ generate insight</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== M1 — LIGHT MINT ===== -->
+  <div class="card" data-choice="light-mint" onclick="toggleSelect(this)" style="cursor:pointer;padding:0;background:none;border:none">
+    <div class="label" style="margin-bottom:6px">M1 — light mint</div>
+    <div class="eu" style="
+      --tb:#cfeee0; --tbink:#3f6b58;
+      --bg:radial-gradient(600px 300px at 15% -5%, #d9f2e6, transparent 62%), radial-gradient(550px 350px at 95% 0%, #e3f1ea, transparent 58%), linear-gradient(160deg, #f2faf6, #eef6f2);
+      --card:#fbfffd; --line:#fff; --ink:#3f5a4e; --inks:#7d9689;
+      --mint:#8fdcbb; --c2:#9dc0dc; --butter:#f0d79a; --c4:#dfa8bd; --pillink:#2f4a3e;
+      --shadow:0 8px 24px rgba(120,165,145,.2); --btnink:#fff; --btnglow:rgba(90,150,125,.32)">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">in range</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <div class="eu-card">
+          <svg viewBox="0 0 240 44" style="width:100%;height:44px;display:block">
+            <polyline points="4,32 28,27 52,29 76,20 100,23 124,13 148,17 172,10 196,15 216,8 236,11"
+              fill="none" stroke="#5fae8d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="4,38 28,36 52,37 76,33 100,35 124,31 148,33 172,29 196,31 216,27 236,29"
+              fill="none" stroke="#8aabc9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:10px 2px 0">
+      <div class="eu-name">A calmer daytime alternative</div>
+      <div class="eu-why">Same brightness as today, but the pink is swapped for sage-mint and the text goes green-slate instead of purple. For people who want the light theme without the pink.</div>
+    </div>
+  </div>
+
+  <!-- ===== M2 — DARK MINT ===== -->
+  <div class="card" data-choice="dark-mint" onclick="toggleSelect(this)" style="cursor:pointer;padding:0;background:none;border:none">
+    <div class="label" style="margin-bottom:6px">M2 — dark mint</div>
+    <div class="eu" style="
+      --tb:#1b2a24; --tbink:#a9c9ba;
+      --bg:radial-gradient(600px 300px at 15% -5%, #17281f, transparent 62%), radial-gradient(550px 350px at 95% 0%, #16232400, transparent 58%), linear-gradient(160deg, #111a17, #0f1614);
+      --card:#182420; --line:rgba(255,255,255,.07); --ink:#e2efe8; --inks:#92a89d;
+      --mint:#7fd7b4; --c2:#8fb8d8; --butter:#e0c684; --c4:#d597b0; --pillink:#12261e;
+      --shadow:0 8px 22px rgba(0,0,0,.45); --btnink:#10231b; --btnglow:rgba(0,0,0,.4)">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">in range</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <div class="eu-card">
+          <svg viewBox="0 0 240 44" style="width:100%;height:44px;display:block">
+            <polyline points="4,32 28,27 52,29 76,20 100,23 124,13 148,17 172,10 196,15 216,8 236,11"
+              fill="none" stroke="#7fd7b4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="4,38 28,36 52,37 76,33 100,35 124,31 148,33 172,29 196,31 216,27 236,29"
+              fill="none" stroke="#8fb8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:10px 2px 0">
+      <div class="eu-name">A cooler sibling to dusk plum</div>
+      <div class="eu-why">Just as dark and just as low-glare, but green-slate instead of purple. Note this makes two dark themes and only one light one.</div>
+    </div>
+  </div>
+
+  <!-- ===== M3 — NEUTRAL SAGE ===== -->
+  <div class="card" data-choice="neutral-sage" onclick="toggleSelect(this)" style="cursor:pointer;padding:0;background:none;border:none">
+    <div class="label" style="margin-bottom:6px">M3 — neutral sage &nbsp;·&nbsp; the literal reading</div>
+    <div class="eu" style="
+      --tb:#c7d6cf; --tbink:#3c5148;
+      --bg:linear-gradient(160deg, #dfe7e2, #d7e1dc);
+      --card:#edf3f0; --line:rgba(255,255,255,.6); --ink:#3a4a43; --inks:#71857b;
+      --mint:#7cbfa1; --c2:#8fabc4; --butter:#d6bd80; --c4:#c295a6; --pillink:#26362e;
+      --shadow:0 6px 18px rgba(90,120,105,.16); --btnink:#fff; --btnglow:rgba(85,125,105,.3)">
+      <div class="eu-tb">🎵 Euphonia</div>
+      <div class="eu-body">
+        <div class="eu-card">
+          <div class="eu-label"><span>pitch</span><span class="eu-pill">in range</span></div>
+          <div class="eu-val">187<small> Hz</small></div>
+          <div class="eu-zone"><i style="left:61%"></i></div>
+          <div class="eu-sub">median across the take</div>
+        </div>
+        <div class="eu-card">
+          <svg viewBox="0 0 240 44" style="width:100%;height:44px;display:block">
+            <polyline points="4,32 28,27 52,29 76,20 100,23 124,13 148,17 172,10 196,15 216,8 236,11"
+              fill="none" stroke="#4f9e7f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="4,38 28,36 52,37 76,33 100,35 124,31 148,33 172,29 196,31 216,27 236,29"
+              fill="none" stroke="#7593ae" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <button class="eu-btn">✨ generate insight</button>
+      </div>
+    </div>
+    <div style="padding:10px 2px 0">
+      <div class="eu-name">Neither bright nor dark</div>
+      <div class="eu-why">A muted mid-tone surface — no white glare, no dark-room shimmer. Genuinely the gentlest of the three in mixed lighting, and the most literally "neutral". Trade-off: it's the least colorful Euphonia has ever looked.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:22px">
+  <p class="subtitle" style="margin:0">If "easier on the eyes" is still the goal driving this, <strong>M3</strong> is the one that best serves it. If you mostly wanted a mint <em>option</em> to switch to for variety, <strong>M1</strong> gives the theme list a proper second light choice. Pick whichever matches what you had in mind — or say "some of each" and I'll blend.</p>
+</div>

@@ -15,7 +15,7 @@ the Rainbow Passage), tells you what she was practicing, and you analyze it. The
    most important, specific, *clockable* thing to work on, and author it as custom UI: a big
    insight in the "🔍 Insights for this take" section, plus optional personalized woven notes.
 
-Read `CLAUDE.md` for the full vibe/design. Keep everything **warm, specific, and comforting**
+Read `ARCHITECTURE.md` for the full vibe/design. Keep everything **warm, specific, and comforting**
 ("Animal Crossing girliepop"). Numbers are *a compass, not a judge.* Be honest about
 weaknesses, always actionable and kind.
 

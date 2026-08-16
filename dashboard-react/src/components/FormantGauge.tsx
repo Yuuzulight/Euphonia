@@ -1,7 +1,8 @@
 import { FiMaximize2 } from "react-icons/fi";
-import { type Zone, zoneOf, fmt } from "../zones";
+import { type Zone, zoneOf, zoneColor, fmt } from "../zones";
 import { ZoneBar } from "./ZoneBar";
 import type { MetricKey } from "../metrics";
+import { useThemeColors } from "../theme/ThemeProvider";
 
 interface Props {
   name: string;
@@ -25,6 +26,7 @@ export function FormantGauge({
   metricKey,
   onExpand,
 }: Props) {
+  const colors = useThemeColors();
   const z = zoneOf(zones, value);
   const clickable = !!(metricKey && onExpand);
   const open = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -57,7 +59,7 @@ export function FormantGauge({
         <span className="fval">
           {fmt(value)} Hz{" "}
           {z && (
-            <span className="pill" style={{ background: z.color, color: "#5a4566" }}>
+            <span className="pill" style={{ background: zoneColor(z.color, colors), color: colors.onZone }}>
               {z.name}
             </span>
           )}

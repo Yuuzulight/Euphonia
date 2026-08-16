@@ -12,7 +12,7 @@ interface Signal {
   metric: string;
   good: boolean;
   // Priority for picking the ONE focus_area when multiple things need work —
-  // lower number = surfaced first. Mirrors CLAUDE.md's own guidance that
+  // lower number = surfaced first. Mirrors ARCHITECTURE.md's own guidance that
   // trailing-off phrase endings are "the classic, high-salience failure."
   priority: number;
   strengthText?: string;

@@ -1,23 +1,53 @@
 // ---- reference zones for voice feminization (gentle guidance, not law) ----
 //
 // CRITICAL COLOR CONVENTION:
-//   blue  #bcd3f0 = MASCULINE / deeper gendered end ONLY (never "needs work")
-//   pink  #ffb6d5 = good / feminine end
-//   butter #ffe9a8 = neutral / mid
-//   GROW  #cdc6da = neutral "room to grow" for skill metrics (breathy/rough/flat)
+//   blue   = MASCULINE / deeper gendered end ONLY (never "needs work")
+//   pink   = good / feminine end
+//   butter = neutral / mid
+//   GROW   = neutral "room to grow" for skill metrics (breathy/rough/flat)
+// These are resolved per theme (see zoneColor() below) — the meaning above is
+// fixed, but the actual color each one paints depends on the active theme.
+// Look in dashboard-react/src/index.css's [data-theme="…"] blocks for the
+// current hex values, not here.
+import type { ThemeColors } from "./theme/ThemeProvider";
+
+export type ZoneColorKey =
+  | "masc"
+  | "fem"
+  | "neutral"
+  | "grow"
+  | "soft"
+  | "comfy"
+  | "strong";
+
 export interface Zone {
   from: number;
   to: number;
-  color: string;
+  color: ZoneColorKey;
   name: string;
 }
 
-export const MASC = "#bcd3f0"; // masculine-gendered end ONLY
-export const FEM = "#ffb6d5"; // good / feminine end
-export const BUTTER = "#ffe9a8"; // neutral / mid
+// These used to be hex literals. They're keys now so each theme can supply a
+// legibility-tuned variant while the meaning stays fixed — the convention
+// above is unchanged, only the delivery mechanism moved.
+export const MASC: ZoneColorKey = "masc"; // masculine-gendered end ONLY
+export const FEM: ZoneColorKey = "fem"; // good / feminine end
+export const BUTTER: ZoneColorKey = "neutral"; // neutral / mid
 // "Room to grow" tone for skill metrics — NOT blue (blue is reserved for
 // masculine-gendered ends only, never for generic "needs work").
-export const GROW = "#cdc6da";
+export const GROW: ZoneColorKey = "grow";
+
+export function zoneColor(key: ZoneColorKey, colors: ThemeColors): string {
+  switch (key) {
+    case "masc": return colors.zoneMasc;
+    case "fem": return colors.zoneFem;
+    case "neutral": return colors.zoneNeutral;
+    case "grow": return colors.zoneGrow;
+    case "soft": return colors.zoneSoft;
+    case "comfy": return colors.zoneComfy;
+    case "strong": return colors.zoneStrong;
+  }
+}
 
 export const PITCH_ZONES: Zone[] = [
   { from: 100, to: 145, color: MASC, name: "masc" },
@@ -59,9 +89,9 @@ export const F3_ZONES: Zone[] = [
 ];
 
 export const LOUD_ZONES: Zone[] = [
-  { from: 45, to: 55, color: "#d7d0e8", name: "soft" },
-  { from: 55, to: 65, color: "#cdeadd", name: "comfy" },
-  { from: 65, to: 78, color: "#ffd9ea", name: "strong" },
+  { from: 45, to: 55, color: "soft", name: "soft" },
+  { from: 55, to: 65, color: "comfy", name: "comfy" },
+  { from: 65, to: 78, color: "strong", name: "strong" },
 ];
 
 // SD of pitch — how much your melody moves. Higher = more expressive.

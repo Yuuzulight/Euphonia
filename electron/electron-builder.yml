@@ -31,7 +31,7 @@ extraResources:
 # app-update.yml (baked in from this at build time) to know where to check,
 # and compares against latest.yml, which this same config makes
 # electron-builder generate alongside the installer. We still publish
-# manually via `gh release create` (see CLAUDE.md) rather than
+# manually via `gh release create` (see ARCHITECTURE.md) rather than
 # `electron-builder --publish always` — this block only affects what gets
 # generated locally, not any automatic upload.
 publish:

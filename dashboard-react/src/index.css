@@ -1,16 +1,636 @@
-:root {
-  --pink: #ffb6d5;
-  --pink-soft: #ffd9ea;
-  --pink-bg: #fff0f7;
-  --lav: #c9b6ff;
-  --lav-soft: #e4dbff;
-  --lav-bg: #f5f0ff;
-  --mint: #b8ecd8;
-  --butter: #ffe9a8;
+/* Blossom — the default theme. Every other theme in this file overrides these
+   same token names under [data-theme="…"]; scripts/test_theme_tokens.js
+   fails the build if any theme's token set drifts from this one.
+
+   The selectors are attribute selectors rather than :root[data-theme] on
+   purpose: that lets any element opt into a theme's tokens, which is how the
+   swatch chips in Settings preview a theme without duplicating its colors.
+   Blossom is listed twice for the same reason — bare :root makes it the
+   default, and [data-theme="blossom"] lets a chip request it explicitly even
+   while another theme is active.
+
+   Two groups, and the difference matters:
+     CHROME tokens (surfaces, text, accents) are free to change per theme.
+     DATA tokens (--zone-*) encode meaning — see the color convention at the
+     top of zones.ts. Themes retune them for legibility on their own
+     background; they never reassign which color means what. */
+:root,
+[data-theme="blossom"] {
+  /* chrome — surfaces */
+  --bg-base: #f5f0ff;
+  --bg-glow-1: #ffd9ea;
+  --bg-glow-2: #e4dbff;
+  --card: #fffafd;
+  --card-2: #fff0f7;
+  --control-bg: #ffffff;
+  --control-disabled: #f5f5f5;
+  --line: #ffffff;
+  --line-soft: #f0dcea;
+  --shadow: 0 8px 24px rgba(186, 142, 196, 0.18);
+  /* bare R, G, B triples — consumed as rgba(var(--x-rgb), 0.22) so each
+     rule keeps its own alpha and geometry while the hue follows the theme */
+  --shadow-rgb: 186, 142, 196;
+  --overlay-rgb: 255, 255, 255;
+  --accent-glow-rgb: 176, 106, 150;
+  --live-glow-rgb: 255, 111, 156;
+  --scrim-rgb: 120, 96, 138;
+  --modal-shadow-rgb: 150, 110, 165;
+  --highlight-rgb: 224, 122, 176;
+  /* chrome — text */
   --ink: #6b5876;
   --ink-soft: #9d8ba8;
-  --card: #fffafd;
-  --shadow: 0 8px 24px rgba(186, 142, 196, 0.18);
+  --ink-strong: #7a5a92;
+  --ink-heading: #8a6aa8;
+  --ink-accent: #b06a96;
+  --ink-callout: #a25688;
+  --ink-warm: #855;
+  --on-accent: #ffffff;
+  --on-zone: #5a4566;
+  /* chrome — accents */
+  --accent: #ffb6d5;
+  --accent-2: #c9b6ff;
+  --accent-soft: #d784ac;
+  /* chrome — states */
+  --danger: #c84545;
+  --danger-bg: #ffe8e8;
+  --danger-border: #ffcccc;
+  --danger-strong: #e05d5d;
+  --success: #3f9c78;
+  --success-bg: #eafaf3;
+  --success-border: #cdeee0;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #ffd9ea;
+  --titlebar-ink: #7a5a92;
+  /* chrome — waveform player */
+  --wave: #bfa9e6;
+  --wave-progress: #ff9ec5;
+  --wave-cursor: #ff89bb;
+  /* chrome — live recording state */
+  --live: #ff8a80;
+  --live-2: #ff6f9c;
+  /* chrome — trend-chart series (5 mutually-distinct hues, one per metric
+     card on "Trends over time" — hue-pinned across themes like the zone
+     tokens below, so a series doesn't change identity when the theme does)
+     + a few one-off decorative/emphasis colors that didn't land within
+     ≤12-per-channel of any existing token */
+  --chart-1: #e07ab0;
+  --chart-2: #9b7ad0;
+  --chart-3: #5fb89a;
+  --chart-4: #d99a4e;
+  --chart-5: #cf7fb0;
+  --chart-3-band: #b8ecd8;
+  --chart-4-band: #c9b6ff;
+  --accent-emphasis: #c75c93;
+  --wave-icon: #c0a9d6;
+  --ink-faint: #b7a8c2;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #bcd3f0;
+  --zone-masc-ink: #5e7fb8;
+  --zone-fem: #ffb6d5;
+  --zone-fem-soft: #ffd9ea;
+  --zone-neutral: #ffe9a8;
+  --zone-grow: #cdc6da;
+  --zone-soft: #d7d0e8;
+  --zone-comfy: #cdeadd;
+  --zone-strong: #ffd9ea;
+  /* non-color */
+  --radius: 22px;
+}
+/* Paper — warm oat-cream, the lowest-glare light theme. */
+[data-theme="paper"] {
+  /* chrome — surfaces */
+  --bg-base: #f2efe8;
+  --bg-glow-1: #f6f0e4;
+  --bg-glow-2: #efeade;
+  --card: #fffdf8;
+  --card-2: #f7f4ee;
+  --control-bg: #ffffff;
+  --control-disabled: #f7f4ee;
+  --line: #ffffff;
+  --line-soft: #e5dcc6;
+  --shadow: 0 8px 24px rgba(150, 128, 96, 0.18);
+  --shadow-rgb: 150, 128, 96;
+  --overlay-rgb: 255, 255, 255;
+  --accent-glow-rgb: 138, 107, 58;
+  --live-glow-rgb: 200, 90, 58;
+  --scrim-rgb: 74, 62, 46;
+  --modal-shadow-rgb: 110, 90, 65;
+  --highlight-rgb: 214, 158, 74;
+  /* chrome — text */
+  --ink: #45403a;
+  --ink-soft: #716a5f;
+  --ink-strong: #5c4a30;
+  --ink-heading: #7a5f34;
+  --ink-accent: #8a6b3a;
+  --ink-callout: #6e5228;
+  --ink-warm: #7c5a3c;
+  --on-accent: #201b15;
+  --on-zone: #453a2a;
+  /* chrome — accents */
+  --accent: #c2a878;
+  --accent-2: #a89a84;
+  --accent-soft: #b0813a;
+  /* chrome — states */
+  --danger: #bb3b35;
+  --danger-bg: #f9e6df;
+  --danger-border: #f0c8ba;
+  --danger-strong: #d9524a;
+  --success: #31795d;
+  --success-bg: #eaf3e2;
+  --success-border: #d3e4bf;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #ece4d6;
+  --titlebar-ink: #5c554a;
+  /* chrome — waveform player */
+  --wave: #c5b394;
+  --wave-progress: #c2a878;
+  --wave-cursor: #a8895a;
+  /* chrome — live recording state */
+  --live: #d97a4a;
+  --live-2: #c85a3a;
+  /* chrome — trend-chart series (see blossom's comment above) */
+  --chart-1: #e07ab0;
+  --chart-2: #9b7ad0;
+  --chart-3: #5fb89a;
+  --chart-4: #d99a4e;
+  --chart-5: #cf7fb0;
+  --chart-3-band: #b8ecd8;
+  --chart-4-band: #c9b6ff;
+  --accent-emphasis: #8e6f1e;
+  --wave-icon: #b9b093;
+  --ink-faint: #937e62;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #bcd3f0;
+  --zone-masc-ink: #5e7fb8;
+  --zone-fem: #ffb6d5;
+  --zone-fem-soft: #f6d7e2;
+  --zone-neutral: #ffe9a8;
+  --zone-grow: #cdc6da;
+  --zone-soft: #dfd6ea;
+  --zone-comfy: #d2e9da;
+  --zone-strong: #f6d7e2;
+  /* non-color */
+  --radius: 22px;
+}
+/* Light mint — sage-mint chrome, green-slate text. */
+[data-theme="light-mint"] {
+  /* chrome — surfaces */
+  --bg-base: #eef6f2;
+  --bg-glow-1: #d9f2e6;
+  --bg-glow-2: #e3f1ea;
+  --card: #fbfffd;
+  --card-2: #f2faf6;
+  --control-bg: #ffffff;
+  --control-disabled: #f2faf6;
+  --line: #ffffff;
+  --line-soft: #d3ece1;
+  --shadow: 0 8px 24px rgba(100, 138, 118, 0.18);
+  --shadow-rgb: 100, 138, 118;
+  --overlay-rgb: 255, 255, 255;
+  --accent-glow-rgb: 45, 122, 92;
+  --live-glow-rgb: 242, 84, 90;
+  --scrim-rgb: 40, 70, 58;
+  --modal-shadow-rgb: 45, 95, 75;
+  --highlight-rgb: 58, 168, 126;
+  /* chrome — text */
+  --ink: #355044;
+  --ink-soft: #5d7266;
+  --ink-strong: #234436;
+  --ink-heading: #2f6b52;
+  --ink-accent: #2d7a5c;
+  --ink-callout: #1f5c44;
+  --ink-warm: #9a5a3a;
+  --on-accent: #10180f;
+  --on-zone: #2b4a3c;
+  /* chrome — accents */
+  --accent: #4f9e7f;
+  --accent-2: #7fa8c4;
+  --accent-soft: #2f8a68;
+  /* chrome — states */
+  --danger: #bd3f37;
+  --danger-bg: #fbe9e7;
+  --danger-border: #f2c9c4;
+  --danger-strong: #d85850;
+  --success: #287a57;
+  --success-bg: #e3f5ea;
+  --success-border: #c3e6d2;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #cfeee0;
+  --titlebar-ink: #365f4d;
+  /* chrome — waveform player */
+  --wave: #9dc0b2;
+  --wave-progress: #5fae8d;
+  --wave-cursor: #3f8f6d;
+  /* chrome — live recording state */
+  --live: #ff7a66;
+  --live-2: #f2545a;
+  /* chrome — trend-chart series (see blossom's comment above) */
+  --chart-1: #e07ab0;
+  --chart-2: #9b7ad0;
+  --chart-3: #5fb89a;
+  --chart-4: #d99a4e;
+  --chart-5: #cf7fb0;
+  --chart-3-band: #b8ecd8;
+  --chart-4-band: #c9b6ff;
+  --accent-emphasis: #148364;
+  --wave-icon: #95bab1;
+  --ink-faint: #629274;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #bcd3f0;
+  --zone-masc-ink: #5e7fb8;
+  --zone-fem: #ffb6d5;
+  --zone-fem-soft: #f7cfd6;
+  --zone-neutral: #ffe9a8;
+  --zone-grow: #cdc6da;
+  --zone-soft: #dcd7ee;
+  --zone-comfy: #c5ead9;
+  --zone-strong: #f7cfd6;
+  /* non-color */
+  --radius: 22px;
+}
+/* Dusk plum — deep plum-violet chrome, pink-gold accent. */
+[data-theme="dusk-plum"] {
+  /* chrome — surfaces */
+  --bg-base: #14131f;
+  --bg-glow-1: #2c1f38;
+  --bg-glow-2: #221f3d;
+  --card: #221b2e;
+  --card-2: #1b1626;
+  --control-bg: #3d324f;
+  --control-disabled: #1b1626;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(7, 5, 10, 0.18);
+  --shadow-rgb: 7, 5, 10;
+  --overlay-rgb: 27, 22, 38;
+  --accent-glow-rgb: 235, 145, 213;
+  --live-glow-rgb: 224, 67, 62;
+  --scrim-rgb: 11, 7, 13;
+  --modal-shadow-rgb: 25, 13, 28;
+  --highlight-rgb: 255, 168, 208;
+  /* chrome — text */
+  --ink: #ece3f5;
+  --ink-soft: #a294b4;
+  --ink-strong: #d5bded;
+  --ink-heading: #dfa9ec;
+  --ink-accent: #eb91d5;
+  --ink-callout: #e76db6;
+  --ink-warm: #e2c8b9;
+  --on-accent: #140c1d;
+  --on-zone: #37163b;
+  /* chrome — accents */
+  --accent: #f093c2;
+  --accent-2: #b6a2f2;
+  --accent-soft: #ed4a9c;
+  /* chrome — states */
+  --danger: #ea9f90;
+  --danger-bg: #2f1c18;
+  --danger-border: #5f332b;
+  --danger-strong: #d25941;
+  --success: #71d0a1;
+  --success-bg: #182a21;
+  --success-border: #2d5842;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #251d33;
+  --titlebar-ink: #c8b6dd;
+  /* chrome — waveform player */
+  --wave: #7d6aa8;
+  --wave-progress: #f093c2;
+  --wave-cursor: #ffa8d0;
+  /* chrome — live recording state */
+  --live: #ed7f6e;
+  --live-2: #e0433e;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
+  --accent-emphasis: #f296d1;
+  --wave-icon: #81699e;
+  --ink-faint: #bfb4cf;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #a8c8ee;
+  --zone-masc-ink: #5d9fec;
+  --zone-fem: #f59ec6;
+  --zone-fem-soft: #eeb0cd;
+  --zone-neutral: #e8d089;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
+  --radius: 22px;
+}
+/* Dark mint — near-black forest chrome, seafoam accent. */
+[data-theme="dark-mint"] {
+  /* chrome — surfaces */
+  --bg-base: #0f1614;
+  --bg-glow-1: #17281f;
+  --bg-glow-2: #16231f;
+  --card: #182420;
+  --card-2: #131d1a;
+  --control-bg: #30443d;
+  --control-disabled: #131d1a;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(5, 10, 8, 0.18);
+  --shadow-rgb: 5, 10, 8;
+  --overlay-rgb: 19, 29, 26;
+  --accent-glow-rgb: 152, 221, 191;
+  --live-glow-rgb: 224, 67, 62;
+  --scrim-rgb: 7, 13, 10;
+  --modal-shadow-rgb: 13, 28, 20;
+  --highlight-rgb: 158, 232, 200;
+  /* chrome — text */
+  --ink: #e2efe8;
+  --ink-soft: #92a89d;
+  --ink-strong: #c0e3d0;
+  --ink-heading: #aee1c8;
+  --ink-accent: #98ddbf;
+  --ink-callout: #77d5ae;
+  --ink-warm: #e0c4b4;
+  --on-accent: #0c1d14;
+  --on-zone: #163b29;
+  /* chrome — accents */
+  --accent: #7fd7b4;
+  --accent-2: #8fb8d8;
+  --accent-soft: #3dcc93;
+  /* chrome — states */
+  --danger: #ea9c90;
+  --danger-bg: #2f1b18;
+  --danger-border: #5f322b;
+  --danger-strong: #d25441;
+  --success: #1eb861;
+  --success-bg: #182a20;
+  --success-border: #2d583f;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #1b2a24;
+  --titlebar-ink: #a9c9ba;
+  /* chrome — waveform player */
+  --wave: #5f7d71;
+  --wave-progress: #7fd7b4;
+  --wave-cursor: #9ee8c8;
+  /* chrome — live recording state */
+  --live: #ed7f6e;
+  --live-2: #e0433e;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
+  --accent-emphasis: #90f1d2;
+  --wave-icon: #5a8b7f;
+  --ink-faint: #abc7b8;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #a8c8ee;
+  --zone-masc-ink: #5d9fec;
+  --zone-fem: #f59ec6;
+  --zone-fem-soft: #eeb0cd;
+  --zone-neutral: #e8d089;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
+  --radius: 22px;
+}
+/* Midnight — deep navy chrome, periwinkle accent. */
+[data-theme="midnight"] {
+  /* chrome — surfaces */
+  --bg-base: #0d1322;
+  --bg-glow-1: #1a2440;
+  --bg-glow-2: #151d33;
+  --card: #182036;
+  --card-2: #121a2c;
+  --control-bg: #2b385b;
+  --control-disabled: #121a2c;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(5, 7, 10, 0.18);
+  --shadow-rgb: 5, 7, 10;
+  --overlay-rgb: 18, 26, 44;
+  --accent-glow-rgb: 145, 169, 235;
+  --live-glow-rgb: 224, 67, 62;
+  --scrim-rgb: 7, 9, 13;
+  --modal-shadow-rgb: 13, 18, 28;
+  --highlight-rgb: 176, 194, 255;
+  /* chrome — text */
+  --ink: #e3e9f5;
+  --ink-soft: #93a0bd;
+  --ink-strong: #bdcded;
+  --ink-heading: #a9beec;
+  --ink-accent: #91a9eb;
+  --ink-callout: #6d8be7;
+  --ink-warm: #e2c8b9;
+  --on-accent: #0c121d;
+  --on-zone: #16213b;
+  /* chrome — accents */
+  --accent: #8fa6f0;
+  --accent-2: #b79ae8;
+  --accent-soft: #587cef;
+  /* chrome — states */
+  --danger: #ea9690;
+  --danger-bg: #2f1a18;
+  --danger-border: #5f2e2b;
+  --danger-strong: #d24b41;
+  --success: #71d0a1;
+  --success-bg: #182a21;
+  --success-border: #2d5842;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #141c30;
+  --titlebar-ink: #a8b6d4;
+  /* chrome — waveform player */
+  --wave: #5c6a90;
+  --wave-progress: #8fa6f0;
+  --wave-cursor: #b0c2ff;
+  /* chrome — live recording state */
+  --live: #ed7f6e;
+  --live-2: #e0433e;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
+  --accent-emphasis: #96a4f2;
+  --wave-icon: #5a608b;
+  --ink-faint: #b6c1d6;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #c3dcff;
+  --zone-masc-ink: #76afff;
+  --zone-fem: #f59ec6;
+  --zone-fem-soft: #eeb0cd;
+  --zone-neutral: #e8d089;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
+  --radius: 22px;
+}
+/* Cocoa — near-black espresso-brown chrome, warm caramel accent. */
+[data-theme="cocoa"] {
+  /* chrome — surfaces */
+  --bg-base: #16110f;
+  --bg-glow-1: #261c18;
+  --bg-glow-2: #1f1714;
+  --card: #211a17;
+  --card-2: #1a1411;
+  --control-bg: #403530;
+  --control-disabled: #1a1411;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(10, 7, 5, 0.18);
+  --shadow-rgb: 10, 7, 5;
+  --overlay-rgb: 26, 20, 17;
+  --accent-glow-rgb: 226, 178, 145;
+  --live-glow-rgb: 224, 62, 94;
+  --scrim-rgb: 13, 10, 7;
+  --modal-shadow-rgb: 28, 19, 13;
+  --highlight-rgb: 245, 195, 160;
+  /* chrome — text */
+  --ink: #f0e6df;
+  --ink-soft: #ab998e;
+  --ink-strong: #e6cdbb;
+  --ink-heading: #e4c1a8;
+  --ink-accent: #e2b291;
+  --ink-callout: #db9b6f;
+  --ink-warm: #e0c3b2;
+  --on-accent: #1d130c;
+  --on-zone: #3b2516;
+  /* chrome — accents */
+  --accent: #e0a882;
+  --accent-2: #c98f6f;
+  --accent-soft: #d87c3e;
+  /* chrome — states */
+  --danger: #ea9990;
+  --danger-bg: #2f1b18;
+  --danger-border: #5f302b;
+  --danger-strong: #d25041;
+  --success: #71d0a1;
+  --success-bg: #182a21;
+  --success-border: #2d5842;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #241b17;
+  --titlebar-ink: #cdb5a5;
+  /* chrome — waveform player */
+  --wave: #7a6559;
+  --wave-progress: #e0a882;
+  --wave-cursor: #f5c3a0;
+  /* chrome — live recording state */
+  --live: #ed6e7a;
+  --live-2: #e03e5e;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
+  --accent-emphasis: #f1c28e;
+  --wave-icon: #8b735a;
+  --ink-faint: #c7b4aa;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #a8c8ee;
+  --zone-masc-ink: #5d9fec;
+  --zone-fem: #f59ec6;
+  --zone-fem-soft: #eeb0cd;
+  --zone-neutral: #e8d089;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
+  --radius: 22px;
+}
+/* Amber night — near-black amber chrome, warm gold accent. */
+[data-theme="amber-night"] {
+  /* chrome — surfaces */
+  --bg-base: #131007;
+  --bg-glow-1: #1f1810;
+  --bg-glow-2: #1a150c;
+  --card: #1e1810;
+  --card-2: #17120b;
+  --control-bg: #413525;
+  --control-disabled: #17120b;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(10, 8, 5, 0.18);
+  --shadow-rgb: 10, 8, 5;
+  --overlay-rgb: 23, 18, 11;
+  --accent-glow-rgb: 238, 198, 118;
+  --live-glow-rgb: 224, 62, 100;
+  --scrim-rgb: 13, 11, 7;
+  --modal-shadow-rgb: 28, 23, 13;
+  --highlight-rgb: 247, 221, 162;
+  /* chrome — text */
+  --ink: #f3e7cd;
+  --ink-soft: #b0a084;
+  --ink-strong: #f0d7a3;
+  --ink-heading: #f1d18d;
+  --ink-accent: #eec676;
+  --ink-callout: #ecb750;
+  --ink-warm: #dbbba8;
+  --on-accent: #1d180c;
+  --on-zone: #3b2f16;
+  /* chrome — accents */
+  --accent: #e8c37a;
+  --accent-2: #d9a94f;
+  --accent-soft: #e4a832;
+  /* chrome — states */
+  --danger: #ea9690;
+  --danger-bg: #2f1a18;
+  --danger-border: #5f2e2b;
+  --danger-strong: #d24b41;
+  --success: #71d0a1;
+  --success-bg: #182a21;
+  --success-border: #2d5842;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #1f1810;
+  --titlebar-ink: #d8bd8a;
+  /* chrome — waveform player */
+  --wave: #806f4f;
+  --wave-progress: #e8c37a;
+  --wave-cursor: #f7dda2;
+  /* chrome — live recording state */
+  --live: #ed6e7f;
+  --live-2: #e03e64;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --chart-4-band: #b6a2f2;
+  --accent-emphasis: #efd780;
+  --wave-icon: #8b825a;
+  --ink-faint: #c9b9a2;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #a9cdf5;
+  --zone-masc-ink: #5aa5f7;
+  --zone-fem: #f0a0c0;
+  --zone-fem-soft: #eeb0cd;
+  --zone-neutral: #efd390;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
   --radius: 22px;
 }
 * {
@@ -27,7 +647,7 @@ html {
   scrollbar-color: transparent transparent;
 }
 html.is-scrolling {
-  scrollbar-color: var(--pink) transparent;
+  scrollbar-color: var(--accent) transparent;
 }
 /* kept as a fallback for engines that use the legacy pseudo-elements
    instead of scrollbar-color. */
@@ -43,7 +663,7 @@ html.is-scrolling {
   border-radius: 999px;
 }
 html.is-scrolling::-webkit-scrollbar-thumb {
-  background-color: var(--pink);
+  background-color: var(--accent);
 }
 ::-webkit-scrollbar-corner {
   background: transparent;
@@ -54,9 +674,9 @@ body {
     "Quicksand", system-ui, sans-serif;
   color: var(--ink);
   background:
-    radial-gradient(1200px 600px at 15% -5%, var(--pink-soft), transparent 60%),
-    radial-gradient(1100px 700px at 95% 0%, var(--lav-soft), transparent 55%),
-    linear-gradient(160deg, var(--pink-bg), var(--lav-bg));
+    radial-gradient(1200px 600px at 15% -5%, var(--bg-glow-1), transparent 60%),
+    radial-gradient(1100px 700px at 95% 0%, var(--bg-glow-2), transparent 55%),
+    linear-gradient(160deg, var(--card-2), var(--bg-base));
   background-attachment: fixed;
   min-height: 100vh;
   line-height: 1.5;
@@ -70,8 +690,8 @@ body {
   gap: 8px;
   height: 40px;
   padding: 0 14px;
-  background: var(--pink-soft);
-  color: #7a5a92;
+  background: var(--titlebar-bg);
+  color: var(--titlebar-ink);
   font-size: 13px;
   font-weight: 700;
   -webkit-app-region: drag;
@@ -89,7 +709,7 @@ body {
   gap: 10px;
   max-width: 340px;
   background: var(--card);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   border-radius: 16px;
   box-shadow: var(--shadow);
   padding: 12px 16px;
@@ -104,10 +724,10 @@ body {
   font-size: 12px;
   font-weight: 700;
   font-family: inherit;
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
-  background: linear-gradient(135deg, var(--pink), var(--lav));
-  box-shadow: 0 3px 10px rgba(176, 106, 150, 0.3);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 3px 10px rgba(var(--accent-glow-rgb), 0.3);
   transition: transform 0.14s ease;
 }
 .update-banner button:hover:not(:disabled) {
@@ -130,9 +750,9 @@ body {
   font-size: 12px;
   font-weight: 700;
   line-height: 1.4;
-  color: #7a5a92;
-  background: var(--lav-bg);
-  border: 2px solid #fff;
+  color: var(--ink-strong);
+  background: var(--bg-base);
+  border: 2px solid var(--line);
   border-radius: 16px;
   padding: 10px 16px;
   box-shadow: var(--shadow);
@@ -152,8 +772,8 @@ header.hero h1 {
   font-size: clamp(28px, 5vw, 44px);
   margin: 0 0 6px;
   letter-spacing: 0.5px;
-  color: #b06a96;
-  text-shadow: 0 2px 0 #fff;
+  color: var(--ink-accent);
+  text-shadow: 0 2px 0 var(--line);
 }
 header.hero p {
   margin: 0;
@@ -162,32 +782,72 @@ header.hero p {
 }
 
 .settings-btn {
-  background: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: var(--card);
   border: none;
-  border-radius: 50%;
-  font-size: 1.5rem;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-size: 16px;
   line-height: 1;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0;
   transition: background 0.15s ease, transform 0.15s ease;
 }
 .settings-btn:hover {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(var(--overlay-rgb), 0.6);
   transform: rotate(20deg);
+}
+.settings-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink-soft);
+  box-shadow: var(--shadow);
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.14s ease, color 0.14s ease;
+}
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  color: var(--ink);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* below ~400px the centered hero text can grow wide enough to run under the
+   toggle + gear pair in the top-right corner — reserve room for them. */
+@media (max-width: 400px) {
+  .hero-text {
+    padding-right: 90px;
+  }
 }
 
 .latest-banner {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(var(--overlay-rgb), 0.72);
   backdrop-filter: blur(10px) saturate(1.1);
   -webkit-backdrop-filter: blur(10px) saturate(1.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(var(--overlay-rgb), 0.9);
   border-radius: 999px;
   padding: 9px 20px;
   display: inline-flex;
   gap: 8px;
   align-items: center;
   margin-top: 16px;
-  box-shadow: 0 6px 18px rgba(186, 142, 196, 0.22);
+  box-shadow: 0 6px 18px rgba(var(--shadow-rgb), 0.22);
   font-size: 14px;
 }
 
@@ -205,9 +865,9 @@ header.hero p {
   flex: 1 1 240px;
   min-width: 0;
   padding: 11px 16px;
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(var(--overlay-rgb), 0.75);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   font-family: inherit;
@@ -221,8 +881,8 @@ header.hero p {
 }
 .record-panel input[type="text"]:focus {
   outline: none;
-  border-color: var(--pink);
-  background: #fff;
+  border-color: var(--accent);
+  background: var(--card);
 }
 .record-panel button {
   flex: 0 0 auto;
@@ -235,27 +895,27 @@ header.hero p {
   font-family: inherit;
   font-size: 13.5px;
   font-weight: 700;
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
-  background: linear-gradient(135deg, var(--pink), var(--lav));
-  box-shadow: 0 4px 14px rgba(176, 106, 150, 0.35);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 4px 14px rgba(var(--accent-glow-rgb), 0.35);
   transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
 .record-panel button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(176, 106, 150, 0.45);
+  box-shadow: 0 6px 18px rgba(var(--accent-glow-rgb), 0.45);
 }
 .record-panel button:active {
   transform: translateY(0) scale(0.97);
 }
 /* recording in progress — a warmer color + a soft pulse so it reads as "live" */
 .record-panel button.is-recording {
-  background: linear-gradient(135deg, #ff8a80, #ff6f9c);
+  background: linear-gradient(135deg, var(--live), var(--live-2));
   animation: record-pulse 1.6s ease-in-out infinite;
 }
 @keyframes record-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 111, 156, 0.45); }
-  50% { box-shadow: 0 0 0 10px rgba(255, 111, 156, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--live-glow-rgb), 0.45); }
+  50% { box-shadow: 0 0 0 10px rgba(var(--live-glow-rgb), 0); }
 }
 @media (prefers-reduced-motion: reduce) {
   .record-panel button.is-recording {
@@ -265,26 +925,26 @@ header.hero p {
 .record-panel .saving {
   font-size: 13.5px;
   color: var(--ink-soft);
-  background: var(--pink-bg);
+  background: var(--card-2);
   padding: 10px 18px;
   border-radius: 999px;
 }
 .record-panel .rec-error {
   font-size: 13px;
-  color: #c84545;
-  background: #ffe8e8;
-  border: 1.5px solid #ffcccc;
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1.5px solid var(--danger-border);
   padding: 8px 16px;
   border-radius: 999px;
 }
 .record-panel .retry {
   background: transparent;
   color: var(--ink-soft);
-  border: 1.5px solid #f0dcea;
+  border: 1.5px solid var(--line-soft);
   box-shadow: none;
 }
 .record-panel .retry:hover {
-  background: #fafafa;
+  background: var(--card);
   box-shadow: none;
   transform: none;
 }
@@ -295,7 +955,7 @@ section {
 .section-title {
   font-size: 20px;
   margin: 0 0 14px;
-  color: #8a6aa8;
+  color: var(--ink-heading);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -312,7 +972,7 @@ section {
   border-radius: var(--radius);
   padding: 18px 18px 16px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
 }
 .stat .label {
   font-size: 13px;
@@ -324,7 +984,7 @@ section {
 .stat .value {
   font-size: 30px;
   font-weight: 700;
-  color: #b06a96;
+  color: var(--ink-accent);
   margin: 2px 0 4px;
 }
 .stat .value small {
@@ -348,7 +1008,7 @@ section {
   margin: 2px 0 14px;
 }
 .res-desc b {
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .fgauge {
   margin: 14px 0;
@@ -362,8 +1022,8 @@ section {
 }
 .fgauge.is-clickable:hover,
 .fgauge.is-clickable:focus-visible {
-  background: var(--pink-bg);
-  box-shadow: 0 4px 14px rgba(186, 142, 196, 0.16);
+  background: var(--card-2);
+  box-shadow: 0 4px 14px rgba(var(--shadow-rgb), 0.16);
   outline: none;
 }
 .fgauge-head {
@@ -374,7 +1034,7 @@ section {
   gap: 8px;
 }
 .fgauge-head .fname b {
-  color: #7a5a92;
+  color: var(--ink-strong);
   font-size: 14px;
 }
 .fgauge-head .fname span {
@@ -383,7 +1043,7 @@ section {
 }
 .fgauge-head .fval {
   font-weight: 700;
-  color: #b06a96;
+  color: var(--ink-accent);
   white-space: nowrap;
 }
 .fgauge-head .fval .pill {
@@ -399,21 +1059,21 @@ section {
 .res-summary {
   margin-top: 10px;
   font-size: 13px;
-  background: var(--pink-bg);
+  background: var(--card-2);
   border-radius: 12px;
   padding: 11px 13px;
-  color: #7a5a92;
+  color: var(--ink-strong);
 }
 .res-f1 {
   font-size: 12px;
   color: var(--ink-soft);
   margin-top: 10px;
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 11px;
   padding: 9px 11px;
 }
 .res-f1 b {
-  color: #7a5a92;
+  color: var(--ink-strong);
 }
 
 /* zone bar */
@@ -440,9 +1100,9 @@ section {
   top: -4px;
   width: 4px;
   height: 20px;
-  background: #5a4566;
+  background: var(--on-zone);
   border-radius: 3px;
-  box-shadow: 0 0 0 2px #fff;
+  box-shadow: 0 0 0 2px var(--line);
   transform: translateX(-2px);
 }
 .pill {
@@ -464,12 +1124,12 @@ section {
   border-radius: var(--radius);
   padding: 16px 16px 10px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
 }
 .chart-card h3 {
   margin: 0 0 2px;
   font-size: 15px;
-  color: #8a6aa8;
+  color: var(--ink-heading);
 }
 .chart-card .cap {
   font-size: 11px;
@@ -488,7 +1148,7 @@ section {
   border-radius: var(--radius);
   padding: 16px 18px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
@@ -501,9 +1161,9 @@ section {
   gap: 8px;
 }
 .rec .num {
-  background: rgba(255, 255, 255, 0.85);
-  color: #b06a96;
-  border: 2px solid var(--pink);
+  background: rgba(var(--overlay-rgb), 0.85);
+  color: var(--ink-accent);
+  border: 2px solid var(--accent);
   font-weight: 700;
   width: 34px;
   height: 34px;
@@ -512,12 +1172,12 @@ section {
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  box-shadow: 0 3px 8px rgba(176, 106, 150, 0.22);
+  box-shadow: 0 3px 8px rgba(var(--accent-glow-rgb), 0.22);
 }
 .rec .label-txt {
   font-weight: 700;
   font-size: 16px;
-  color: #855;
+  color: var(--ink-warm);
 }
 .rec .date {
   font-size: 12px;
@@ -529,7 +1189,7 @@ section {
   gap: 8px;
 }
 .chip {
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 12px;
   padding: 6px 11px;
   font-size: 12px;
@@ -540,7 +1200,7 @@ section {
 }
 .chip b {
   font-size: 15px;
-  color: #7a5a92;
+  color: var(--ink-strong);
 }
 .chip span {
   color: var(--ink-soft);
@@ -566,7 +1226,7 @@ section {
 }
 .rec-delete:hover {
   opacity: 1;
-  background: #ffe8e8;
+  background: var(--danger-bg);
   transform: scale(1.08);
 }
 .rec-confirm,
@@ -576,9 +1236,9 @@ section {
   align-items: center;
   gap: 10px;
   font-size: 12.5px;
-  color: #c84545;
-  background: #ffe8e8;
-  border: 1.5px solid #ffcccc;
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1.5px solid var(--danger-border);
   border-radius: 12px;
   padding: 9px 13px;
 }
@@ -589,16 +1249,16 @@ section {
   font-size: 12px;
   font-weight: 700;
   font-family: inherit;
-  color: #fff;
-  background: #e05d5d;
+  color: var(--on-accent);
+  background: var(--danger-strong);
   cursor: pointer;
   transition: background 0.15s ease;
 }
 .rec-confirm-yes:hover:not(:disabled) {
-  background: #c84545;
+  background: var(--danger);
 }
 .rec-confirm-no {
-  border: 1.5px solid #f0dcea;
+  border: 1.5px solid var(--line-soft);
   border-radius: 999px;
   padding: 6px 14px;
   font-size: 12px;
@@ -610,7 +1270,7 @@ section {
   transition: background 0.15s ease;
 }
 .rec-confirm-no:hover:not(:disabled) {
-  background: #fafafa;
+  background: var(--card);
 }
 .rec-confirm-yes:disabled,
 .rec-confirm-no:disabled {
@@ -625,13 +1285,13 @@ section {
   gap: 12px;
   margin-top: 4px;
   padding: 9px 13px;
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 16px;
   transition: box-shadow 0.18s ease, background 0.18s ease;
 }
 .player:hover {
-  background: #f1eaff;
-  box-shadow: 0 6px 18px rgba(186, 142, 196, 0.16);
+  background: var(--bg-base);
+  box-shadow: 0 6px 18px rgba(var(--shadow-rgb), 0.16);
 }
 .player .wave {
   cursor: pointer;
@@ -643,9 +1303,9 @@ section {
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  color: #fff;
-  background: linear-gradient(135deg, var(--pink), var(--lav));
-  box-shadow: 0 3px 8px rgba(176, 106, 150, 0.35);
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 3px 8px rgba(var(--accent-glow-rgb), 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -679,7 +1339,7 @@ section {
 }
 .player .vol input[type="range"] {
   width: 62px;
-  accent-color: var(--pink);
+  accent-color: var(--accent);
   cursor: pointer;
 }
 @media (max-width: 520px) {
@@ -695,15 +1355,15 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #b06a96;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid var(--pink-soft);
+  color: var(--ink-accent);
+  background: rgba(var(--overlay-rgb), 0.7);
+  border: 1.5px solid var(--bg-glow-1);
   text-decoration: none;
   transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
 }
 .player .dl:hover {
-  background: #fff;
-  border-color: var(--pink);
+  background: var(--card);
+  border-color: var(--accent);
   transform: translateY(1px);
 }
 .player .dl:active {
@@ -715,7 +1375,7 @@ details.cheat {
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   padding: 4px 20px;
   margin-top: 4px;
 }
@@ -723,7 +1383,7 @@ details.cheat summary {
   cursor: pointer;
   list-style: none;
   font-size: 18px;
-  color: #8a6aa8;
+  color: var(--ink-heading);
   padding: 12px 0;
   font-weight: 700;
   user-select: none;
@@ -746,14 +1406,14 @@ details.cheat[open] summary::after {
   padding: 6px 0 18px;
 }
 .gloss-item {
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 16px;
   padding: 14px;
 }
 .gloss-item h4 {
   margin: 0 0 4px;
   font-size: 14px;
-  color: #7a5a92;
+  color: var(--ink-strong);
   display: flex;
   gap: 6px;
   align-items: center;
@@ -765,8 +1425,8 @@ details.cheat[open] summary::after {
 }
 .gloss-item .guide {
   font-size: 12px;
-  color: #7a5a92;
-  background: #fff;
+  color: var(--ink-strong);
+  background: var(--card);
   border-radius: 10px;
   padding: 6px 9px;
   margin-bottom: 6px;
@@ -780,7 +1440,7 @@ details.cheat[open] summary::after {
   font-size: 12px;
   color: var(--ink-soft);
   font-style: italic;
-  background: var(--pink-bg);
+  background: var(--card-2);
   border-radius: 12px;
   padding: 10px 12px;
 }
@@ -796,7 +1456,7 @@ footer {
   margin-top: 50px;
 }
 a.legend-link {
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 
 /* ---- recording switcher ---- */
@@ -815,7 +1475,7 @@ a.legend-link {
 .picker button {
   font-family: inherit;
   cursor: pointer;
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   background: var(--card);
   color: var(--ink-soft);
   border-radius: 999px;
@@ -825,11 +1485,11 @@ a.legend-link {
   transition: color 0.15s, background 0.15s;
 }
 .picker button:hover {
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .picker button.active {
-  background: linear-gradient(135deg, var(--pink-soft), var(--lav-soft));
-  color: #b06a96;
+  background: linear-gradient(135deg, var(--bg-glow-1), var(--bg-glow-2));
+  color: var(--ink-accent);
   font-weight: 700;
 }
 
@@ -839,7 +1499,7 @@ a.legend-link {
   border-radius: var(--radius);
   padding: 14px 16px 8px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
 }
 .contour {
   display: block;
@@ -864,7 +1524,7 @@ a.legend-link {
   height: 100%;
   display: flex;
   align-items: flex-end;
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -875,7 +1535,7 @@ a.legend-link {
 }
 .posbar-val {
   font-weight: 700;
-  color: #5e7fb8;
+  color: var(--zone-masc-ink);
   font-size: 14px;
   margin-top: 6px;
 }
@@ -891,12 +1551,12 @@ a.legend-link {
   border-radius: var(--radius);
   padding: 20px 22px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
 }
 .insight h3 {
   margin: 0 0 4px;
   font-size: 18px;
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .insight .insight-sub {
   font-size: 13px;
@@ -908,21 +1568,21 @@ a.legend-link {
   color: var(--ink);
 }
 .insight .drill {
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 14px;
   padding: 12px 14px;
   font-size: 13px;
   margin-top: 10px;
 }
 .insight .drill b {
-  color: #7a5a92;
+  color: var(--ink-strong);
 }
 .insight-placeholder {
   background: var(--card);
   border-radius: var(--radius);
   padding: 26px 22px;
   box-shadow: var(--shadow);
-  border: 2px dashed #e7ddef;
+  border: 2px dashed var(--line-soft);
   color: var(--ink-soft);
   font-size: 13.5px;
   text-align: center;
@@ -938,8 +1598,8 @@ a.legend-link {
   padding: 4px 11px;
   border-radius: 999px;
   font-weight: 700;
-  background: var(--pink-bg);
-  color: #b06a96;
+  background: var(--card-2);
+  color: var(--ink-accent);
 }
 
 /* "generate insight" — primary CTA, same gradient pill as the record button */
@@ -951,15 +1611,15 @@ a.legend-link {
   font-family: inherit;
   font-size: 13.5px;
   font-weight: 700;
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
-  background: linear-gradient(135deg, var(--pink), var(--lav));
-  box-shadow: 0 4px 14px rgba(176, 106, 150, 0.35);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 4px 14px rgba(var(--accent-glow-rgb), 0.35);
   transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
 .insight-placeholder button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(176, 106, 150, 0.45);
+  box-shadow: 0 6px 18px rgba(var(--accent-glow-rgb), 0.45);
 }
 .insight-placeholder button:disabled {
   opacity: 0.65;
@@ -972,10 +1632,10 @@ a.legend-link {
    ghost-vs-gradient pairing). */
 .insight button {
   padding: 7px 16px;
-  border: 1.5px solid var(--pink);
+  border: 1.5px solid var(--accent);
   border-radius: 999px;
-  background: #fff;
-  color: #b06a96;
+  background: var(--control-bg);
+  color: var(--ink-accent);
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 700;
@@ -983,7 +1643,7 @@ a.legend-link {
   transition: background 0.15s ease;
 }
 .insight button:hover:not(:disabled) {
-  background: var(--pink-bg);
+  background: var(--card-2);
 }
 .insight button:disabled {
   opacity: 0.65;
@@ -995,9 +1655,9 @@ a.legend-link {
 .take-hint {
   margin: -6px 0 14px;
   font-size: 12.5px;
-  color: #b06a96;
-  background: var(--pink-bg);
-  border: 1.5px solid #ffe3f0;
+  color: var(--ink-accent);
+  background: var(--card-2);
+  border: 1.5px solid var(--bg-glow-1);
   border-radius: 999px;
   padding: 6px 14px;
   display: inline-block;
@@ -1009,20 +1669,20 @@ a.legend-link {
   cursor: pointer;
   /* persistent affordance: a soft tinted edge so clickable cards read
      differently from the plain "Pitch range" card even without hover */
-  border-color: #ffe3f1;
+  border-color: var(--bg-glow-1);
   background:
-    linear-gradient(180deg, #fffafd 0%, #fff4fa 100%);
+    linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
   transition: transform 0.16s ease, box-shadow 0.16s ease,
     border-color 0.16s ease;
 }
 .stat.is-clickable:hover,
 .stat.is-clickable:focus-visible {
   transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(186, 142, 196, 0.28);
+  box-shadow: 0 14px 30px rgba(var(--shadow-rgb), 0.28);
   outline: none;
 }
 .stat.is-clickable:focus-visible {
-  border-color: var(--pink);
+  border-color: var(--accent);
 }
 
 /* corner magnify glyph — persistent (visible on touch, no hover needed) */
@@ -1036,10 +1696,10 @@ a.legend-link {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--pink-bg);
-  color: #d784ac;
+  background: var(--card-2);
+  color: var(--accent-soft);
   font-size: 0.78em;
-  box-shadow: inset 0 0 0 1.5px #ffdcec;
+  box-shadow: inset 0 0 0 1.5px var(--bg-glow-1);
   transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
   pointer-events: none;
 }
@@ -1049,8 +1709,8 @@ a.legend-link {
 }
 .stat.is-clickable:hover .stat-expand,
 .stat.is-clickable:focus-visible .stat-expand {
-  background: var(--pink);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   transform: scale(1.08);
 }
 
@@ -1063,7 +1723,7 @@ a.legend-link {
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #cf86b0;
+  color: var(--accent-soft);
   text-transform: lowercase;
 }
 .stat-tap::before {
@@ -1072,7 +1732,7 @@ a.legend-link {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--pink);
+  background: var(--accent);
 }
 
 /* resonance gauges: small magnify glyph in the value row */
@@ -1084,17 +1744,17 @@ a.legend-link {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--pink-bg);
-  color: #d784ac;
+  background: var(--card-2);
+  color: var(--accent-soft);
   font-size: 0.72em;
-  box-shadow: inset 0 0 0 1.5px #ffdcec;
+  box-shadow: inset 0 0 0 1.5px var(--bg-glow-1);
   vertical-align: -0.22em;
   transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
 }
 .fgauge.is-clickable:hover .fgauge-expand,
 .fgauge.is-clickable:focus-visible .fgauge-expand {
-  background: var(--pink);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   transform: scale(1.08);
 }
 
@@ -1106,7 +1766,7 @@ a.legend-link {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(120, 96, 138, 0.28);
+  background: rgba(var(--scrim-rgb), 0.28);
   backdrop-filter: blur(6px) saturate(1.1);
   -webkit-backdrop-filter: blur(6px) saturate(1.1);
   animation: mm-fade 0.2s ease both;
@@ -1121,8 +1781,8 @@ a.legend-link {
   width: min(640px, 100%);
   background: var(--card);
   border-radius: 26px;
-  border: 2px solid #fff;
-  box-shadow: 0 24px 60px rgba(150, 110, 165, 0.34);
+  border: 2px solid var(--line);
+  box-shadow: 0 24px 60px rgba(var(--modal-shadow-rgb), 0.34);
   padding: 26px 28px 22px;
   transform-origin: var(--ox, 50%) var(--oy, 50%);
   animation: mm-pop 0.34s cubic-bezier(0.22, 1.2, 0.36, 1) both;
@@ -1141,22 +1801,22 @@ a.legend-link {
   height: 30px;
   border: none;
   border-radius: 50%;
-  background: var(--pink-bg);
-  color: #b06a96;
+  background: var(--card-2);
+  color: var(--ink-accent);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.15s ease;
 }
 .mm-close:hover {
-  background: var(--pink-soft);
+  background: var(--bg-glow-1);
   transform: rotate(90deg);
 }
 
 .mm-head h3 {
   margin: 0 36px 4px 0;
   font-size: 19px;
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .mm-head p {
   margin: 0 0 22px;
@@ -1187,7 +1847,7 @@ a.legend-link {
   height: 18px;
   border-radius: 9px;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(150, 110, 165, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(var(--modal-shadow-rgb), 0.08);
 }
 .mm-seg {
   position: absolute;
@@ -1201,7 +1861,7 @@ a.legend-link {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #5a4566;
+  color: var(--on-zone);
   opacity: 0.7;
   text-transform: lowercase;
   white-space: nowrap;
@@ -1237,7 +1897,7 @@ a.legend-link {
   transform: translateX(-50%);
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(176, 106, 150, 0.6) 0 3px,
+    rgba(var(--accent-glow-rgb), 0.6) 0 3px,
     transparent 3px 6px
   );
   pointer-events: none;
@@ -1246,7 +1906,7 @@ a.legend-link {
   left: 8.5px;
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(224, 122, 176, 0.85) 0 3px,
+    rgba(var(--highlight-rgb), 0.85) 0 3px,
     transparent 3px 6px
   );
 }
@@ -1254,9 +1914,9 @@ a.legend-link {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #b06a96;
-  border: 2.5px solid #fff;
-  box-shadow: 0 2px 6px rgba(150, 110, 165, 0.5);
+  background: var(--ink-accent);
+  border: 2.5px solid var(--line);
+  box-shadow: 0 2px 6px rgba(var(--modal-shadow-rgb), 0.5);
   flex: none;
   z-index: 2;
   display: flex;
@@ -1266,7 +1926,7 @@ a.legend-link {
 /* speaker glyph baked into each playable dot — a persistent "this plays" cue */
 .mm-spk {
   font-size: 8px;
-  color: #fff;
+  color: var(--on-accent);
   opacity: 0.92;
 }
 .mm-take-label {
@@ -1278,14 +1938,14 @@ a.legend-link {
 .mm-take.is-active .mm-take-dot {
   width: 17px;
   height: 17px;
-  background: var(--pink);
-  box-shadow: 0 0 0 3px var(--pink-soft), 0 3px 8px rgba(224, 122, 176, 0.55);
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--bg-glow-1), 0 3px 8px rgba(var(--highlight-rgb), 0.55);
 }
 .mm-take.is-active .mm-spk {
   font-size: 10px;
 }
 .mm-take.is-active .mm-take-label {
-  color: #b06a96;
+  color: var(--ink-accent);
   font-size: 12px;
 }
 
@@ -1308,12 +1968,12 @@ a.legend-link {
   border-radius: 2px;
 }
 .mm-ref-fem .mm-ref-stem {
-  background: #ffb6d5;
-  box-shadow: 0 0 0 1px #fff;
+  background: var(--zone-fem);
+  box-shadow: 0 0 0 1px var(--line);
 }
 .mm-ref-masc .mm-ref-stem {
-  background: #bcd3f0;
-  box-shadow: 0 0 0 1px #fff;
+  background: var(--zone-masc);
+  box-shadow: 0 0 0 1px var(--line);
 }
 
 .mm-axis {
@@ -1330,7 +1990,7 @@ a.legend-link {
   gap: 14px;
   margin-top: 18px;
   padding-top: 14px;
-  border-top: 1px dashed #f0dcea;
+  border-top: 1px dashed var(--line-soft);
   font-size: 11.5px;
   color: var(--ink-soft);
 }
@@ -1347,7 +2007,7 @@ a.legend-link {
 }
 .mm-key-take {
   border-radius: 50%;
-  background: #b06a96;
+  background: var(--ink-accent);
 }
 .mm-legend-note {
   font-style: italic;
@@ -1365,8 +2025,8 @@ a.legend-link {
   transform: scale(1.18);
 }
 .mm-take.is-playing .mm-take-dot {
-  background: var(--pink);
-  box-shadow: 0 0 0 4px var(--pink-soft), 0 3px 8px rgba(224, 122, 176, 0.6);
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--bg-glow-1), 0 3px 8px rgba(var(--highlight-rgb), 0.6);
 }
 .mm-ref.is-clickable .mm-ref-stem {
   transition: transform 0.14s ease, filter 0.14s ease;
@@ -1380,7 +2040,7 @@ a.legend-link {
   outline: none;
 }
 .mm-ref.is-playing .mm-ref-stem {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px rgba(176, 106, 150, 0.5);
+  box-shadow: 0 0 0 2px var(--line), 0 0 0 3.5px rgba(var(--accent-glow-rgb), 0.5);
 }
 /* tiny speaker badge above a ref tick — hidden until hover / focus / playing so
    the reference row stays a clean backdrop, but discoverable on interaction.
@@ -1392,7 +2052,7 @@ a.legend-link {
   transform: translateX(-50%) scale(0.6);
   transform-origin: center bottom;
   font-size: 11px;
-  color: #b06a96;
+  color: var(--ink-accent);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.14s ease, transform 0.14s ease;
@@ -1404,7 +2064,7 @@ a.legend-link {
   transform: translateX(-50%) scale(1);
 }
 .mm-ref-masc .mm-ref-spk {
-  color: #5e7fb8;
+  color: var(--zone-masc-ink);
 }
 
 /* prominent "click a dot/tick to hear it" banner above the legend */
@@ -1414,28 +2074,28 @@ a.legend-link {
   gap: 8px;
   margin-top: 18px;
   padding: 9px 14px;
-  background: linear-gradient(180deg, #fff0f7 0%, #fbeeff 100%);
-  border: 1.5px solid #ffe3f0;
+  background: linear-gradient(180deg, var(--card-2) 0%, var(--bg-base) 100%);
+  border: 1.5px solid var(--bg-glow-1);
   border-radius: 14px;
   font-size: 12.5px;
   font-weight: 600;
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .mm-hear b {
-  color: #a25688;
+  color: var(--ink-callout);
 }
 .mm-hear-icon {
   flex: none;
   font-size: 16px;
-  color: #d784ac;
+  color: var(--accent-soft);
 }
 
 .mm-player {
   margin-top: 16px;
   padding: 12px 14px;
-  background: var(--pink-bg);
+  background: var(--card-2);
   border-radius: 18px;
-  border: 1.5px solid #ffe3f0;
+  border: 1.5px solid var(--bg-glow-1);
   animation: mm-player-in 0.22s ease both;
 }
 @keyframes mm-player-in {
@@ -1451,7 +2111,7 @@ a.legend-link {
 .mm-player-title {
   font-size: 12.5px;
   font-weight: 700;
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .mm-player-close {
   border: none;
@@ -1464,8 +2124,8 @@ a.legend-link {
   transition: background 0.15s ease, color 0.15s ease;
 }
 .mm-player-close:hover {
-  background: var(--pink-soft);
-  color: #b06a96;
+  background: var(--bg-glow-1);
+  color: var(--ink-accent);
 }
 @media (prefers-reduced-motion: reduce) {
   .mm-backdrop, .mm-card { animation: none; }
@@ -1480,7 +2140,7 @@ a.legend-link {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(120, 96, 138, 0.32);
+  background: rgba(var(--scrim-rgb), 0.32);
   backdrop-filter: blur(6px) saturate(1.1);
   -webkit-backdrop-filter: blur(6px) saturate(1.1);
   animation: modal-fade 0.2s ease both;
@@ -1493,10 +2153,13 @@ a.legend-link {
 
 .modal {
   width: min(500px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--card);
   border-radius: 26px;
-  border: 2px solid #fff;
-  box-shadow: 0 24px 60px rgba(150, 110, 165, 0.34);
+  border: 2px solid var(--line);
+  box-shadow: 0 24px 60px rgba(var(--modal-shadow-rgb), 0.34);
   padding: 28px;
   animation: modal-slide 0.34s cubic-bezier(0.22, 1.2, 0.36, 1) both;
 }
@@ -1509,7 +2172,41 @@ a.legend-link {
 .modal h2 {
   margin: 0 0 8px;
   font-size: 22px;
-  color: #b06a96;
+  color: var(--ink-accent);
+}
+
+.modal.onboarding h3 {
+  margin: 20px 0 8px;
+  font-size: 16px;
+  color: var(--ink-accent);
+}
+
+.theme-picker { display: grid; gap: 14px; margin-bottom: 20px; }
+.theme-group { border: none; margin: 0; padding: 0; }
+.theme-group legend {
+  font-size: 11px; font-weight: 800; color: var(--ink-soft);
+  padding: 0; margin-bottom: 7px;
+}
+.theme-mode, .theme-swatch {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 0 8px 8px 0; padding: 6px 12px;
+  border-radius: 999px; background: var(--card-2); color: var(--ink);
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  border: 2px solid transparent;
+}
+.theme-mode.is-on, .theme-swatch.is-on { border-color: var(--accent); }
+.theme-mode input, .theme-swatch input {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.theme-mode:focus-within, .theme-swatch:focus-within {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.theme-chip {
+  width: 22px; height: 22px; border-radius: 7px; display: grid;
+  place-items: center; background: var(--bg-base); border: 1px solid var(--line);
+}
+.theme-chip i {
+  width: 9px; height: 9px; border-radius: 3px; background: var(--accent);
 }
 
 .modal > p {
@@ -1531,14 +2228,14 @@ a.legend-link {
 }
 
 .modal a {
-  color: #b06a96;
+  color: var(--ink-accent);
   text-decoration: none;
   font-weight: 600;
   transition: color 0.15s ease;
 }
 
 .modal a:hover {
-  color: #d784ac;
+  color: var(--accent-soft);
   text-decoration: underline;
 }
 
@@ -1547,9 +2244,9 @@ a.legend-link {
   width: 100%;
   padding: 12px 14px;
   margin: 0 0 16px;
-  border: 2px solid #f0dcea;
+  border: 2px solid var(--line-soft);
   border-radius: 14px;
-  background: #fafafa;
+  background: var(--card);
   font-size: 14px;
   color: var(--ink);
   font-family: inherit;
@@ -1560,13 +2257,13 @@ a.legend-link {
 .modal input[type="password"]:focus,
 .modal input[type="text"]:focus {
   outline: none;
-  border-color: var(--pink);
-  background: #fff;
+  border-color: var(--accent);
+  background: var(--card);
 }
 
 .modal input[type="password"]:disabled,
 .modal input[type="text"]:disabled {
-  background: #f5f5f5;
+  background: var(--control-disabled);
   color: var(--ink-soft);
 }
 
@@ -1590,23 +2287,23 @@ a.legend-link {
 .modal button:first-child {
   background: transparent;
   color: var(--ink-soft);
-  border: 1.5px solid #f0dcea;
+  border: 1.5px solid var(--line-soft);
 }
 
 .modal button:first-child:hover {
-  background: #fafafa;
+  background: var(--card);
   border-color: var(--ink-soft);
 }
 
 .modal button:last-child {
-  background: linear-gradient(135deg, var(--pink), var(--lav));
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(176, 106, 150, 0.35);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: var(--on-accent);
+  box-shadow: 0 4px 12px rgba(var(--accent-glow-rgb), 0.35);
 }
 
 .modal button:last-child:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(176, 106, 150, 0.45);
+  box-shadow: 0 6px 16px rgba(var(--accent-glow-rgb), 0.45);
 }
 
 .modal button:disabled {
@@ -1617,33 +2314,33 @@ a.legend-link {
 .modal-error {
   margin: -12px 0 16px;
   padding: 10px 13px;
-  background: #ffe8e8;
-  border: 1.5px solid #ffcccc;
+  background: var(--danger-bg);
+  border: 1.5px solid var(--danger-border);
   border-radius: 10px;
   font-size: 13px;
-  color: #c84545;
+  color: var(--danger);
   line-height: 1.4;
 }
 
 .backup-zone {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1.5px dashed #f0dcea;
+  border-top: 1.5px dashed var(--line-soft);
 }
 .backup-btn {
-  border: 1.5px solid var(--lav-soft);
+  border: 1.5px solid var(--bg-glow-2);
   border-radius: 999px;
   padding: 8px 16px;
   font-size: 12.5px;
   font-weight: 700;
   font-family: inherit;
-  color: #7a5a92;
-  background: #fff;
+  color: var(--ink-strong);
+  background: var(--control-bg);
   cursor: pointer;
   transition: background 0.15s ease;
 }
 .backup-btn:hover:not(:disabled) {
-  background: var(--lav-bg);
+  background: var(--bg-base);
 }
 .backup-btn:disabled {
   opacity: 0.65;
@@ -1652,9 +2349,9 @@ a.legend-link {
 .backup-success {
   margin: 10px 0 0;
   font-size: 12.5px;
-  color: #3f9c78;
-  background: #eafaf3;
-  border: 1.5px solid #cdeee0;
+  color: var(--success);
+  background: var(--success-bg);
+  border: 1.5px solid var(--success-border);
   border-radius: 10px;
   padding: 8px 12px;
   word-break: break-all;
@@ -1663,7 +2360,7 @@ a.legend-link {
 .danger-zone {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1.5px dashed #f0dcea;
+  border-top: 1.5px dashed var(--line-soft);
 }
 .danger-zone-label {
   margin: 0 0 8px;
@@ -1674,17 +2371,17 @@ a.legend-link {
   color: var(--ink-soft);
 }
 .danger-btn {
-  border: 1.5px solid #ffcccc;
+  border: 1.5px solid var(--danger-border);
   border-radius: 999px;
   padding: 8px 16px;
   font-size: 12.5px;
   font-weight: 700;
   font-family: inherit;
-  color: #c84545;
-  background: #fff;
+  color: var(--danger);
+  background: var(--control-bg);
   cursor: pointer;
   transition: background 0.15s ease;
 }
 .danger-btn:hover {
-  background: #ffe8e8;
+  background: var(--danger-bg);
 }

@@ -8,18 +8,23 @@ import {
   JITTER_ZONES,
   WEIGHT_ZONES,
   MELODY_ZONES,
+  FEM,
   zoneOf,
+  zoneColor,
   fmt,
+  type Zone,
 } from "./zones";
 import { StatCard } from "./components/StatCard";
 import { MetricModal } from "./components/MetricModal";
 import { METRICS, type MetricKey } from "./metrics";
 import { ResonanceCard } from "./components/ResonanceCard";
-import { LineChart, type Point, type ChartBand } from "./components/LineChart";
+import { LineChart, type Point } from "./components/LineChart";
+import { useThemeColors } from "./theme/ThemeProvider";
 import { RecordingCard } from "./components/RecordingCard";
 import { CheatSheet } from "./components/CheatSheet";
 import { RegisterSection } from "./components/RegisterSection";
 import { RecordButton } from "./components/RecordButton";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { TitleBar } from "./components/TitleBar";
 import { UpdateBanner } from "./components/UpdateBanner";
 import { GeneratedInsight } from "./components/GeneratedInsight";
@@ -44,6 +49,7 @@ import {
 } from "./components/icons";
 
 export function App() {
+  const colors = useThemeColors();
   const [recordings, setRecordings] = useState<Recording[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -129,25 +135,27 @@ export function App() {
       <div className="wrap">
       <header className="hero">
         <div style={{ position: "relative" }}>
-          <div>
+          <div className="hero-text">
             <h1>
               <EuphoniaIcon title="Euphonia" /> Euphonia
             </h1>
             <p>finding the sound that feels like you 💗✨</p>
           </div>
-          <button
-            className="settings-btn"
-            onClick={() => setShowOnboarding(true)}
-            title="Settings"
-            style={{ position: "absolute", top: 0, right: 0 }}
-          >
-            ⚙️
-          </button>
+          <div style={{ position: "absolute", top: 0, right: 0, display: "flex", gap: 6 }}>
+            <ThemeToggle />
+            <button
+              className="settings-btn"
+              onClick={() => setShowOnboarding(true)}
+              title="Settings"
+            >
+              ⚙️
+            </button>
+          </div>
         </div>
         {active && (
           <div className="latest-banner">
             💗 <b>#{active.id}</b> &middot; {active.label} &middot;{" "}
-            <span style={{ color: "#9d8ba8" }}>{active.date}</span>
+            <span style={{ color: "var(--ink-soft)" }}>{active.date}</span>
           </div>
         )}
       </header>
@@ -359,38 +367,38 @@ export function App() {
           <ChartCard
             h="Pitch (avg)"
             cap="pink band = feminine zone (165 Hz+)"
-            color="#e07ab0"
+            color={colors.chart1}
             data={mk((r) => r.pitch.mean_hz)}
             band={[165, 260]}
-            bandColor="#ffb6d5"
+            bandColor={zoneColor(FEM, colors)}
           />
           <ChartCard
             h="In-register melody"
             cap="true expressiveness, crashes removed (st)"
-            color="#9b7ad0"
+            color={colors.chart2}
             data={mk((r) => r.register?.in_register_semitones_sd ?? null)}
             bands={MELODY_ZONES}
           />
           <ChartCard
             h="Phrase endings landed"
             cap="% of phrases that stayed in register"
-            color="#5fb89a"
+            color={colors.chart3}
             data={mk((r) => r.register?.phrases_landed_pct ?? null)}
             band={[80, 100]}
-            bandColor="#b8ecd8"
+            bandColor={colors.chart3Band}
           />
           <ChartCard
             h="Resonance (F2)"
             cap="brightness / vocal-tract size cue"
-            color="#d99a4e"
+            color={colors.chart4}
             data={mk((r) => r.formants.f2_hz)}
             band={[1850, 2400]}
-            bandColor="#c9b6ff"
+            bandColor={colors.chart4Band}
           />
           <ChartCard
             h="Weight"
             cap="spectral tilt · lower = lighter / more feminine"
-            color="#cf7fb0"
+            color={colors.chart5}
             data={mk((r) => r.weight?.h1a3c_db ?? null)}
             bands={WEIGHT_ZONES}
           />
@@ -468,10 +476,18 @@ interface ChartCardProps {
   data: Point[];
   band?: [number, number];
   bandColor?: string;
-  bands?: ChartBand[];
+  bands?: Zone[];
 }
 
 function ChartCard({ h, cap, color, data, band, bandColor, bands }: ChartCardProps) {
+  const colors = useThemeColors();
+  // bands come in as zone keys (see zones.ts) — resolve each to this theme's
+  // actual color before handing them to LineChart, which just wants hex.
+  const resolvedBands = bands?.map((z) => ({
+    from: z.from,
+    to: z.to,
+    color: zoneColor(z.color, colors),
+  }));
   return (
     <div className="chart-card">
       <h3>{h}</h3>
@@ -481,7 +497,7 @@ function ChartCard({ h, cap, color, data, band, bandColor, bands }: ChartCardPro
         color={color}
         band={band}
         bandColor={bandColor}
-        bands={bands}
+        bands={resolvedBands}
       />
     </div>
   );

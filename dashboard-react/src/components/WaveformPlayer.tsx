@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import WavesurferPlayer from "@wavesurfer/react";
 import type WaveSurfer from "wavesurfer.js";
 import Hover from "wavesurfer.js/dist/plugins/hover.esm.js";
+import { useThemeColors } from "../theme/ThemeProvider";
 
 // Themed waveform player (wavesurfer.js) — replaces the native <audio> bar so
 // playback matches the pastel theme AND shows the take's actual voice shape.
@@ -50,26 +51,54 @@ interface PlayerProps {
 }
 
 export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
+  const colors = useThemeColors();
   const [ws, setWs] = useState<WaveSurfer | null>(null);
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(duration ?? 0);
   const [vol, setVol] = useState(1);
 
-  // hover-to-seek preview: a soft pink line + time tooltip following the cursor.
-  // created once so it isn't re-instantiated on every render.
+  // @wavesurfer/react rebuilds (destroys + recreates) the underlying
+  // WaveSurfer instance whenever ANY option value changes across renders —
+  // not just `plugins` — since its internal effect depends on every option
+  // it's handed. Passing the live `colors.*` strings straight into the props
+  // below would therefore tear down and rebuild the player on every theme
+  // switch, dropping playback position mid-listen. So these are captured
+  // once at mount and never updated; the effect further down repaints the
+  // *existing* instance via setOptions() instead, which is how a live theme
+  // change actually reaches the waveform without a rebuild.
+  const mountColors = useRef(colors).current;
+
+  // hover-to-seek preview: a soft line + time tooltip following the cursor.
+  // created once so it isn't re-instantiated on every render — the Hover
+  // plugin has no setOptions of its own, and reference stability here (see
+  // the empty deps below) also keeps `plugins` from becoming a new array on
+  // a theme change, which would trigger the rebuild described above. Its
+  // colors are therefore frozen to whatever theme was active at mount.
   const plugins = useMemo(
     () => [
       Hover.create({
-        lineColor: "#ff89bb",
+        lineColor: mountColors.waveCursor,
         lineWidth: 2,
-        labelBackground: "#b06a96",
-        labelColor: "#ffffff",
+        labelBackground: mountColors.inkAccent,
+        labelColor: mountColors.onAccent,
         labelSize: 11,
       }),
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+
+  // Repaint the existing instance in place when the theme changes. Deps are
+  // the individual color strings (not `colors` itself) so this only fires
+  // when a color actually changes, not on every unrelated re-render.
+  useEffect(() => {
+    ws?.setOptions({
+      waveColor: colors.wave,
+      progressColor: colors.waveProgress,
+      cursorColor: colors.waveCursor,
+    });
+  }, [ws, colors.wave, colors.waveProgress, colors.waveCursor]);
 
   const onReady = useCallback(
     (w: WaveSurfer) => {
@@ -113,9 +142,9 @@ export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
           url={url}
           height={42}
           normalize
-          waveColor="#bfa9e6"
-          progressColor="#ff9ec5"
-          cursorColor="#ff89bb"
+          waveColor={mountColors.wave}
+          progressColor={mountColors.waveProgress}
+          cursorColor={mountColors.waveCursor}
           cursorWidth={2}
           barWidth={2.5}
           barGap={1.6}
@@ -135,10 +164,10 @@ export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
 
       <div className="vol">
         <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 9 H8 L13 5 V19 L8 15 H4 Z" fill="#c0a9d6" />
+          <path d="M4 9 H8 L13 5 V19 L8 15 H4 Z" fill={colors.waveIcon} />
           <path
             d="M16 8.5 C18 10 18 14 16 15.5"
-            stroke="#c0a9d6"
+            stroke={colors.waveIcon}
             strokeWidth="1.8"
             fill="none"
             strokeLinecap="round"

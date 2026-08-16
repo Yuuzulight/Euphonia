@@ -9,6 +9,7 @@ import type { RecordingSummary } from "./gemini";
 import { generateInsight, regenerateWithGemini, readCachedInsight } from "./insights";
 import { deleteRecording, deleteAllRecordings, exportRecordings } from "./recordings";
 import { installUpdate } from "./updater";
+import { chromeFor, writeCachedTheme } from "./theme";
 
 interface CreateRecordingPayload {
   audioBase64: string;
@@ -55,4 +56,21 @@ export function registerIpcHandlers(win: BrowserWindow): void {
   ipcMain.handle("insights:regenerateWithGemini", (_event, recording: RecordingSummary) =>
     regenerateWithGemini(recording),
   );
+
+  ipcMain.on("theme:set", (_event, id: unknown) => {
+    // The `id: string` on the preload side is only a compile-time promise —
+    // a compromised or buggy renderer can send anything over the wire, so
+    // main must not trust the payload's shape before it reaches theme.ts's
+    // own-property lookup.
+    if (typeof id !== "string") return;
+    const chrome = chromeFor(id);
+    writeCachedTheme(id);
+    if (!win.isDestroyed()) {
+      win.setTitleBarOverlay({
+        color: chrome.titlebar,
+        symbolColor: chrome.symbol,
+        height: 40,
+      });
+    }
+  });
 }

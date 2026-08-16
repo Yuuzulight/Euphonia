@@ -1,13 +1,15 @@
-import { MASC, FEM, fmt } from "../zones";
+import { MASC, FEM, zoneColor, fmt } from "../zones";
 import { ContourChart } from "./ContourChart";
 import { useAnnotations, Note } from "../annotations/AnnotationsProvider";
 import { RichText } from "./RichText";
+import { useThemeColors } from "../theme/ThemeProvider";
 
 // Permanent "Register & phrasing" visualizer. Reads the active recording and
 // its heavy detail JSON from the annotations context (loaded once there), and
 // shows the pitch contour, register-stability stats, and the phrase-boundary
 // breakdown (where the voice falls out of register).
 export function RegisterSection() {
+  const colors = useThemeColors();
   const { recording, detail } = useAnnotations();
   const reg = recording.register;
 
@@ -34,7 +36,7 @@ export function RegisterSection() {
         Pitch isn't just an average — it's a <b>contour</b> that moves through every phrase. This
         shows where your voice <b>falls out of register</b> (crashes below {reg.floor_hz} Hz, back
         toward chest voice). The{" "}
-        <span style={{ color: "#5e7fb8", fontWeight: 700 }}>blue stretches</span> are the drops;
+        <span style={{ color: colors.zoneMascInk, fontWeight: 700 }}>blue stretches</span> are the drops;
         watch where they cluster.
       </p>
 
@@ -100,7 +102,7 @@ export function RegisterSection() {
             return (
               <div className="posbar" key={p.key}>
                 <div className="posbar-track">
-                  <div className="posbar-fill" style={{ height: `${h}%`, background: MASC }} />
+                  <div className="posbar-fill" style={{ height: `${h}%`, background: zoneColor(MASC, colors) }} />
                 </div>
                 <div className="posbar-val">{fmt(p.v)}%</div>
                 <div className="posbar-lbl">{p.label}</div>
@@ -108,7 +110,7 @@ export function RegisterSection() {
             );
           })}
         </div>
-        <div className="res-summary" style={{ marginTop: 14, background: FEM + "22" }}>
+        <div className="res-summary" style={{ marginTop: 14, background: zoneColor(FEM, colors) + "22" }}>
           <Note id="note.register">
             <RichText>
               🎯 Your weakest spot is <b>{worst.label}</b> ({fmt(worst.v)}% sub-register). The most

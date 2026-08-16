@@ -10,11 +10,11 @@ These metrics are grounded in established acoustic research, not professional cl
 
 For results that are meaningfully comparable over time, read the same passage with a similar microphone setup each time. The Rainbow Passage is used as the reference passage throughout this guide.
 
-There are three ways to use Euphonia, depending on your platform and how comfortable you are with a coding agent:
+There are three ways to use Euphonia, depending on your platform and how comfortable you are working in the code:
 
 ## Desktop app (recommended if you just want to use it)
 
-Euphonia is available as a Windows desktop app. No coding agent, no terminal, no account, no API key — install it, open it, record a take, and everything works instantly, including a written insight for every take. All your recordings and data stay on your own machine, in your own user folder.
+Euphonia is available as a Windows desktop app. No terminal, no account, no API key — install it, open it, record a take, and everything works instantly, including a written insight for every take. All your recordings and data stay on your own machine, in your own user folder.
 
 **Currently Windows-only.** A macOS build was part of the original plan but hasn't actually been built yet. If you're on a Mac, use the developer workflow below for now.
 
@@ -38,6 +38,8 @@ For results you can actually compare over time, read the *same* passage with a *
 ### 3. Read your results
 
 The dashboard shows, for your latest take: pitch, resonance (formants), loudness, steadiness (jitter/shimmer), vocal weight, and a register/phrasing breakdown of where your voice stays in or falls out of your target range. Click any metric card to see the full scale, with your past takes and real reference voices plotted alongside so you can see where you sit. The **"What do these mean?"** section at the bottom explains each metric in plain language. Every number here is meant as a compass, not a judge — a hint toward what to work on next, never a verdict.
+
+Prefer a different look? There are eight themes, three light and five dark, one click away from the moon/sun button in the header or the picker in **⚙️ Settings** — whichever you pick is remembered on this machine.
 
 ### 4. Get a written insight for a take
 
@@ -65,19 +67,19 @@ To remove a single take, use the small 🗑️ button on its card in **All recor
 
 This runs the same Praat voice-analysis engine as the desktop app, compiled to WebAssembly. Everything happens locally in your browser tab: nothing is uploaded anywhere, and once the page has loaded once it works offline. Recordings live in your browser's local storage (IndexedDB) instead of a file on disk, so they stay on that device and in that browser. Export a backup (⚙️ Settings → 💾 export all recordings) if you want to move them elsewhere or keep a copy.
 
-Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis. The one thing missing is auto-update — just refresh the page for the latest version.
+Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
 
 **Mobile:** the layout and the full record → analyze → results flow have both been tested on phone-sized screens against the live site, so this is more than a "should probably work." The one piece I haven't verified on an actual phone yet is microphone capture itself — if that misbehaves on your device, [open an issue](../../issues).
 
-## Developer / coding-agent workflow
+## Developer workflow
 
-This is how the project was originally built, and it's still how you'd customize it, add features, or get the deeper hand-authored insight style (see `CLAUDE.md`) instead of the desktop app's automated template or Gemini insights.
+This is how you'd customize Euphonia, add features, or get the deeper hand-authored insight style instead of the desktop app's automated template or Gemini insights.
 
-Open your coding agent of choice and ask it to read `CLAUDE.md`. It'll give you a summary of how the app works and help you analyze your voice from there — it also documents the desktop app's architecture in depth if you want to build on it.
+Start with `ARCHITECTURE.md`. It covers how the app works end to end — the annotation system, the color and copy conventions, the analysis methodology — and documents the desktop app's architecture in depth if you want to build on it.
 
-Euphonia relies heavily on Claude Code, so use Claude Code or a similar coding agent for this path. Instead of embedding AI-generated analysis into the UI, it's implemented using skills — the coding agent runs those skills and updates the UI with the results.
+The difference from the other two paths is where insights come from. Rather than generating them in the UI, this one keeps authoring in the repo: you run `analyze.py` over a take, then write that recording's insight by hand against its metrics as an annotation entry, and the dashboard renders it. `.claude/skills/analyze-voice/SKILL.md` writes that routine out step by step.
 
-If you don't know what a coding agent is, use the desktop app above instead.
+If that sounds like more than you want, use the desktop app above instead.
 
 ## Building the desktop app
 
@@ -102,11 +104,11 @@ cd electron && npm install && npm run build && npx electron-builder
 
 To run it in dev without packaging: `cd electron && npm run build && npx electron .`. This spawns `analyze.py` via `uv run` instead of a frozen sidecar, so you'll still need `ffmpeg` on PATH.
 
-The full architecture — the Electron shell, the `app://` protocol that bridges the renderer to your local files, the IPC surface, the Gemini insight generation — is documented in `CLAUDE.md`.
+The full architecture — the Electron shell, the `app://` protocol that bridges the renderer to your local files, the IPC surface, the Gemini insight generation — is documented in `ARCHITECTURE.md`.
 
 ## License
 
-All code and content I wrote — `analyze.py`, the React dashboard, the Claude Code skill, and the docs — is licensed under the **MIT License** (see `LICENSE`).
+All code and content I wrote — `analyze.py`, the React dashboard, the annotation skill, and the docs — is licensed under the **MIT License** (see `LICENSE`).
 
 I also dedicate my own code and content to the **public domain**, in jurisdictions where that's legally meaningful — use it under the MIT License or as public domain, whichever suits you. (Many countries lack a legal framework for public-domain dedication, which is why the MIT License is there too.) This doesn't apply to the third-party assets credited below.
 

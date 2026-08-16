@@ -1,10 +1,12 @@
 import type { RecordingDetail } from "../../types";
-import { MASC, FEM } from "../../zones";
+import { MASC, FEM, zoneColor } from "../../zones";
+import { useThemeColors } from "../../theme/ThemeProvider";
 
 // Focused viz for "register at phrase boundaries": one dot per phrase ENDING,
 // plotted at its offset pitch, with the register floor drawn across. Pink dot =
 // landed in register; blue dot = trailed off below it.
 export function PhraseEndingStrip({ detail }: { detail: RecordingDetail }) {
+  const colors = useThemeColors();
   const floor = detail.register_floor_hz;
   const phrases = detail.phrases;
   const W = 900;
@@ -27,7 +29,7 @@ export function PhraseEndingStrip({ detail }: { detail: RecordingDetail }) {
         y={y(floor)}
         width={iw}
         height={y(minHz) - y(floor)}
-        fill={MASC}
+        fill={zoneColor(MASC, colors)}
         opacity={0.18}
       />
       <line
@@ -39,7 +41,7 @@ export function PhraseEndingStrip({ detail }: { detail: RecordingDetail }) {
         strokeWidth={1.5}
         strokeDasharray="5 4"
       />
-      <text x={W - pad.r} y={y(floor) - 5} fontSize="10" fill="#5e7fb8" textAnchor="end">
+      <text x={W - pad.r} y={y(floor) - 5} fontSize="10" fill={colors.zoneMascInk} textAnchor="end">
         register floor {floor} Hz
       </text>
       {phrases.map((p, i) => (
@@ -49,7 +51,7 @@ export function PhraseEndingStrip({ detail }: { detail: RecordingDetail }) {
             x2={x(i)}
             y1={y(p.offset_hz)}
             y2={y(minHz)}
-            stroke={p.ended_in_register ? FEM : MASC}
+            stroke={zoneColor(p.ended_in_register ? FEM : MASC, colors)}
             strokeWidth={2}
             opacity={0.45}
           />
@@ -57,8 +59,8 @@ export function PhraseEndingStrip({ detail }: { detail: RecordingDetail }) {
             cx={x(i)}
             cy={y(p.offset_hz)}
             r={5}
-            fill={p.ended_in_register ? FEM : MASC}
-            stroke="#fff"
+            fill={zoneColor(p.ended_in_register ? FEM : MASC, colors)}
+            stroke={colors.card}
             strokeWidth={1.5}
           >
             <title>
@@ -68,7 +70,7 @@ export function PhraseEndingStrip({ detail }: { detail: RecordingDetail }) {
           </circle>
         </g>
       ))}
-      <text x={pad.l} y={H - 6} fontSize="10" fill="#9d8ba8">
+      <text x={pad.l} y={H - 6} fontSize="10" fill={colors.inkSoft}>
         each dot = a phrase ending · blue = fell out of register
       </text>
     </svg>

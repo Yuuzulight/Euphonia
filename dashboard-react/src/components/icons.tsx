@@ -2,12 +2,23 @@
 // Custom hand-drawn icon set 💗 — soft pastel glyphs that replace the section
 // emoji so the whole dashboard feels bespoke and cohesive (same family as the
 // Euphonia favicon). Each is a self-contained inline SVG that inherits text sizing
-// via `em`, so it lines up with the heading it sits beside. Decorative only.
+// via `em`, so it lines up with the heading it sits beside.
 //
-// Palette (from zones.ts / index.css): pink #ffb6d5 · deep-pink #ff9ec5/#ff89bb
-// lavender #c9b6ff/#b6a2f0 · mint #7fd0ab · butter #ffe08f/#ffd27a · masc-blue
-// #9fbce8 (used ONLY for the "fell out of register" dip — honoring the strict
-// color convention: blue = masculine register, and a register crash *is* that).
+// BowIcon/SparkleIcon/InsightIcon/TrendsIcon/CardsIcon/BulbIcon keep their
+// original literal, multi-hue palettes on purpose — treat them the same
+// exception class as the trans-pride flag bars in EuphoniaIcon below: they
+// are decorative brand illustration, not theme chrome. They were never
+// single-color glyphs (SparkleIcon mixes pink/gold/lavender, CardsIcon mixes
+// lavender/pink/white/mint, BulbIcon mixes gold/pink/lavender), so collapsing
+// them to `currentColor` flattened them into one flat heading-colored blob —
+// the wrong fix. These are light pastels that stay legible against the dark
+// themes' near-black cards, the same way the flag bars do.
+//
+// ContourIcon is the one exception to "decorative": it carries the same
+// masc/fem register meaning as the charts it symbolizes (see its own doc
+// comment below), so it's wired to the zone tokens instead.
+
+import { useThemeColors } from "../theme/ThemeProvider";
 
 type IconProps = {
   /** rendered size; defaults to 1.15em so it matches emoji weight in a heading */
@@ -63,20 +74,27 @@ export function SparkleIcon(p: IconProps = {}) {
 }
 
 /** 🎚️ → a pitch contour that rises (pink, in register) then dips into masc-blue
- *  (fell out of register) — literally the thing this section measures. */
+ *  (fell out of register) — literally the thing this section measures. Unlike
+ *  the rest of this file, these colors are NOT decorative: honoring the app's
+ *  strict color convention (blue = masculine register, never reassigned), the
+ *  dip is wired to the same zone tokens as the charts it symbolizes, so it
+ *  can't drift out of sync with them under any theme. */
 export function ContourIcon(p: IconProps = {}) {
+  const colors = useThemeColors();
   const { children, ...rest } = svgProps("0 0 64 64", p);
   return (
     <svg {...rest}>
       {children}
-      {/* soft pink fill = the "in-register" hill above the floor (adds mass) */}
-      <path d="M7 40 C16 40 22 14 32 14 C40 14 42 26 47 29 L47 37 L7 37 Z" fill="#ffd9ea" />
+      {/* soft pink fill = the "in-register" hill above the floor (adds mass).
+          Uses zoneFemSoft (a dedicated fem-family tint), NOT zoneStrong — this
+          is a pitch/register shape, not the loudness concept zoneStrong means. */}
+      <path d="M7 40 C16 40 22 14 32 14 C40 14 42 26 47 29 L47 37 L7 37 Z" fill={colors.zoneFemSoft} />
       {/* register floor — the line you fall below */}
-      <path d="M7 37 H57" stroke="#cdc6da" strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="0.1 7" />
-      <path d="M7 40 C16 40 22 14 32 14 C40 14 42 26 47 29" stroke="#ff9ec5" strokeWidth="6.5" fill="none" strokeLinecap="round" />
-      <path d="M47 29 C53 31 53 50 59 50" stroke="#9fbce8" strokeWidth="6.5" fill="none" strokeLinecap="round" />
-      <circle cx="32" cy="14" r="5.5" fill="#ff89bb" />
-      <circle cx="59" cy="50" r="5.5" fill="#7ea3d8" />
+      <path d="M7 37 H57" stroke={colors.zoneGrow} strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="0.1 7" />
+      <path d="M7 40 C16 40 22 14 32 14 C40 14 42 26 47 29" stroke={colors.zoneFem} strokeWidth="6.5" fill="none" strokeLinecap="round" />
+      <path d="M47 29 C53 31 53 50 59 50" stroke={colors.zoneMascInk} strokeWidth="6.5" fill="none" strokeLinecap="round" />
+      <circle cx="32" cy="14" r="5.5" fill={colors.zoneFem} />
+      <circle cx="59" cy="50" r="5.5" fill={colors.zoneMasc} />
     </svg>
   );
 }

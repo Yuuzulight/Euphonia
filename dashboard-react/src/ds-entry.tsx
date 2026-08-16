@@ -1,7 +1,6 @@
-// Design-system entry: re-exports the Euphonia component library for
-// claude.ai/design (consumed by /design-sync). Not used by the app itself —
-// the app mounts via main.tsx. Keep this in sync with src/components/ and
-// src/annotations/lib/.
+// Design-system entry: re-exports the Euphonia component library for external
+// design tooling. Not used by the app itself — the app mounts via main.tsx.
+// Keep this in sync with src/components/ and src/annotations/lib/.
 export { StatCard } from "./components/StatCard";
 export { ResonanceCard } from "./components/ResonanceCard";
 export { ZoneBar } from "./components/ZoneBar";

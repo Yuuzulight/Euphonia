@@ -31,6 +31,9 @@ jobs:
       - name: Test protocol path containment (resolveWithinBase)
         run: node scripts/test_protocol_paths.js
 
+      - name: Test theme tokens (parity + contrast)
+        run: node scripts/test_theme_tokens.js
+
       - uses: astral-sh/setup-uv@v3
 
       - name: Test analyze.py path resolution

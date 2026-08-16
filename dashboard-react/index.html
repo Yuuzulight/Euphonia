@@ -9,6 +9,63 @@
     <link rel="alternate icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#d6ecff" />
+    <!-- Applies the saved theme before first paint. This deliberately
+         duplicates resolvePref() from src/theme/themeStore.ts rather than
+         importing it: the module graph hasn't loaded yet at this point, and
+         anything async here means a white flash on every load for dark-theme
+         users. Keep the two in sync — it's ~6 lines, same trade as zones.ts. -->
+    <script>
+      // Must agree with loadPref()+resolvePref() in src/theme/themeStore.ts for
+      // EVERY stored value, not just well-formed ones. Any disagreement paints one
+      // theme and then snaps to another when React mounts — the exact flash this
+      // script exists to prevent. That means duplicating the per-field family
+      // validation too, not only the mode branch: a dark id smuggled into the
+      // light slot is syntactically valid JSON and never reaches the catch.
+      // scripts/test_theme_tokens.js asserts these two arrays still match the
+      // theme blocks in index.css, so adding a theme cannot silently skip this file.
+      //
+      // TITLEBAR_BG duplicates each theme's --titlebar-bg (index.css) so the
+      // <meta name="theme-color"> can be set to the resolved theme before
+      // first paint too — mobile browser chrome would otherwise stay the
+      // static fallback color behind every dark theme. Same trade as the
+      // LIGHT/DARK arrays above: no module graph is loaded yet, so this can't
+      // read the CSS custom property, it has to carry its own copy.
+      (function () {
+        var LIGHT = ["blossom", "paper", "light-mint"];
+        var DARK = ["dusk-plum", "dark-mint", "midnight", "cocoa", "amber-night"];
+        var TITLEBAR_BG = {
+          "blossom": "#ffd9ea",
+          "paper": "#ece4d6",
+          "light-mint": "#cfeee0",
+          "dusk-plum": "#251d33",
+          "dark-mint": "#1b2a24",
+          "midnight": "#141c30",
+          "cocoa": "#241b17",
+          "amber-night": "#1f1810",
+        };
+        var p = null;
+        try {
+          var raw = JSON.parse(localStorage.getItem("euphonia:theme") || "null");
+          if (raw && typeof raw === "object") p = raw;
+        } catch (e) {
+          p = null;
+        }
+        if (!p) p = {};
+        var light = LIGHT.indexOf(p.light) >= 0 ? p.light : "blossom";
+        var dark = DARK.indexOf(p.dark) >= 0 ? p.dark : "dusk-plum";
+        // an unrecognised mode resolves as "auto", matching loadPref's guard
+        var useDark =
+          p.mode === "dark" ||
+          (p.mode !== "light" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        var theme = useDark ? dark : light;
+        document.documentElement.setAttribute("data-theme", theme);
+        var metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor && TITLEBAR_BG[theme]) {
+          metaThemeColor.setAttribute("content", TITLEBAR_BG[theme]);
+        }
+      })();
+    </script>
     <title>🎵 Euphonia</title>
   </head>
   <body>

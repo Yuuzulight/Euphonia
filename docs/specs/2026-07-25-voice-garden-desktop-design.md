@@ -2,7 +2,7 @@
 
 ## Goal
 
-Turn Euphonia from a repo you clone and drive via a coding agent into an
+Turn Euphonia from a repo you clone and drive from the command line into an
 installable desktop app that friends can run on their own machines, with no
 server, no accounts, and no per-install cost beyond an optional free Gemini
 API key.
@@ -56,9 +56,8 @@ read-only inside the app bundle, unchanged from today.
 
 ## Insight generation (Gemini API)
 
-- Replaces the repo's current workflow (a human + Claude Code hand-authoring
-  a bespoke `.tsx` file per recording), which doesn't work per-user in a
-  shipped app.
+- Replaces the repo's current workflow (hand-authoring a bespoke `.tsx` file
+  per recording), which doesn't work per-user in a shipped app.
 - Main process calls the **Gemini API** (free tier) with the recording's
   metrics plus prior recordings for trend context, requesting structured
   JSON: `{ summary, strengths[], focus_area, tip }`.

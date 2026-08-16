@@ -1,8 +1,8 @@
 # Euphonia Desktop App Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> Steps use checkbox (`- [ ]`) syntax so the plan can be worked through task-by-task.
 
-**Goal:** Package Euphonia as an installable Electron desktop app — no server, no accounts — that records audio, runs the existing Praat/parselmouth analysis, and generates a free Gemini-powered written insight per recording, replacing the current "clone the repo + ask a coding agent" workflow.
+**Goal:** Package Euphonia as an installable Electron desktop app — no server, no accounts — that records audio, runs the existing Praat/parselmouth analysis, and generates a free Gemini-powered written insight per recording, replacing the current "clone the repo and hand-author each insight" workflow.
 
 **Architecture:** Electron main process spawns the existing `analyze.py` as a subprocess (dev: via `uv run`; packaged: a PyInstaller-frozen executable) and serves the existing `dashboard-react` renderer through a custom `app://` protocol that transparently redirects the small set of *dynamic* paths (`recordings.json`, `audio/*`, `analysis/*`) to the OS per-user data directory while everything else is served read-only from the built bundle — so almost none of the existing React code changes. New IPC channels (recording upload, Gemini insight generation, API key settings) are exposed to the renderer via a `contextBridge` preload script.
 
@@ -12,10 +12,10 @@
 
 - No new backend, database, or accounts — spec explicitly rules these out.
 - No new production npm dependencies beyond `electron` — use Node/Electron built-ins (`fetch`, `safeStorage`, `fs`) wherever they cover the need.
-- `analyze.py`'s existing CLI behavior (no `--output-root` passed) must stay byte-for-byte the same, since the repo's documented coding-agent workflow (`CLAUDE.md`) depends on it.
+- `analyze.py`'s existing CLI behavior (no `--output-root` passed) must stay byte-for-byte the same, since the repo's documented developer workflow (`ARCHITECTURE.md`) depends on it.
 - All existing `dashboard-react` components (`StatCard`, `MetricModal`, `WaveformPlayer`, `AnnotationsProvider`, `zones.ts`, etc.) must keep working via `fetch("${import.meta.env.BASE_URL}...")` unchanged — the protocol layer, not the components, absorbs the desktop-app data-location change.
 - Insights are optional: with no Gemini key, every existing dashboard feature (metrics, charts, reference comparison, waveform playback) must work exactly as today.
-- Follow the repo's existing conventions from `CLAUDE.md`: MASC-blue only for register crashes, warm/specific copy, no bare `React` import (automatic JSX runtime).
+- Follow the repo's existing conventions from `ARCHITECTURE.md`: MASC-blue only for register crashes, warm/specific copy, no bare `React` import (automatic JSX runtime).
 
 ---
 
@@ -1174,7 +1174,7 @@ Replace:
     <div className="insight-placeholder">
       ✍️ no custom insight written for take #{active.id} yet.
       <br />
-      ask Claude to "analyze this recording" — it'll design one right
+      author one for this recording — it'll render right
       here.
     </div>
   }

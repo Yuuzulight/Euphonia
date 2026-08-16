@@ -1,5 +1,6 @@
 import type { RecordingDetail } from "../types";
-import { MASC, FEM } from "../zones";
+import { MASC, FEM, zoneColor } from "../zones";
+import { useThemeColors } from "../theme/ThemeProvider";
 
 interface Props {
   detail: RecordingDetail;
@@ -12,6 +13,7 @@ interface Props {
 // are marked with soft dividers and a dot under each ending (pink = landed in
 // register, blue = fell out).
 export function ContourChart({ detail, femThreshold = 165 }: Props) {
+  const colors = useThemeColors();
   const W = 900;
   const H = 240;
   const pad = { l: 40, r: 14, t: 14, b: 40 };
@@ -63,7 +65,7 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
         y={y(maxHz)}
         width={iw}
         height={y(femThreshold) - y(maxHz)}
-        fill={FEM}
+        fill={zoneColor(FEM, colors)}
         opacity={0.12}
       />
       {/* sub-register band (blue, below the floor) */}
@@ -72,7 +74,7 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
         y={y(floor)}
         width={iw}
         height={y(minHz) - y(floor)}
-        fill={MASC}
+        fill={zoneColor(MASC, colors)}
         opacity={0.22}
       />
 
@@ -86,7 +88,7 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
         strokeWidth={1.5}
         strokeDasharray="5 4"
       />
-      <text x={W - pad.r} y={y(floor) - 5} fontSize="10" fill="#5e7fb8" textAnchor="end">
+      <text x={W - pad.r} y={y(floor) - 5} fontSize="10" fill={colors.zoneMascInk} textAnchor="end">
         register floor {floor} Hz
       </text>
 
@@ -98,25 +100,31 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
           x2={x(p.end)}
           y1={pad.t}
           y2={pad.t + ih}
-          stroke="#e7ddef"
+          stroke={colors.lineSoft}
           strokeWidth={1}
         />
       ))}
 
       {/* y ticks */}
       {yTicks.map((v, k) => (
-        <text key={`y${k}`} x={pad.l - 6} y={y(v) + 3} fontSize="9" fill="#9d8ba8" textAnchor="end">
+        <text key={`y${k}`} x={pad.l - 6} y={y(v) + 3} fontSize="9" fill={colors.inkSoft} textAnchor="end">
           {Math.round(v)}
         </text>
       ))}
 
-      {/* the contour */}
+      {/* the contour. The "below floor" branch was already colors.zoneMascInk
+          before this task; the other branch used to be a literal (#e07ab0)
+          that doesn't blossom-match zoneFem — but this is the same register
+          data the phrase-ending dots two blocks below already color via
+          zoneColor(FEM/MASC), so it stays wired to the real zone token
+          rather than a blossom-pixel-matched one, the same call made for
+          ContourIcon's identical masc/fem dip. */}
       {segs.map((s, k) => (
         <path
           key={`s${k}`}
           d={toPath(s.pts)}
           fill="none"
-          stroke={s.below ? "#5e7fb8" : "#e07ab0"}
+          stroke={s.below ? colors.zoneMascInk : zoneColor(FEM, colors)}
           strokeWidth={s.below ? 3 : 2.4}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -131,8 +139,8 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
           cx={x(p.end)}
           cy={pad.t + ih + 14}
           r={4.5}
-          fill={p.ended_in_register ? FEM : MASC}
-          stroke="#fff"
+          fill={zoneColor(p.ended_in_register ? FEM : MASC, colors)}
+          stroke={colors.card}
           strokeWidth={1.5}
         >
           <title>
@@ -141,10 +149,10 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
           </title>
         </circle>
       ))}
-      <text x={pad.l} y={H - 6} fontSize="10" fill="#9d8ba8">
+      <text x={pad.l} y={H - 6} fontSize="10" fill={colors.inkSoft}>
         time →
       </text>
-      <text x={W - pad.r} y={H - 6} fontSize="10" fill="#9d8ba8" textAnchor="end">
+      <text x={W - pad.r} y={H - 6} fontSize="10" fill={colors.inkSoft} textAnchor="end">
         ● dots = how each phrase landed
       </text>
     </svg>
