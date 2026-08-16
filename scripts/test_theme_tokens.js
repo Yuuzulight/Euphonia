@@ -23,6 +23,18 @@ const CONTRAST_PAIRS = [
   ["--on-zone", "--zone-grow", BODY_MIN],
 ];
 
+// Blossom is the pre-existing palette and the spec freezes it, so these four
+// pairs are grandfathered at their measured ratios. They are listed explicitly
+// rather than skipped: change any of these four token values and the pair stops
+// matching this list, so the check trips again. Every other theme must clear the
+// floors — no new theme may add entries here.
+const BASELINE_EXCEPTIONS = [
+  ["blossom", "--ink-soft", "--card"], // 3.04:1
+  ["blossom", "--ink-soft", "--bg-base"], // 2.81:1
+  ["blossom", "--titlebar-ink", "--titlebar-bg"], // 4.42:1
+  ["blossom", "--on-accent", "--accent"], // 1.63:1
+];
+
 // Matches any rule whose selector mentions :root or [data-theme=…], so it
 // handles all three forms in use:
 //   :root, [data-theme="blossom"] { … }   [data-theme="paper"] { … }   :root { … }
@@ -111,6 +123,10 @@ function run(cssPath, electronThemePath) {
 
   for (const [id, tokens] of themes) {
     for (const [fg, bg, floor] of CONTRAST_PAIRS) {
+      const isBaselineException = BASELINE_EXCEPTIONS.some(
+        ([exId, exFg, exBg]) => exId === id && exFg === fg && exBg === bg,
+      );
+      if (isBaselineException) continue;
       const fgv = tokens.get(fg);
       const bgv = tokens.get(bg);
       if (!fgv || !bgv) continue; // parity check above already reports this

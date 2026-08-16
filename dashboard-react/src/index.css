@@ -1,16 +1,72 @@
-:root {
-  --pink: #ffb6d5;
-  --pink-soft: #ffd9ea;
-  --pink-bg: #fff0f7;
-  --lav: #c9b6ff;
-  --lav-soft: #e4dbff;
-  --lav-bg: #f5f0ff;
-  --mint: #b8ecd8;
-  --butter: #ffe9a8;
+/* Blossom — the default theme. Every other theme in this file overrides these
+   same token names under [data-theme="…"]; scripts/test_theme_tokens.js
+   fails the build if any theme's token set drifts from this one.
+
+   The selectors are attribute selectors rather than :root[data-theme] on
+   purpose: that lets any element opt into a theme's tokens, which is how the
+   swatch chips in Settings preview a theme without duplicating its colors.
+   Blossom is listed twice for the same reason — bare :root makes it the
+   default, and [data-theme="blossom"] lets a chip request it explicitly even
+   while another theme is active.
+
+   Two groups, and the difference matters:
+     CHROME tokens (surfaces, text, accents) are free to change per theme.
+     DATA tokens (--zone-*) encode meaning — see the color convention at the
+     top of zones.ts. Themes retune them for legibility on their own
+     background; they never reassign which color means what. */
+:root,
+[data-theme="blossom"] {
+  /* chrome — surfaces */
+  --bg-base: #f5f0ff;
+  --bg-glow-1: #ffd9ea;
+  --bg-glow-2: #e4dbff;
+  --card: #fffafd;
+  --card-2: #fff0f7;
+  --line: #ffffff;
+  --line-soft: #f0dcea;
+  --shadow: 0 8px 24px rgba(186, 142, 196, 0.18);
+  /* chrome — text */
   --ink: #6b5876;
   --ink-soft: #9d8ba8;
-  --card: #fffafd;
-  --shadow: 0 8px 24px rgba(186, 142, 196, 0.18);
+  --ink-strong: #7a5a92;
+  --ink-heading: #8a6aa8;
+  --ink-accent: #b06a96;
+  --ink-callout: #a25688;
+  --ink-warm: #855;
+  --on-accent: #ffffff;
+  --on-zone: #5a4566;
+  /* chrome — accents */
+  --accent: #ffb6d5;
+  --accent-2: #c9b6ff;
+  --accent-soft: #d784ac;
+  /* chrome — states */
+  --danger: #c84545;
+  --danger-bg: #ffe8e8;
+  --danger-border: #ffcccc;
+  --danger-strong: #e05d5d;
+  --success: #3f9c78;
+  --success-bg: #eafaf3;
+  --success-border: #cdeee0;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #ffd9ea;
+  --titlebar-ink: #7a5a92;
+  /* chrome — waveform player */
+  --wave: #bfa9e6;
+  --wave-progress: #ff9ec5;
+  --wave-cursor: #ff89bb;
+  /* chrome — live recording state */
+  --live: #ff8a80;
+  --live-2: #ff6f9c;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #bcd3f0;
+  --zone-masc-ink: #5e7fb8;
+  --zone-fem: #ffb6d5;
+  --zone-neutral: #ffe9a8;
+  --zone-grow: #cdc6da;
+  --zone-soft: #d7d0e8;
+  --zone-comfy: #cdeadd;
+  --zone-strong: #ffd9ea;
+  /* non-color */
   --radius: 22px;
 }
 * {
@@ -27,7 +83,7 @@ html {
   scrollbar-color: transparent transparent;
 }
 html.is-scrolling {
-  scrollbar-color: var(--pink) transparent;
+  scrollbar-color: var(--accent) transparent;
 }
 /* kept as a fallback for engines that use the legacy pseudo-elements
    instead of scrollbar-color. */
@@ -43,7 +99,7 @@ html.is-scrolling {
   border-radius: 999px;
 }
 html.is-scrolling::-webkit-scrollbar-thumb {
-  background-color: var(--pink);
+  background-color: var(--accent);
 }
 ::-webkit-scrollbar-corner {
   background: transparent;
@@ -54,9 +110,9 @@ body {
     "Quicksand", system-ui, sans-serif;
   color: var(--ink);
   background:
-    radial-gradient(1200px 600px at 15% -5%, var(--pink-soft), transparent 60%),
-    radial-gradient(1100px 700px at 95% 0%, var(--lav-soft), transparent 55%),
-    linear-gradient(160deg, var(--pink-bg), var(--lav-bg));
+    radial-gradient(1200px 600px at 15% -5%, var(--bg-glow-1), transparent 60%),
+    radial-gradient(1100px 700px at 95% 0%, var(--bg-glow-2), transparent 55%),
+    linear-gradient(160deg, var(--card-2), var(--bg-base));
   background-attachment: fixed;
   min-height: 100vh;
   line-height: 1.5;
@@ -70,8 +126,8 @@ body {
   gap: 8px;
   height: 40px;
   padding: 0 14px;
-  background: var(--pink-soft);
-  color: #7a5a92;
+  background: var(--titlebar-bg);
+  color: var(--titlebar-ink);
   font-size: 13px;
   font-weight: 700;
   -webkit-app-region: drag;
@@ -89,7 +145,7 @@ body {
   gap: 10px;
   max-width: 340px;
   background: var(--card);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   border-radius: 16px;
   box-shadow: var(--shadow);
   padding: 12px 16px;
@@ -104,9 +160,9 @@ body {
   font-size: 12px;
   font-weight: 700;
   font-family: inherit;
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
-  background: linear-gradient(135deg, var(--pink), var(--lav));
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   box-shadow: 0 3px 10px rgba(176, 106, 150, 0.3);
   transition: transform 0.14s ease;
 }
@@ -130,9 +186,9 @@ body {
   font-size: 12px;
   font-weight: 700;
   line-height: 1.4;
-  color: #7a5a92;
-  background: var(--lav-bg);
-  border: 2px solid #fff;
+  color: var(--ink-strong);
+  background: var(--bg-base);
+  border: 2px solid var(--line);
   border-radius: 16px;
   padding: 10px 16px;
   box-shadow: var(--shadow);
@@ -152,8 +208,8 @@ header.hero h1 {
   font-size: clamp(28px, 5vw, 44px);
   margin: 0 0 6px;
   letter-spacing: 0.5px;
-  color: #b06a96;
-  text-shadow: 0 2px 0 #fff;
+  color: var(--ink-accent);
+  text-shadow: 0 2px 0 var(--line);
 }
 header.hero p {
   margin: 0;
@@ -205,7 +261,7 @@ header.hero p {
   flex: 1 1 240px;
   min-width: 0;
   padding: 11px 16px;
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(6px);
@@ -221,8 +277,8 @@ header.hero p {
 }
 .record-panel input[type="text"]:focus {
   outline: none;
-  border-color: var(--pink);
-  background: #fff;
+  border-color: var(--accent);
+  background: var(--line);
 }
 .record-panel button {
   flex: 0 0 auto;
@@ -235,9 +291,9 @@ header.hero p {
   font-family: inherit;
   font-size: 13.5px;
   font-weight: 700;
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
-  background: linear-gradient(135deg, var(--pink), var(--lav));
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   box-shadow: 0 4px 14px rgba(176, 106, 150, 0.35);
   transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
@@ -250,7 +306,7 @@ header.hero p {
 }
 /* recording in progress — a warmer color + a soft pulse so it reads as "live" */
 .record-panel button.is-recording {
-  background: linear-gradient(135deg, #ff8a80, #ff6f9c);
+  background: linear-gradient(135deg, var(--live), var(--live-2));
   animation: record-pulse 1.6s ease-in-out infinite;
 }
 @keyframes record-pulse {
@@ -265,26 +321,26 @@ header.hero p {
 .record-panel .saving {
   font-size: 13.5px;
   color: var(--ink-soft);
-  background: var(--pink-bg);
+  background: var(--card-2);
   padding: 10px 18px;
   border-radius: 999px;
 }
 .record-panel .rec-error {
   font-size: 13px;
-  color: #c84545;
-  background: #ffe8e8;
-  border: 1.5px solid #ffcccc;
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1.5px solid var(--danger-border);
   padding: 8px 16px;
   border-radius: 999px;
 }
 .record-panel .retry {
   background: transparent;
   color: var(--ink-soft);
-  border: 1.5px solid #f0dcea;
+  border: 1.5px solid var(--line-soft);
   box-shadow: none;
 }
 .record-panel .retry:hover {
-  background: #fafafa;
+  background: var(--card);
   box-shadow: none;
   transform: none;
 }
@@ -295,7 +351,7 @@ section {
 .section-title {
   font-size: 20px;
   margin: 0 0 14px;
-  color: #8a6aa8;
+  color: var(--ink-heading);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -312,7 +368,7 @@ section {
   border-radius: var(--radius);
   padding: 18px 18px 16px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
 }
 .stat .label {
   font-size: 13px;
@@ -324,7 +380,7 @@ section {
 .stat .value {
   font-size: 30px;
   font-weight: 700;
-  color: #b06a96;
+  color: var(--ink-accent);
   margin: 2px 0 4px;
 }
 .stat .value small {
@@ -348,7 +404,7 @@ section {
   margin: 2px 0 14px;
 }
 .res-desc b {
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .fgauge {
   margin: 14px 0;
@@ -362,7 +418,7 @@ section {
 }
 .fgauge.is-clickable:hover,
 .fgauge.is-clickable:focus-visible {
-  background: var(--pink-bg);
+  background: var(--card-2);
   box-shadow: 0 4px 14px rgba(186, 142, 196, 0.16);
   outline: none;
 }
@@ -374,7 +430,7 @@ section {
   gap: 8px;
 }
 .fgauge-head .fname b {
-  color: #7a5a92;
+  color: var(--ink-strong);
   font-size: 14px;
 }
 .fgauge-head .fname span {
@@ -383,7 +439,7 @@ section {
 }
 .fgauge-head .fval {
   font-weight: 700;
-  color: #b06a96;
+  color: var(--ink-accent);
   white-space: nowrap;
 }
 .fgauge-head .fval .pill {
@@ -399,21 +455,21 @@ section {
 .res-summary {
   margin-top: 10px;
   font-size: 13px;
-  background: var(--pink-bg);
+  background: var(--card-2);
   border-radius: 12px;
   padding: 11px 13px;
-  color: #7a5a92;
+  color: var(--ink-strong);
 }
 .res-f1 {
   font-size: 12px;
   color: var(--ink-soft);
   margin-top: 10px;
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 11px;
   padding: 9px 11px;
 }
 .res-f1 b {
-  color: #7a5a92;
+  color: var(--ink-strong);
 }
 
 /* zone bar */
@@ -440,9 +496,9 @@ section {
   top: -4px;
   width: 4px;
   height: 20px;
-  background: #5a4566;
+  background: var(--on-zone);
   border-radius: 3px;
-  box-shadow: 0 0 0 2px #fff;
+  box-shadow: 0 0 0 2px var(--line);
   transform: translateX(-2px);
 }
 .pill {
@@ -464,12 +520,12 @@ section {
   border-radius: var(--radius);
   padding: 16px 16px 10px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
 }
 .chart-card h3 {
   margin: 0 0 2px;
   font-size: 15px;
-  color: #8a6aa8;
+  color: var(--ink-heading);
 }
 .chart-card .cap {
   font-size: 11px;
@@ -488,7 +544,7 @@ section {
   border-radius: var(--radius);
   padding: 16px 18px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
@@ -502,8 +558,8 @@ section {
 }
 .rec .num {
   background: rgba(255, 255, 255, 0.85);
-  color: #b06a96;
-  border: 2px solid var(--pink);
+  color: var(--ink-accent);
+  border: 2px solid var(--accent);
   font-weight: 700;
   width: 34px;
   height: 34px;
@@ -517,7 +573,7 @@ section {
 .rec .label-txt {
   font-weight: 700;
   font-size: 16px;
-  color: #855;
+  color: var(--ink-warm);
 }
 .rec .date {
   font-size: 12px;
@@ -529,7 +585,7 @@ section {
   gap: 8px;
 }
 .chip {
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 12px;
   padding: 6px 11px;
   font-size: 12px;
@@ -540,7 +596,7 @@ section {
 }
 .chip b {
   font-size: 15px;
-  color: #7a5a92;
+  color: var(--ink-strong);
 }
 .chip span {
   color: var(--ink-soft);
@@ -566,7 +622,7 @@ section {
 }
 .rec-delete:hover {
   opacity: 1;
-  background: #ffe8e8;
+  background: var(--danger-bg);
   transform: scale(1.08);
 }
 .rec-confirm,
@@ -576,9 +632,9 @@ section {
   align-items: center;
   gap: 10px;
   font-size: 12.5px;
-  color: #c84545;
-  background: #ffe8e8;
-  border: 1.5px solid #ffcccc;
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1.5px solid var(--danger-border);
   border-radius: 12px;
   padding: 9px 13px;
 }
@@ -589,16 +645,16 @@ section {
   font-size: 12px;
   font-weight: 700;
   font-family: inherit;
-  color: #fff;
-  background: #e05d5d;
+  color: var(--on-accent);
+  background: var(--danger-strong);
   cursor: pointer;
   transition: background 0.15s ease;
 }
 .rec-confirm-yes:hover:not(:disabled) {
-  background: #c84545;
+  background: var(--danger);
 }
 .rec-confirm-no {
-  border: 1.5px solid #f0dcea;
+  border: 1.5px solid var(--line-soft);
   border-radius: 999px;
   padding: 6px 14px;
   font-size: 12px;
@@ -610,7 +666,7 @@ section {
   transition: background 0.15s ease;
 }
 .rec-confirm-no:hover:not(:disabled) {
-  background: #fafafa;
+  background: var(--card);
 }
 .rec-confirm-yes:disabled,
 .rec-confirm-no:disabled {
@@ -625,12 +681,12 @@ section {
   gap: 12px;
   margin-top: 4px;
   padding: 9px 13px;
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 16px;
   transition: box-shadow 0.18s ease, background 0.18s ease;
 }
 .player:hover {
-  background: #f1eaff;
+  background: var(--bg-base);
   box-shadow: 0 6px 18px rgba(186, 142, 196, 0.16);
 }
 .player .wave {
@@ -643,8 +699,8 @@ section {
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  color: #fff;
-  background: linear-gradient(135deg, var(--pink), var(--lav));
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   box-shadow: 0 3px 8px rgba(176, 106, 150, 0.35);
   display: flex;
   align-items: center;
@@ -679,7 +735,7 @@ section {
 }
 .player .vol input[type="range"] {
   width: 62px;
-  accent-color: var(--pink);
+  accent-color: var(--accent);
   cursor: pointer;
 }
 @media (max-width: 520px) {
@@ -695,15 +751,15 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #b06a96;
+  color: var(--ink-accent);
   background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid var(--pink-soft);
+  border: 1.5px solid var(--bg-glow-1);
   text-decoration: none;
   transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
 }
 .player .dl:hover {
-  background: #fff;
-  border-color: var(--pink);
+  background: var(--line);
+  border-color: var(--accent);
   transform: translateY(1px);
 }
 .player .dl:active {
@@ -715,7 +771,7 @@ details.cheat {
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   padding: 4px 20px;
   margin-top: 4px;
 }
@@ -723,7 +779,7 @@ details.cheat summary {
   cursor: pointer;
   list-style: none;
   font-size: 18px;
-  color: #8a6aa8;
+  color: var(--ink-heading);
   padding: 12px 0;
   font-weight: 700;
   user-select: none;
@@ -746,14 +802,14 @@ details.cheat[open] summary::after {
   padding: 6px 0 18px;
 }
 .gloss-item {
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 16px;
   padding: 14px;
 }
 .gloss-item h4 {
   margin: 0 0 4px;
   font-size: 14px;
-  color: #7a5a92;
+  color: var(--ink-strong);
   display: flex;
   gap: 6px;
   align-items: center;
@@ -765,8 +821,8 @@ details.cheat[open] summary::after {
 }
 .gloss-item .guide {
   font-size: 12px;
-  color: #7a5a92;
-  background: #fff;
+  color: var(--ink-strong);
+  background: var(--line);
   border-radius: 10px;
   padding: 6px 9px;
   margin-bottom: 6px;
@@ -780,7 +836,7 @@ details.cheat[open] summary::after {
   font-size: 12px;
   color: var(--ink-soft);
   font-style: italic;
-  background: var(--pink-bg);
+  background: var(--card-2);
   border-radius: 12px;
   padding: 10px 12px;
 }
@@ -796,7 +852,7 @@ footer {
   margin-top: 50px;
 }
 a.legend-link {
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 
 /* ---- recording switcher ---- */
@@ -815,7 +871,7 @@ a.legend-link {
 .picker button {
   font-family: inherit;
   cursor: pointer;
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   background: var(--card);
   color: var(--ink-soft);
   border-radius: 999px;
@@ -825,11 +881,11 @@ a.legend-link {
   transition: color 0.15s, background 0.15s;
 }
 .picker button:hover {
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .picker button.active {
-  background: linear-gradient(135deg, var(--pink-soft), var(--lav-soft));
-  color: #b06a96;
+  background: linear-gradient(135deg, var(--bg-glow-1), var(--bg-glow-2));
+  color: var(--ink-accent);
   font-weight: 700;
 }
 
@@ -839,7 +895,7 @@ a.legend-link {
   border-radius: var(--radius);
   padding: 14px 16px 8px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
 }
 .contour {
   display: block;
@@ -864,7 +920,7 @@ a.legend-link {
   height: 100%;
   display: flex;
   align-items: flex-end;
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -875,7 +931,7 @@ a.legend-link {
 }
 .posbar-val {
   font-weight: 700;
-  color: #5e7fb8;
+  color: var(--zone-masc-ink);
   font-size: 14px;
   margin-top: 6px;
 }
@@ -891,12 +947,12 @@ a.legend-link {
   border-radius: var(--radius);
   padding: 20px 22px;
   box-shadow: var(--shadow);
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
 }
 .insight h3 {
   margin: 0 0 4px;
   font-size: 18px;
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .insight .insight-sub {
   font-size: 13px;
@@ -908,21 +964,21 @@ a.legend-link {
   color: var(--ink);
 }
 .insight .drill {
-  background: var(--lav-bg);
+  background: var(--bg-base);
   border-radius: 14px;
   padding: 12px 14px;
   font-size: 13px;
   margin-top: 10px;
 }
 .insight .drill b {
-  color: #7a5a92;
+  color: var(--ink-strong);
 }
 .insight-placeholder {
   background: var(--card);
   border-radius: var(--radius);
   padding: 26px 22px;
   box-shadow: var(--shadow);
-  border: 2px dashed #e7ddef;
+  border: 2px dashed var(--line-soft);
   color: var(--ink-soft);
   font-size: 13.5px;
   text-align: center;
@@ -938,8 +994,8 @@ a.legend-link {
   padding: 4px 11px;
   border-radius: 999px;
   font-weight: 700;
-  background: var(--pink-bg);
-  color: #b06a96;
+  background: var(--card-2);
+  color: var(--ink-accent);
 }
 
 /* "generate insight" — primary CTA, same gradient pill as the record button */
@@ -951,9 +1007,9 @@ a.legend-link {
   font-family: inherit;
   font-size: 13.5px;
   font-weight: 700;
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
-  background: linear-gradient(135deg, var(--pink), var(--lav));
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   box-shadow: 0 4px 14px rgba(176, 106, 150, 0.35);
   transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
@@ -972,10 +1028,10 @@ a.legend-link {
    ghost-vs-gradient pairing). */
 .insight button {
   padding: 7px 16px;
-  border: 1.5px solid var(--pink);
+  border: 1.5px solid var(--accent);
   border-radius: 999px;
-  background: #fff;
-  color: #b06a96;
+  background: var(--line);
+  color: var(--ink-accent);
   font-family: inherit;
   font-size: 12.5px;
   font-weight: 700;
@@ -983,7 +1039,7 @@ a.legend-link {
   transition: background 0.15s ease;
 }
 .insight button:hover:not(:disabled) {
-  background: var(--pink-bg);
+  background: var(--card-2);
 }
 .insight button:disabled {
   opacity: 0.65;
@@ -995,9 +1051,9 @@ a.legend-link {
 .take-hint {
   margin: -6px 0 14px;
   font-size: 12.5px;
-  color: #b06a96;
-  background: var(--pink-bg);
-  border: 1.5px solid #ffe3f0;
+  color: var(--ink-accent);
+  background: var(--card-2);
+  border: 1.5px solid var(--bg-glow-1);
   border-radius: 999px;
   padding: 6px 14px;
   display: inline-block;
@@ -1009,9 +1065,9 @@ a.legend-link {
   cursor: pointer;
   /* persistent affordance: a soft tinted edge so clickable cards read
      differently from the plain "Pitch range" card even without hover */
-  border-color: #ffe3f1;
+  border-color: var(--bg-glow-1);
   background:
-    linear-gradient(180deg, #fffafd 0%, #fff4fa 100%);
+    linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
   transition: transform 0.16s ease, box-shadow 0.16s ease,
     border-color 0.16s ease;
 }
@@ -1022,7 +1078,7 @@ a.legend-link {
   outline: none;
 }
 .stat.is-clickable:focus-visible {
-  border-color: var(--pink);
+  border-color: var(--accent);
 }
 
 /* corner magnify glyph — persistent (visible on touch, no hover needed) */
@@ -1036,10 +1092,10 @@ a.legend-link {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--pink-bg);
-  color: #d784ac;
+  background: var(--card-2);
+  color: var(--accent-soft);
   font-size: 0.78em;
-  box-shadow: inset 0 0 0 1.5px #ffdcec;
+  box-shadow: inset 0 0 0 1.5px var(--bg-glow-1);
   transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
   pointer-events: none;
 }
@@ -1049,8 +1105,8 @@ a.legend-link {
 }
 .stat.is-clickable:hover .stat-expand,
 .stat.is-clickable:focus-visible .stat-expand {
-  background: var(--pink);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   transform: scale(1.08);
 }
 
@@ -1063,7 +1119,7 @@ a.legend-link {
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #cf86b0;
+  color: var(--accent-soft);
   text-transform: lowercase;
 }
 .stat-tap::before {
@@ -1072,7 +1128,7 @@ a.legend-link {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--pink);
+  background: var(--accent);
 }
 
 /* resonance gauges: small magnify glyph in the value row */
@@ -1084,17 +1140,17 @@ a.legend-link {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--pink-bg);
-  color: #d784ac;
+  background: var(--card-2);
+  color: var(--accent-soft);
   font-size: 0.72em;
-  box-shadow: inset 0 0 0 1.5px #ffdcec;
+  box-shadow: inset 0 0 0 1.5px var(--bg-glow-1);
   vertical-align: -0.22em;
   transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
 }
 .fgauge.is-clickable:hover .fgauge-expand,
 .fgauge.is-clickable:focus-visible .fgauge-expand {
-  background: var(--pink);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   transform: scale(1.08);
 }
 
@@ -1121,7 +1177,7 @@ a.legend-link {
   width: min(640px, 100%);
   background: var(--card);
   border-radius: 26px;
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   box-shadow: 0 24px 60px rgba(150, 110, 165, 0.34);
   padding: 26px 28px 22px;
   transform-origin: var(--ox, 50%) var(--oy, 50%);
@@ -1141,22 +1197,22 @@ a.legend-link {
   height: 30px;
   border: none;
   border-radius: 50%;
-  background: var(--pink-bg);
-  color: #b06a96;
+  background: var(--card-2);
+  color: var(--ink-accent);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.15s ease;
 }
 .mm-close:hover {
-  background: var(--pink-soft);
+  background: var(--bg-glow-1);
   transform: rotate(90deg);
 }
 
 .mm-head h3 {
   margin: 0 36px 4px 0;
   font-size: 19px;
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .mm-head p {
   margin: 0 0 22px;
@@ -1201,7 +1257,7 @@ a.legend-link {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: #5a4566;
+  color: var(--on-zone);
   opacity: 0.7;
   text-transform: lowercase;
   white-space: nowrap;
@@ -1254,8 +1310,8 @@ a.legend-link {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #b06a96;
-  border: 2.5px solid #fff;
+  background: var(--ink-accent);
+  border: 2.5px solid var(--line);
   box-shadow: 0 2px 6px rgba(150, 110, 165, 0.5);
   flex: none;
   z-index: 2;
@@ -1266,7 +1322,7 @@ a.legend-link {
 /* speaker glyph baked into each playable dot — a persistent "this plays" cue */
 .mm-spk {
   font-size: 8px;
-  color: #fff;
+  color: var(--on-accent);
   opacity: 0.92;
 }
 .mm-take-label {
@@ -1278,14 +1334,14 @@ a.legend-link {
 .mm-take.is-active .mm-take-dot {
   width: 17px;
   height: 17px;
-  background: var(--pink);
-  box-shadow: 0 0 0 3px var(--pink-soft), 0 3px 8px rgba(224, 122, 176, 0.55);
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--bg-glow-1), 0 3px 8px rgba(224, 122, 176, 0.55);
 }
 .mm-take.is-active .mm-spk {
   font-size: 10px;
 }
 .mm-take.is-active .mm-take-label {
-  color: #b06a96;
+  color: var(--ink-accent);
   font-size: 12px;
 }
 
@@ -1308,12 +1364,12 @@ a.legend-link {
   border-radius: 2px;
 }
 .mm-ref-fem .mm-ref-stem {
-  background: #ffb6d5;
-  box-shadow: 0 0 0 1px #fff;
+  background: var(--zone-fem);
+  box-shadow: 0 0 0 1px var(--line);
 }
 .mm-ref-masc .mm-ref-stem {
-  background: #bcd3f0;
-  box-shadow: 0 0 0 1px #fff;
+  background: var(--zone-masc);
+  box-shadow: 0 0 0 1px var(--line);
 }
 
 .mm-axis {
@@ -1330,7 +1386,7 @@ a.legend-link {
   gap: 14px;
   margin-top: 18px;
   padding-top: 14px;
-  border-top: 1px dashed #f0dcea;
+  border-top: 1px dashed var(--line-soft);
   font-size: 11.5px;
   color: var(--ink-soft);
 }
@@ -1347,7 +1403,7 @@ a.legend-link {
 }
 .mm-key-take {
   border-radius: 50%;
-  background: #b06a96;
+  background: var(--ink-accent);
 }
 .mm-legend-note {
   font-style: italic;
@@ -1365,8 +1421,8 @@ a.legend-link {
   transform: scale(1.18);
 }
 .mm-take.is-playing .mm-take-dot {
-  background: var(--pink);
-  box-shadow: 0 0 0 4px var(--pink-soft), 0 3px 8px rgba(224, 122, 176, 0.6);
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--bg-glow-1), 0 3px 8px rgba(224, 122, 176, 0.6);
 }
 .mm-ref.is-clickable .mm-ref-stem {
   transition: transform 0.14s ease, filter 0.14s ease;
@@ -1380,7 +1436,7 @@ a.legend-link {
   outline: none;
 }
 .mm-ref.is-playing .mm-ref-stem {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px rgba(176, 106, 150, 0.5);
+  box-shadow: 0 0 0 2px var(--line), 0 0 0 3.5px rgba(176, 106, 150, 0.5);
 }
 /* tiny speaker badge above a ref tick — hidden until hover / focus / playing so
    the reference row stays a clean backdrop, but discoverable on interaction.
@@ -1392,7 +1448,7 @@ a.legend-link {
   transform: translateX(-50%) scale(0.6);
   transform-origin: center bottom;
   font-size: 11px;
-  color: #b06a96;
+  color: var(--ink-accent);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.14s ease, transform 0.14s ease;
@@ -1404,7 +1460,7 @@ a.legend-link {
   transform: translateX(-50%) scale(1);
 }
 .mm-ref-masc .mm-ref-spk {
-  color: #5e7fb8;
+  color: var(--zone-masc-ink);
 }
 
 /* prominent "click a dot/tick to hear it" banner above the legend */
@@ -1414,28 +1470,28 @@ a.legend-link {
   gap: 8px;
   margin-top: 18px;
   padding: 9px 14px;
-  background: linear-gradient(180deg, #fff0f7 0%, #fbeeff 100%);
-  border: 1.5px solid #ffe3f0;
+  background: linear-gradient(180deg, var(--card-2) 0%, var(--bg-base) 100%);
+  border: 1.5px solid var(--bg-glow-1);
   border-radius: 14px;
   font-size: 12.5px;
   font-weight: 600;
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .mm-hear b {
-  color: #a25688;
+  color: var(--ink-callout);
 }
 .mm-hear-icon {
   flex: none;
   font-size: 16px;
-  color: #d784ac;
+  color: var(--accent-soft);
 }
 
 .mm-player {
   margin-top: 16px;
   padding: 12px 14px;
-  background: var(--pink-bg);
+  background: var(--card-2);
   border-radius: 18px;
-  border: 1.5px solid #ffe3f0;
+  border: 1.5px solid var(--bg-glow-1);
   animation: mm-player-in 0.22s ease both;
 }
 @keyframes mm-player-in {
@@ -1451,7 +1507,7 @@ a.legend-link {
 .mm-player-title {
   font-size: 12.5px;
   font-weight: 700;
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 .mm-player-close {
   border: none;
@@ -1464,8 +1520,8 @@ a.legend-link {
   transition: background 0.15s ease, color 0.15s ease;
 }
 .mm-player-close:hover {
-  background: var(--pink-soft);
-  color: #b06a96;
+  background: var(--bg-glow-1);
+  color: var(--ink-accent);
 }
 @media (prefers-reduced-motion: reduce) {
   .mm-backdrop, .mm-card { animation: none; }
@@ -1495,7 +1551,7 @@ a.legend-link {
   width: min(500px, 100%);
   background: var(--card);
   border-radius: 26px;
-  border: 2px solid #fff;
+  border: 2px solid var(--line);
   box-shadow: 0 24px 60px rgba(150, 110, 165, 0.34);
   padding: 28px;
   animation: modal-slide 0.34s cubic-bezier(0.22, 1.2, 0.36, 1) both;
@@ -1509,7 +1565,7 @@ a.legend-link {
 .modal h2 {
   margin: 0 0 8px;
   font-size: 22px;
-  color: #b06a96;
+  color: var(--ink-accent);
 }
 
 .modal > p {
@@ -1531,14 +1587,14 @@ a.legend-link {
 }
 
 .modal a {
-  color: #b06a96;
+  color: var(--ink-accent);
   text-decoration: none;
   font-weight: 600;
   transition: color 0.15s ease;
 }
 
 .modal a:hover {
-  color: #d784ac;
+  color: var(--accent-soft);
   text-decoration: underline;
 }
 
@@ -1547,9 +1603,9 @@ a.legend-link {
   width: 100%;
   padding: 12px 14px;
   margin: 0 0 16px;
-  border: 2px solid #f0dcea;
+  border: 2px solid var(--line-soft);
   border-radius: 14px;
-  background: #fafafa;
+  background: var(--card);
   font-size: 14px;
   color: var(--ink);
   font-family: inherit;
@@ -1560,13 +1616,13 @@ a.legend-link {
 .modal input[type="password"]:focus,
 .modal input[type="text"]:focus {
   outline: none;
-  border-color: var(--pink);
-  background: #fff;
+  border-color: var(--accent);
+  background: var(--line);
 }
 
 .modal input[type="password"]:disabled,
 .modal input[type="text"]:disabled {
-  background: #f5f5f5;
+  background: var(--card);
   color: var(--ink-soft);
 }
 
@@ -1590,17 +1646,17 @@ a.legend-link {
 .modal button:first-child {
   background: transparent;
   color: var(--ink-soft);
-  border: 1.5px solid #f0dcea;
+  border: 1.5px solid var(--line-soft);
 }
 
 .modal button:first-child:hover {
-  background: #fafafa;
+  background: var(--card);
   border-color: var(--ink-soft);
 }
 
 .modal button:last-child {
-  background: linear-gradient(135deg, var(--pink), var(--lav));
-  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: var(--on-accent);
   box-shadow: 0 4px 12px rgba(176, 106, 150, 0.35);
 }
 
@@ -1617,33 +1673,33 @@ a.legend-link {
 .modal-error {
   margin: -12px 0 16px;
   padding: 10px 13px;
-  background: #ffe8e8;
-  border: 1.5px solid #ffcccc;
+  background: var(--danger-bg);
+  border: 1.5px solid var(--danger-border);
   border-radius: 10px;
   font-size: 13px;
-  color: #c84545;
+  color: var(--danger);
   line-height: 1.4;
 }
 
 .backup-zone {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1.5px dashed #f0dcea;
+  border-top: 1.5px dashed var(--line-soft);
 }
 .backup-btn {
-  border: 1.5px solid var(--lav-soft);
+  border: 1.5px solid var(--bg-glow-2);
   border-radius: 999px;
   padding: 8px 16px;
   font-size: 12.5px;
   font-weight: 700;
   font-family: inherit;
-  color: #7a5a92;
-  background: #fff;
+  color: var(--ink-strong);
+  background: var(--line);
   cursor: pointer;
   transition: background 0.15s ease;
 }
 .backup-btn:hover:not(:disabled) {
-  background: var(--lav-bg);
+  background: var(--bg-base);
 }
 .backup-btn:disabled {
   opacity: 0.65;
@@ -1652,9 +1708,9 @@ a.legend-link {
 .backup-success {
   margin: 10px 0 0;
   font-size: 12.5px;
-  color: #3f9c78;
-  background: #eafaf3;
-  border: 1.5px solid #cdeee0;
+  color: var(--success);
+  background: var(--success-bg);
+  border: 1.5px solid var(--success-border);
   border-radius: 10px;
   padding: 8px 12px;
   word-break: break-all;
@@ -1663,7 +1719,7 @@ a.legend-link {
 .danger-zone {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1.5px dashed #f0dcea;
+  border-top: 1.5px dashed var(--line-soft);
 }
 .danger-zone-label {
   margin: 0 0 8px;
@@ -1674,17 +1730,17 @@ a.legend-link {
   color: var(--ink-soft);
 }
 .danger-btn {
-  border: 1.5px solid #ffcccc;
+  border: 1.5px solid var(--danger-border);
   border-radius: 999px;
   padding: 8px 16px;
   font-size: 12.5px;
   font-weight: 700;
   font-family: inherit;
-  color: #c84545;
-  background: #fff;
+  color: var(--danger);
+  background: var(--line);
   cursor: pointer;
   transition: background 0.15s ease;
 }
 .danger-btn:hover {
-  background: #ffe8e8;
+  background: var(--danger-bg);
 }
