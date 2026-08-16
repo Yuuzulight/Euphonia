@@ -74,7 +74,7 @@ export function StatCompare({
                 textAlign: "right",
                 fontWeight: 700,
                 fontVariantNumeric: "tabular-nums",
-                color: aIsBetter === false ? "var(--ink)" : aIsBetter ? colors.accent : "var(--ink)",
+                color: aIsBetter === false ? "var(--ink)" : aIsBetter ? colors.accentEmphasis : "var(--ink)",
                 paddingTop: 3,
               }}
             >

@@ -364,7 +364,7 @@ export function App() {
           <ChartCard
             h="Pitch (avg)"
             cap="pink band = feminine zone (165 Hz+)"
-            color={colors.accent}
+            color={colors.chart1}
             data={mk((r) => r.pitch.mean_hz)}
             band={[165, 260]}
             bandColor={zoneColor(FEM, colors)}
@@ -372,22 +372,22 @@ export function App() {
           <ChartCard
             h="In-register melody"
             cap="true expressiveness, crashes removed (st)"
-            color={colors.accent2}
+            color={colors.chart2}
             data={mk((r) => r.register?.in_register_semitones_sd ?? null)}
             bands={MELODY_ZONES}
           />
           <ChartCard
             h="Phrase endings landed"
             cap="% of phrases that stayed in register"
-            color={colors.accent}
+            color={colors.chart3}
             data={mk((r) => r.register?.phrases_landed_pct ?? null)}
             band={[80, 100]}
-            bandColor={zoneColor("comfy", colors)}
+            bandColor={colors.chart3Band}
           />
           <ChartCard
             h="Resonance (F2)"
             cap="brightness / vocal-tract size cue"
-            color={colors.accent2}
+            color={colors.chart4}
             data={mk((r) => r.formants.f2_hz)}
             band={[1850, 2400]}
             bandColor={colors.accent2}
@@ -395,7 +395,7 @@ export function App() {
           <ChartCard
             h="Weight"
             cap="spectral tilt · lower = lighter / more feminine"
-            color={colors.accent}
+            color={colors.chart5}
             data={mk((r) => r.weight?.h1a3c_db ?? null)}
             bands={WEIGHT_ZONES}
           />

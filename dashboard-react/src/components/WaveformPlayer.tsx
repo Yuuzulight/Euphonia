@@ -80,8 +80,8 @@ export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
       Hover.create({
         lineColor: mountColors.waveCursor,
         lineWidth: 2,
-        labelBackground: mountColors.inkSoft,
-        labelColor: mountColors.card,
+        labelBackground: mountColors.inkAccent,
+        labelColor: mountColors.onAccent,
         labelSize: 11,
       }),
     ],
@@ -164,10 +164,10 @@ export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
 
       <div className="vol">
         <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 9 H8 L13 5 V19 L8 15 H4 Z" fill={colors.accent2} />
+          <path d="M4 9 H8 L13 5 V19 L8 15 H4 Z" fill={colors.waveIcon} />
           <path
             d="M16 8.5 C18 10 18 14 16 15.5"
-            stroke={colors.accent2}
+            stroke={colors.waveIcon}
             strokeWidth="1.8"
             fill="none"
             strokeLinecap="round"

@@ -29,14 +29,37 @@ export interface ThemeColors {
   zoneStrong: string;
   accent: string;
   accent2: string;
+  /** bold small-text callout color (e.g. "this take is better") — a distinct
+   *  token from `accent` because `accent` alone is too pale for foreground
+   *  text on a near-white card in the light themes. */
+  accentEmphasis: string;
   ink: string;
   inkSoft: string;
+  /** a second, slightly different muted-text shade used by a couple of chart
+   *  axis labels that were never actually `inkSoft` in the original design. */
+  inkFaint: string;
+  inkAccent: string;
   card: string;
   line: string;
+  lineSoft: string;
   onZone: string;
+  onAccent: string;
   wave: string;
   waveProgress: string;
   waveCursor: string;
+  /** the waveform player's volume glyph — its own lavender shade, close to
+   *  but distinct from `wave`. */
+  waveIcon: string;
+  /** five mutually-distinct series colors for the "Trends over time" mini
+   *  charts, one per metric card — see index.css for why these are their
+   *  own tokens rather than reusing `accent`/`accent2`. */
+  chart1: string;
+  chart2: string;
+  chart3: string;
+  chart4: string;
+  chart5: string;
+  /** background wash paired with chart3 (the "phrase endings landed" band). */
+  chart3Band: string;
 }
 
 const TOKEN_OF: Record<keyof ThemeColors, string> = {
@@ -50,14 +73,26 @@ const TOKEN_OF: Record<keyof ThemeColors, string> = {
   zoneStrong: "--zone-strong",
   accent: "--accent",
   accent2: "--accent-2",
+  accentEmphasis: "--accent-emphasis",
   ink: "--ink",
   inkSoft: "--ink-soft",
+  inkFaint: "--ink-faint",
+  inkAccent: "--ink-accent",
   card: "--card",
   line: "--line",
+  lineSoft: "--line-soft",
   onZone: "--on-zone",
+  onAccent: "--on-accent",
   wave: "--wave",
   waveProgress: "--wave-progress",
   waveCursor: "--wave-cursor",
+  waveIcon: "--wave-icon",
+  chart1: "--chart-1",
+  chart2: "--chart-2",
+  chart3: "--chart-3",
+  chart4: "--chart-4",
+  chart5: "--chart-5",
+  chart3Band: "--chart-3-band",
 };
 
 // One getComputedStyle read per theme change, not per component per render.

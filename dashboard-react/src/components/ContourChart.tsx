@@ -100,7 +100,7 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
           x2={x(p.end)}
           y1={pad.t}
           y2={pad.t + ih}
-          stroke={colors.line}
+          stroke={colors.lineSoft}
           strokeWidth={1}
         />
       ))}
@@ -112,7 +112,13 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
         </text>
       ))}
 
-      {/* the contour */}
+      {/* the contour. The "below floor" branch was already colors.zoneMascInk
+          before this task; the other branch used to be a literal (#e07ab0)
+          that doesn't blossom-match zoneFem — but this is the same register
+          data the phrase-ending dots two blocks below already color via
+          zoneColor(FEM/MASC), so it stays wired to the real zone token
+          rather than a blossom-pixel-matched one, the same call made for
+          ContourIcon's identical masc/fem dip. */}
       {segs.map((s, k) => (
         <path
           key={`s${k}`}

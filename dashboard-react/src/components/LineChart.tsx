@@ -25,8 +25,10 @@ interface Props {
 export function LineChart({ points, color, band, bandColor, bands }: Props) {
   const colors = useThemeColors();
   // callers usually pass an explicit (often zone-derived) color; these are
-  // just the chart's own defaults when they don't.
-  const strokeColor = color ?? colors.accent;
+  // just the chart's own defaults when they don't. The original literal
+  // defaults were #b06a96 (== --ink-accent) and #ffb6d5 (== --accent) —
+  // matched to those exact tokens, not swapped for a same-ish nearby one.
+  const strokeColor = color ?? colors.inkAccent;
   const fallbackBandColor = bandColor ?? colors.accent;
   const W = 300;
   const H = 130;

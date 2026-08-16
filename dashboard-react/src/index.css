@@ -67,6 +67,20 @@
   /* chrome — live recording state */
   --live: #ff8a80;
   --live-2: #ff6f9c;
+  /* chrome — trend-chart series (5 mutually-distinct hues, one per metric
+     card on "Trends over time" — hue-pinned across themes like the zone
+     tokens below, so a series doesn't change identity when the theme does)
+     + a few one-off decorative/emphasis colors that didn't land within
+     ≤12-per-channel of any existing token */
+  --chart-1: #e07ab0;
+  --chart-2: #9b7ad0;
+  --chart-3: #5fb89a;
+  --chart-4: #d99a4e;
+  --chart-5: #cf7fb0;
+  --chart-3-band: #b8ecd8;
+  --accent-emphasis: #c75c93;
+  --wave-icon: #c0a9d6;
+  --ink-faint: #b7a8c2;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #bcd3f0;
   --zone-masc-ink: #5e7fb8;
@@ -130,6 +144,16 @@
   /* chrome — live recording state */
   --live: #d97a4a;
   --live-2: #c85a3a;
+  /* chrome — trend-chart series (see blossom's comment above) */
+  --chart-1: #e07ab0;
+  --chart-2: #9b7ad0;
+  --chart-3: #5fb89a;
+  --chart-4: #d99a4e;
+  --chart-5: #cf7fb0;
+  --chart-3-band: #b8ecd8;
+  --accent-emphasis: #a78323;
+  --wave-icon: #b9b093;
+  --ink-faint: #937e62;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #bcd3f0;
   --zone-masc-ink: #5e7fb8;
@@ -193,6 +217,16 @@
   /* chrome — live recording state */
   --live: #ff7a66;
   --live-2: #f2545a;
+  /* chrome — trend-chart series (see blossom's comment above) */
+  --chart-1: #e07ab0;
+  --chart-2: #9b7ad0;
+  --chart-3: #5fb89a;
+  --chart-4: #d99a4e;
+  --chart-5: #cf7fb0;
+  --chart-3-band: #b8ecd8;
+  --accent-emphasis: #189b77;
+  --wave-icon: #95bab1;
+  --ink-faint: #629274;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #bcd3f0;
   --zone-masc-ink: #5e7fb8;
@@ -256,6 +290,17 @@
   /* chrome — live recording state */
   --live: #ed7f6e;
   --live-2: #e0433e;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --accent-emphasis: #f296d1;
+  --wave-icon: #81699e;
+  --ink-faint: #bfb4cf;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #a8c8ee;
   --zone-masc-ink: #5d9fec;
@@ -319,6 +364,17 @@
   /* chrome — live recording state */
   --live: #ed7f6e;
   --live-2: #e0433e;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --accent-emphasis: #90f1d2;
+  --wave-icon: #5a8b7f;
+  --ink-faint: #abc7b8;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #a8c8ee;
   --zone-masc-ink: #5d9fec;
@@ -382,6 +438,17 @@
   /* chrome — live recording state */
   --live: #ed7f6e;
   --live-2: #e0433e;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --accent-emphasis: #96a4f2;
+  --wave-icon: #5a608b;
+  --ink-faint: #b6c1d6;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #c3dcff;
   --zone-masc-ink: #76afff;
@@ -445,6 +512,17 @@
   /* chrome — live recording state */
   --live: #ed6e7a;
   --live-2: #e03e5e;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --accent-emphasis: #f1c28e;
+  --wave-icon: #8b735a;
+  --ink-faint: #c7b4aa;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #a8c8ee;
   --zone-masc-ink: #5d9fec;
@@ -508,6 +586,17 @@
   /* chrome — live recording state */
   --live: #ed6e7f;
   --live-2: #e03e64;
+  /* chrome — trend-chart series (see blossom's comment above; shared across
+     the five dark themes the way --zone-comfy is) */
+  --chart-1: #e48bba;
+  --chart-2: #b095da;
+  --chart-3: #9cd3c1;
+  --chart-4: #e6bc89;
+  --chart-5: #d897bf;
+  --chart-3-band: #92e2c3;
+  --accent-emphasis: #efd780;
+  --wave-icon: #8b825a;
+  --ink-faint: #c9b9a2;
   /* data — meaning-bearing, see zones.ts */
   --zone-masc: #a9cdf5;
   --zone-masc-ink: #5aa5f7;
