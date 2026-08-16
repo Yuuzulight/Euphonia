@@ -26,6 +26,15 @@
   --line: #ffffff;
   --line-soft: #f0dcea;
   --shadow: 0 8px 24px rgba(186, 142, 196, 0.18);
+  /* bare R, G, B triples — consumed as rgba(var(--x-rgb), 0.22) so each
+     rule keeps its own alpha and geometry while the hue follows the theme */
+  --shadow-rgb: 186, 142, 196;
+  --overlay-rgb: 255, 255, 255;
+  --accent-glow-rgb: 176, 106, 150;
+  --live-glow-rgb: 255, 111, 156;
+  --scrim-rgb: 120, 96, 138;
+  --modal-shadow-rgb: 150, 110, 165;
+  --highlight-rgb: 224, 122, 176;
   /* chrome — text */
   --ink: #6b5876;
   --ink-soft: #9d8ba8;
@@ -164,7 +173,7 @@ body {
   color: var(--on-accent);
   cursor: pointer;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  box-shadow: 0 3px 10px rgba(176, 106, 150, 0.3);
+  box-shadow: 0 3px 10px rgba(var(--accent-glow-rgb), 0.3);
   transition: transform 0.14s ease;
 }
 .update-banner button:hover:not(:disabled) {
@@ -229,22 +238,22 @@ header.hero p {
   transition: background 0.15s ease, transform 0.15s ease;
 }
 .settings-btn:hover {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(var(--overlay-rgb), 0.6);
   transform: rotate(20deg);
 }
 
 .latest-banner {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(var(--overlay-rgb), 0.72);
   backdrop-filter: blur(10px) saturate(1.1);
   -webkit-backdrop-filter: blur(10px) saturate(1.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(var(--overlay-rgb), 0.9);
   border-radius: 999px;
   padding: 9px 20px;
   display: inline-flex;
   gap: 8px;
   align-items: center;
   margin-top: 16px;
-  box-shadow: 0 6px 18px rgba(186, 142, 196, 0.22);
+  box-shadow: 0 6px 18px rgba(var(--shadow-rgb), 0.22);
   font-size: 14px;
 }
 
@@ -264,7 +273,7 @@ header.hero p {
   padding: 11px 16px;
   border: 2px solid var(--line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(var(--overlay-rgb), 0.75);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   font-family: inherit;
@@ -295,12 +304,12 @@ header.hero p {
   color: var(--on-accent);
   cursor: pointer;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  box-shadow: 0 4px 14px rgba(176, 106, 150, 0.35);
+  box-shadow: 0 4px 14px rgba(var(--accent-glow-rgb), 0.35);
   transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
 .record-panel button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(176, 106, 150, 0.45);
+  box-shadow: 0 6px 18px rgba(var(--accent-glow-rgb), 0.45);
 }
 .record-panel button:active {
   transform: translateY(0) scale(0.97);
@@ -311,8 +320,8 @@ header.hero p {
   animation: record-pulse 1.6s ease-in-out infinite;
 }
 @keyframes record-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 111, 156, 0.45); }
-  50% { box-shadow: 0 0 0 10px rgba(255, 111, 156, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--live-glow-rgb), 0.45); }
+  50% { box-shadow: 0 0 0 10px rgba(var(--live-glow-rgb), 0); }
 }
 @media (prefers-reduced-motion: reduce) {
   .record-panel button.is-recording {
@@ -420,7 +429,7 @@ section {
 .fgauge.is-clickable:hover,
 .fgauge.is-clickable:focus-visible {
   background: var(--card-2);
-  box-shadow: 0 4px 14px rgba(186, 142, 196, 0.16);
+  box-shadow: 0 4px 14px rgba(var(--shadow-rgb), 0.16);
   outline: none;
 }
 .fgauge-head {
@@ -558,7 +567,7 @@ section {
   gap: 8px;
 }
 .rec .num {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(var(--overlay-rgb), 0.85);
   color: var(--ink-accent);
   border: 2px solid var(--accent);
   font-weight: 700;
@@ -569,7 +578,7 @@ section {
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  box-shadow: 0 3px 8px rgba(176, 106, 150, 0.22);
+  box-shadow: 0 3px 8px rgba(var(--accent-glow-rgb), 0.22);
 }
 .rec .label-txt {
   font-weight: 700;
@@ -688,7 +697,7 @@ section {
 }
 .player:hover {
   background: var(--bg-base);
-  box-shadow: 0 6px 18px rgba(186, 142, 196, 0.16);
+  box-shadow: 0 6px 18px rgba(var(--shadow-rgb), 0.16);
 }
 .player .wave {
   cursor: pointer;
@@ -702,7 +711,7 @@ section {
   cursor: pointer;
   color: var(--on-accent);
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  box-shadow: 0 3px 8px rgba(176, 106, 150, 0.35);
+  box-shadow: 0 3px 8px rgba(var(--accent-glow-rgb), 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -753,7 +762,7 @@ section {
   align-items: center;
   justify-content: center;
   color: var(--ink-accent);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(var(--overlay-rgb), 0.7);
   border: 1.5px solid var(--bg-glow-1);
   text-decoration: none;
   transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
@@ -1011,12 +1020,12 @@ a.legend-link {
   color: var(--on-accent);
   cursor: pointer;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  box-shadow: 0 4px 14px rgba(176, 106, 150, 0.35);
+  box-shadow: 0 4px 14px rgba(var(--accent-glow-rgb), 0.35);
   transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
 .insight-placeholder button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(176, 106, 150, 0.45);
+  box-shadow: 0 6px 18px rgba(var(--accent-glow-rgb), 0.45);
 }
 .insight-placeholder button:disabled {
   opacity: 0.65;
@@ -1075,7 +1084,7 @@ a.legend-link {
 .stat.is-clickable:hover,
 .stat.is-clickable:focus-visible {
   transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(186, 142, 196, 0.28);
+  box-shadow: 0 14px 30px rgba(var(--shadow-rgb), 0.28);
   outline: none;
 }
 .stat.is-clickable:focus-visible {
@@ -1163,7 +1172,7 @@ a.legend-link {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(120, 96, 138, 0.28);
+  background: rgba(var(--scrim-rgb), 0.28);
   backdrop-filter: blur(6px) saturate(1.1);
   -webkit-backdrop-filter: blur(6px) saturate(1.1);
   animation: mm-fade 0.2s ease both;
@@ -1179,7 +1188,7 @@ a.legend-link {
   background: var(--card);
   border-radius: 26px;
   border: 2px solid var(--line);
-  box-shadow: 0 24px 60px rgba(150, 110, 165, 0.34);
+  box-shadow: 0 24px 60px rgba(var(--modal-shadow-rgb), 0.34);
   padding: 26px 28px 22px;
   transform-origin: var(--ox, 50%) var(--oy, 50%);
   animation: mm-pop 0.34s cubic-bezier(0.22, 1.2, 0.36, 1) both;
@@ -1244,7 +1253,7 @@ a.legend-link {
   height: 18px;
   border-radius: 9px;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(150, 110, 165, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(var(--modal-shadow-rgb), 0.08);
 }
 .mm-seg {
   position: absolute;
@@ -1294,7 +1303,7 @@ a.legend-link {
   transform: translateX(-50%);
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(176, 106, 150, 0.6) 0 3px,
+    rgba(var(--accent-glow-rgb), 0.6) 0 3px,
     transparent 3px 6px
   );
   pointer-events: none;
@@ -1303,7 +1312,7 @@ a.legend-link {
   left: 8.5px;
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(224, 122, 176, 0.85) 0 3px,
+    rgba(var(--highlight-rgb), 0.85) 0 3px,
     transparent 3px 6px
   );
 }
@@ -1313,7 +1322,7 @@ a.legend-link {
   border-radius: 50%;
   background: var(--ink-accent);
   border: 2.5px solid var(--line);
-  box-shadow: 0 2px 6px rgba(150, 110, 165, 0.5);
+  box-shadow: 0 2px 6px rgba(var(--modal-shadow-rgb), 0.5);
   flex: none;
   z-index: 2;
   display: flex;
@@ -1336,7 +1345,7 @@ a.legend-link {
   width: 17px;
   height: 17px;
   background: var(--accent);
-  box-shadow: 0 0 0 3px var(--bg-glow-1), 0 3px 8px rgba(224, 122, 176, 0.55);
+  box-shadow: 0 0 0 3px var(--bg-glow-1), 0 3px 8px rgba(var(--highlight-rgb), 0.55);
 }
 .mm-take.is-active .mm-spk {
   font-size: 10px;
@@ -1423,7 +1432,7 @@ a.legend-link {
 }
 .mm-take.is-playing .mm-take-dot {
   background: var(--accent);
-  box-shadow: 0 0 0 4px var(--bg-glow-1), 0 3px 8px rgba(224, 122, 176, 0.6);
+  box-shadow: 0 0 0 4px var(--bg-glow-1), 0 3px 8px rgba(var(--highlight-rgb), 0.6);
 }
 .mm-ref.is-clickable .mm-ref-stem {
   transition: transform 0.14s ease, filter 0.14s ease;
@@ -1437,7 +1446,7 @@ a.legend-link {
   outline: none;
 }
 .mm-ref.is-playing .mm-ref-stem {
-  box-shadow: 0 0 0 2px var(--line), 0 0 0 3.5px rgba(176, 106, 150, 0.5);
+  box-shadow: 0 0 0 2px var(--line), 0 0 0 3.5px rgba(var(--accent-glow-rgb), 0.5);
 }
 /* tiny speaker badge above a ref tick — hidden until hover / focus / playing so
    the reference row stays a clean backdrop, but discoverable on interaction.
@@ -1537,7 +1546,7 @@ a.legend-link {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(120, 96, 138, 0.32);
+  background: rgba(var(--scrim-rgb), 0.32);
   backdrop-filter: blur(6px) saturate(1.1);
   -webkit-backdrop-filter: blur(6px) saturate(1.1);
   animation: modal-fade 0.2s ease both;
@@ -1553,7 +1562,7 @@ a.legend-link {
   background: var(--card);
   border-radius: 26px;
   border: 2px solid var(--line);
-  box-shadow: 0 24px 60px rgba(150, 110, 165, 0.34);
+  box-shadow: 0 24px 60px rgba(var(--modal-shadow-rgb), 0.34);
   padding: 28px;
   animation: modal-slide 0.34s cubic-bezier(0.22, 1.2, 0.36, 1) both;
 }
@@ -1658,12 +1667,12 @@ a.legend-link {
 .modal button:last-child {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: var(--on-accent);
-  box-shadow: 0 4px 12px rgba(176, 106, 150, 0.35);
+  box-shadow: 0 4px 12px rgba(var(--accent-glow-rgb), 0.35);
 }
 
 .modal button:last-child:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(176, 106, 150, 0.45);
+  box-shadow: 0 6px 16px rgba(var(--accent-glow-rgb), 0.45);
 }
 
 .modal button:disabled {
