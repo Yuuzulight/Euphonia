@@ -205,6 +205,321 @@
   /* non-color */
   --radius: 22px;
 }
+/* Dusk plum — deep plum-violet chrome, pink-gold accent. */
+[data-theme="dusk-plum"] {
+  /* chrome — surfaces */
+  --bg-base: #14131f;
+  --bg-glow-1: #2c1f38;
+  --bg-glow-2: #221f3d;
+  --card: #221b2e;
+  --card-2: #1b1626;
+  --control-bg: #3d324f;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(7, 5, 10, 0.18);
+  --shadow-rgb: 7, 5, 10;
+  --overlay-rgb: 27, 22, 38;
+  --accent-glow-rgb: 235, 145, 213;
+  --live-glow-rgb: 224, 67, 62;
+  --scrim-rgb: 11, 7, 13;
+  --modal-shadow-rgb: 25, 13, 28;
+  --highlight-rgb: 255, 168, 208;
+  /* chrome — text */
+  --ink: #ece3f5;
+  --ink-soft: #a294b4;
+  --ink-strong: #d5bded;
+  --ink-heading: #dfa9ec;
+  --ink-accent: #eb91d5;
+  --ink-callout: #e76db6;
+  --ink-warm: #e2c8b9;
+  --on-accent: #140c1d;
+  --on-zone: #37163b;
+  /* chrome — accents */
+  --accent: #f093c2;
+  --accent-2: #b6a2f2;
+  --accent-soft: #ed4a9c;
+  /* chrome — states */
+  --danger: #ea9f90;
+  --danger-bg: #2f1c18;
+  --danger-border: #5f332b;
+  --danger-strong: #d25941;
+  --success: #71d0a1;
+  --success-bg: #182a21;
+  --success-border: #2d5842;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #251d33;
+  --titlebar-ink: #c8b6dd;
+  /* chrome — waveform player */
+  --wave: #7d6aa8;
+  --wave-progress: #f093c2;
+  --wave-cursor: #ffa8d0;
+  /* chrome — live recording state */
+  --live: #ed7f6e;
+  --live-2: #e0433e;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #a8c8ee;
+  --zone-masc-ink: #5d9fec;
+  --zone-fem: #f59ec6;
+  --zone-neutral: #e8d089;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
+  --radius: 22px;
+}
+/* Dark mint — near-black forest chrome, seafoam accent. */
+[data-theme="dark-mint"] {
+  /* chrome — surfaces */
+  --bg-base: #0f1614;
+  --bg-glow-1: #17281f;
+  --bg-glow-2: #16231f;
+  --card: #182420;
+  --card-2: #131d1a;
+  --control-bg: #30443d;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(5, 10, 8, 0.18);
+  --shadow-rgb: 5, 10, 8;
+  --overlay-rgb: 19, 29, 26;
+  --accent-glow-rgb: 152, 221, 191;
+  --live-glow-rgb: 224, 67, 62;
+  --scrim-rgb: 7, 13, 10;
+  --modal-shadow-rgb: 13, 28, 20;
+  --highlight-rgb: 158, 232, 200;
+  /* chrome — text */
+  --ink: #e2efe8;
+  --ink-soft: #92a89d;
+  --ink-strong: #c0e3d0;
+  --ink-heading: #aee1c8;
+  --ink-accent: #98ddbf;
+  --ink-callout: #77d5ae;
+  --ink-warm: #e0c4b4;
+  --on-accent: #0c1d14;
+  --on-zone: #163b29;
+  /* chrome — accents */
+  --accent: #7fd7b4;
+  --accent-2: #8fb8d8;
+  --accent-soft: #3dcc93;
+  /* chrome — states */
+  --danger: #ea9c90;
+  --danger-bg: #2f1b18;
+  --danger-border: #5f322b;
+  --danger-strong: #d25441;
+  --success: #1eb861;
+  --success-bg: #182a20;
+  --success-border: #2d583f;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #1b2a24;
+  --titlebar-ink: #a9c9ba;
+  /* chrome — waveform player */
+  --wave: #5f7d71;
+  --wave-progress: #7fd7b4;
+  --wave-cursor: #9ee8c8;
+  /* chrome — live recording state */
+  --live: #ed7f6e;
+  --live-2: #e0433e;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #a8c8ee;
+  --zone-masc-ink: #5d9fec;
+  --zone-fem: #f59ec6;
+  --zone-neutral: #e8d089;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
+  --radius: 22px;
+}
+/* Midnight — deep navy chrome, periwinkle accent. */
+[data-theme="midnight"] {
+  /* chrome — surfaces */
+  --bg-base: #0d1322;
+  --bg-glow-1: #1a2440;
+  --bg-glow-2: #151d33;
+  --card: #182036;
+  --card-2: #121a2c;
+  --control-bg: #2b385b;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(5, 7, 10, 0.18);
+  --shadow-rgb: 5, 7, 10;
+  --overlay-rgb: 18, 26, 44;
+  --accent-glow-rgb: 145, 169, 235;
+  --live-glow-rgb: 224, 67, 62;
+  --scrim-rgb: 7, 9, 13;
+  --modal-shadow-rgb: 13, 18, 28;
+  --highlight-rgb: 176, 194, 255;
+  /* chrome — text */
+  --ink: #e3e9f5;
+  --ink-soft: #93a0bd;
+  --ink-strong: #bdcded;
+  --ink-heading: #a9beec;
+  --ink-accent: #91a9eb;
+  --ink-callout: #6d8be7;
+  --ink-warm: #e2c8b9;
+  --on-accent: #0c121d;
+  --on-zone: #16213b;
+  /* chrome — accents */
+  --accent: #8fa6f0;
+  --accent-2: #b79ae8;
+  --accent-soft: #587cef;
+  /* chrome — states */
+  --danger: #ea9690;
+  --danger-bg: #2f1a18;
+  --danger-border: #5f2e2b;
+  --danger-strong: #d24b41;
+  --success: #71d0a1;
+  --success-bg: #182a21;
+  --success-border: #2d5842;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #141c30;
+  --titlebar-ink: #a8b6d4;
+  /* chrome — waveform player */
+  --wave: #5c6a90;
+  --wave-progress: #8fa6f0;
+  --wave-cursor: #b0c2ff;
+  /* chrome — live recording state */
+  --live: #ed7f6e;
+  --live-2: #e0433e;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #c3dcff;
+  --zone-masc-ink: #76afff;
+  --zone-fem: #f59ec6;
+  --zone-neutral: #e8d089;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
+  --radius: 22px;
+}
+/* Cocoa — near-black espresso-brown chrome, warm caramel accent. */
+[data-theme="cocoa"] {
+  /* chrome — surfaces */
+  --bg-base: #16110f;
+  --bg-glow-1: #261c18;
+  --bg-glow-2: #1f1714;
+  --card: #211a17;
+  --card-2: #1a1411;
+  --control-bg: #403530;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(10, 7, 5, 0.18);
+  --shadow-rgb: 10, 7, 5;
+  --overlay-rgb: 26, 20, 17;
+  --accent-glow-rgb: 226, 178, 145;
+  --live-glow-rgb: 224, 62, 94;
+  --scrim-rgb: 13, 10, 7;
+  --modal-shadow-rgb: 28, 19, 13;
+  --highlight-rgb: 245, 195, 160;
+  /* chrome — text */
+  --ink: #f0e6df;
+  --ink-soft: #ab998e;
+  --ink-strong: #e6cdbb;
+  --ink-heading: #e4c1a8;
+  --ink-accent: #e2b291;
+  --ink-callout: #db9b6f;
+  --ink-warm: #e0c3b2;
+  --on-accent: #1d130c;
+  --on-zone: #3b2516;
+  /* chrome — accents */
+  --accent: #e0a882;
+  --accent-2: #c98f6f;
+  --accent-soft: #d87c3e;
+  /* chrome — states */
+  --danger: #ea9990;
+  --danger-bg: #2f1b18;
+  --danger-border: #5f302b;
+  --danger-strong: #d25041;
+  --success: #71d0a1;
+  --success-bg: #182a21;
+  --success-border: #2d5842;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #241b17;
+  --titlebar-ink: #cdb5a5;
+  /* chrome — waveform player */
+  --wave: #7a6559;
+  --wave-progress: #e0a882;
+  --wave-cursor: #f5c3a0;
+  /* chrome — live recording state */
+  --live: #ed6e7a;
+  --live-2: #e03e5e;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #a8c8ee;
+  --zone-masc-ink: #5d9fec;
+  --zone-fem: #f59ec6;
+  --zone-neutral: #e8d089;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
+  --radius: 22px;
+}
+/* Amber night — near-black amber chrome, warm gold accent. */
+[data-theme="amber-night"] {
+  /* chrome — surfaces */
+  --bg-base: #131007;
+  --bg-glow-1: #1f1810;
+  --bg-glow-2: #1a150c;
+  --card: #1e1810;
+  --card-2: #17120b;
+  --control-bg: #413525;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 24px rgba(10, 8, 5, 0.18);
+  --shadow-rgb: 10, 8, 5;
+  --overlay-rgb: 23, 18, 11;
+  --accent-glow-rgb: 238, 198, 118;
+  --live-glow-rgb: 224, 62, 100;
+  --scrim-rgb: 13, 11, 7;
+  --modal-shadow-rgb: 28, 23, 13;
+  --highlight-rgb: 247, 221, 162;
+  /* chrome — text */
+  --ink: #f3e7cd;
+  --ink-soft: #b0a084;
+  --ink-strong: #f0d7a3;
+  --ink-heading: #f1d18d;
+  --ink-accent: #eec676;
+  --ink-callout: #ecb750;
+  --ink-warm: #dbbba8;
+  --on-accent: #1d180c;
+  --on-zone: #3b2f16;
+  /* chrome — accents */
+  --accent: #e8c37a;
+  --accent-2: #d9a94f;
+  --accent-soft: #e4a832;
+  /* chrome — states */
+  --danger: #ea9690;
+  --danger-bg: #2f1a18;
+  --danger-border: #5f2e2b;
+  --danger-strong: #d24b41;
+  --success: #71d0a1;
+  --success-bg: #182a21;
+  --success-border: #2d5842;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #1f1810;
+  --titlebar-ink: #d8bd8a;
+  /* chrome — waveform player */
+  --wave: #806f4f;
+  --wave-progress: #e8c37a;
+  --wave-cursor: #f7dda2;
+  /* chrome — live recording state */
+  --live: #ed6e7f;
+  --live-2: #e03e64;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #a9cdf5;
+  --zone-masc-ink: #5aa5f7;
+  --zone-fem: #f0a0c0;
+  --zone-neutral: #efd390;
+  --zone-grow: #b3a9c6;
+  --zone-soft: #b9b0d2;
+  --zone-comfy: #a6d6c0;
+  --zone-strong: #eeb0cd;
+  /* non-color */
+  --radius: 22px;
+}
 * {
   box-sizing: border-box;
 }
