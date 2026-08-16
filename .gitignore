@@ -43,5 +43,5 @@ electron/release/
 electron/resources/ffmpeg/
 
 # brainstorming session scratch — the server's state/ holds a session key, and
-# the mockups worth keeping are copied into docs/superpowers/specs/ instead
-.superpowers/brainstorm/
+# the mockups worth keeping are copied into docs/specs/ instead
+.superpowers/

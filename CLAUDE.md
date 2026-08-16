@@ -373,8 +373,8 @@ the top sections + which annotation file loads.
 The Electron app in `electron/` wraps this same dashboard + analyzer so it can be
 installed and run standalone, no coding agent, no server, no accounts. Full
 implementation history (10 tasks + a final-review hardening pass) lives in
-`docs/superpowers/plans/2026-07-25-voice-garden-desktop-app.md` and
-`docs/superpowers/specs/2026-07-25-voice-garden-desktop-design.md` — read those for
+`docs/plans/2026-07-25-voice-garden-desktop-app.md` and
+`docs/specs/2026-07-25-voice-garden-desktop-design.md` — read those for
 the "why" behind each decision below; this section is the current-state summary.
 
 ### Architecture
@@ -553,7 +553,7 @@ on Windows, derived from `electron/package.json`'s `name`).
   SignPath/Azure Trusted Signing/Certum research if this changes).
 - A handful of deferred Minor findings from the implementation's review passes
   (CSS duplication, a couple of missing edge-case guards, etc.) — see
-  `.superpowers/sdd/2026-07-25-voice-garden-desktop-app/final-review-fix-report.md`
+  `docs/reports/2026-07-25-voice-garden-desktop-app-final-review.md`
   for the ones that came out of the final review specifically.
 
 ---
@@ -698,8 +698,9 @@ load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
   `protocol.ts`'s path-containment security check).
 - `docs/gemini-api-key.md` — the Gemini key setup guide; single source of truth,
   also rendered inline in the desktop app's onboarding modal.
-- `docs/superpowers/` — the design spec and implementation plan for the desktop app
-  (full architecture rationale, task-by-task history, final-review findings).
+- `docs/specs/` — design specs (desktop app architecture rationale; theme system).
+- `docs/plans/` — task-by-task implementation plans.
+- `docs/reports/` — review findings from completed work.
 - `/tmp/vctk-ref/audio/` — **NOT in the repo.** The downloaded VCTK American clips used to
   generate `public/reference.json` + `reference-audio/` previews. See the "Reference voices"
   section above for how to regenerate.
