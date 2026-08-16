@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ThemePicker } from "./ThemePicker";
 
 const GUIDE_STEPS = [
   ["Go to Google AI Studio", "aistudio.google.com/apikey"],
@@ -81,7 +82,9 @@ export function OnboardingModal({
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="modal onboarding">
-        <h2>💗 Gemini key (optional)</h2>
+        <h2>⚙️ Settings</h2>
+        <ThemePicker />
+        <h3>💗 Gemini key (optional)</h3>
         <p>
           Euphonia already writes a short insight for every take — no setup needed.
           Add a free Gemini key for a richer, more personalized version instead:

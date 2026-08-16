@@ -2139,6 +2139,40 @@ a.legend-link {
   color: var(--ink-accent);
 }
 
+.modal.onboarding h3 {
+  margin: 20px 0 8px;
+  font-size: 16px;
+  color: var(--ink-accent);
+}
+
+.theme-picker { display: grid; gap: 14px; margin-bottom: 20px; }
+.theme-group { border: none; margin: 0; padding: 0; }
+.theme-group legend {
+  font-size: 11px; font-weight: 800; color: var(--ink-soft);
+  padding: 0; margin-bottom: 7px;
+}
+.theme-mode, .theme-swatch {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 0 8px 8px 0; padding: 6px 12px;
+  border-radius: 999px; background: var(--card-2); color: var(--ink);
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  border: 2px solid transparent;
+}
+.theme-mode.is-on, .theme-swatch.is-on { border-color: var(--accent); }
+.theme-mode input, .theme-swatch input {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.theme-mode:focus-within, .theme-swatch:focus-within {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.theme-chip {
+  width: 22px; height: 22px; border-radius: 7px; display: grid;
+  place-items: center; background: var(--bg-base); border: 1px solid var(--line);
+}
+.theme-chip i {
+  width: 9px; height: 9px; border-radius: 3px; background: var(--accent);
+}
+
 .modal > p {
   margin: 0 0 16px;
   font-size: 14px;
