@@ -952,277 +952,214 @@ git commit -m "feat: add theme context and live token color hook"
 
 ---
 
-## Task 5: The seven remaining palettes
+## Task 5a: The two remaining light themes
+
+Rewritten during execution. The palettes below were originally written against a
+~30-token vocabulary; the sweep tasks grew it to **51 tokens**, so each theme
+must now define all 51 or the parity check fails. Rather than list 51 values per
+theme here, this task gives the anchor values from the approved mockups and the
+rules for deriving the rest by role.
 
 **Files:**
-- Modify: `dashboard-react/src/index.css` (append after the `:root` block)
+- Modify: `dashboard-react/src/index.css` (append after the blossom block)
 
 **Interfaces:**
-- Consumes: the token vocabulary from Task 2.
-- Produces: seven `:root[data-theme="…"]` blocks. No new token names.
+- Consumes: the 51-token vocabulary defined in the `:root, [data-theme="blossom"]` block.
+- Produces: `[data-theme="paper"]` and `[data-theme="light-mint"]` blocks.
 
-- [ ] **Step 1: Add the two remaining light themes**
+- [ ] **Step 1: Read the vocabulary you must satisfy**
 
-Transcribe from `docs/specs/2026-08-16-theme-mockups/more-themes.html` (paper) and `mint-theme.html` (M1). Append to `index.css`:
+Read the whole `:root, [data-theme="blossom"]` block first and list its 51 token
+names. **Every theme block must define exactly that set — no more, no fewer.**
+`scripts/test_theme_tokens.js` fails the build on any drift, in either direction.
 
-```css
-[data-theme="paper"] {
-  --bg-base: #f2efe8;
-  --bg-glow-1: #f6f0e4;
-  --bg-glow-2: #efeade;
-  --card: #fffdf8;
-  --card-2: #f7f4ee;
-  --line: #ffffff;
-  --shadow: 0 6px 18px rgba(140, 125, 100, 0.15);
-  --ink: #45403a;
-  --ink-soft: #756d62;
-  --on-accent: #ffffff;
-  --on-zone: #4a4036;
-  --accent: #c2a878;
-  --accent-2: #a89a84;
-  --danger: #a53f3f;
-  --danger-bg: #f7e6e2;
-  --success: #3d7a5f;
-  --success-bg: #e8f2ea;
-  --titlebar-bg: #ece4d6;
-  --titlebar-ink: #5c554a;
-  --wave: #c5b394;
-  --wave-progress: #c2a878;
-  --wave-cursor: #a8895a;
-  --zone-masc: #bcd3f0;
-  --zone-fem: #ffb6d5;
-  --zone-neutral: #ffe9a8;
-  --zone-grow: #cdc6da;
-  --zone-soft: #d7d0e8;
-  --zone-comfy: #cdeadd;
-  --zone-strong: #ffd9ea;
-  --radius: 22px;
-}
-[data-theme="light-mint"] {
-  --bg-base: #eef6f2;
-  --bg-glow-1: #d9f2e6;
-  --bg-glow-2: #e3f1ea;
-  --card: #fbfffd;
-  --card-2: #f2faf6;
-  --line: #ffffff;
-  --shadow: 0 8px 24px rgba(120, 165, 145, 0.2);
-  --ink: #355044;
-  --ink-soft: #63796d;
-  --on-accent: #ffffff;
-  --on-zone: #2f4a3e;
-  --accent: #4f9e7f;
-  --accent-2: #7fa8c4;
-  --danger: #b04141;
-  --danger-bg: #fbe7e7;
-  --success: #37795d;
-  --success-bg: #e6f4ec;
-  --titlebar-bg: #cfeee0;
-  --titlebar-ink: #365f4d;
-  --wave: #9dc0b2;
-  --wave-progress: #5fae8d;
-  --wave-cursor: #3f8f6d;
-  --zone-masc: #bcd3f0;
-  --zone-fem: #ffb6d5;
-  --zone-neutral: #ffe9a8;
-  --zone-grow: #cdc6da;
-  --zone-soft: #d7d0e8;
-  --zone-comfy: #cdeadd;
-  --zone-strong: #ffd9ea;
-  --radius: 22px;
-}
+- [ ] **Step 2: Anchor values from the approved mockups**
+
+These come from `docs/specs/2026-08-16-theme-mockups/` and are not yours to
+reinvent — transcribe them:
+
+**paper** — warm oat-cream, the lowest-glare light theme.
+```
+--bg-base: #f2efe8;  --bg-glow-1: #f6f0e4;  --bg-glow-2: #efeade;
+--card: #fffdf8;     --card-2: #f7f4ee;     --line: #ffffff;
+--ink: #45403a;      --ink-soft: #756d62;   --on-accent: #ffffff;
+--accent: #c2a878;   --accent-2: #a89a84;
+--titlebar-bg: #ece4d6;  --titlebar-ink: #5c554a;
+--wave: #c5b394;     --wave-progress: #c2a878;  --wave-cursor: #a8895a;
 ```
 
-- [ ] **Step 2: Add the five dark themes**
-
-Data tokens are lifted here so pastels survive a dark card. Midnight brightens `--zone-masc` and deepens its chrome; amber-night cools `--zone-masc` — both per the spec's "Token model" section.
-
-```css
-[data-theme="dusk-plum"] {
-  --bg-base: #14131f;
-  --bg-glow-1: #2c1f38;
-  --bg-glow-2: #221f3d;
-  --card: #221b2e;
-  --card-2: #1b1626;
-  --line: rgba(255, 255, 255, 0.07);
-  --shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
-  --ink: #ece3f5;
-  --ink-soft: #a294b4;
-  --on-accent: #241a2e;
-  --on-zone: #2a1f33;
-  --accent: #f093c2;
-  --accent-2: #b6a2f2;
-  --danger: #f08a8a;
-  --danger-bg: #3a1f22;
-  --success: #7fd2ac;
-  --success-bg: #17301f;
-  --titlebar-bg: #251d33;
-  --titlebar-ink: #c8b6dd;
-  --wave: #7d6aa8;
-  --wave-progress: #f093c2;
-  --wave-cursor: #ffa8d0;
-  --zone-masc: #a8c8ee;
-  --zone-fem: #f59ec6;
-  --zone-neutral: #e8d089;
-  --zone-grow: #b3a9c6;
-  --zone-soft: #b9b0d2;
-  --zone-comfy: #a6d6c0;
-  --zone-strong: #eeb0cd;
-  --radius: 22px;
-}
-[data-theme="dark-mint"] {
-  --bg-base: #0f1614;
-  --bg-glow-1: #17281f;
-  --bg-glow-2: #16231f;
-  --card: #182420;
-  --card-2: #131d1a;
-  --line: rgba(255, 255, 255, 0.07);
-  --shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
-  --ink: #e2efe8;
-  --ink-soft: #92a89d;
-  --on-accent: #10231b;
-  --on-zone: #16302a;
-  --accent: #7fd7b4;
-  --accent-2: #8fb8d8;
-  --danger: #f08a8a;
-  --danger-bg: #33201f;
-  --success: #7fd7b4;
-  --success-bg: #16301f;
-  --titlebar-bg: #1b2a24;
-  --titlebar-ink: #a9c9ba;
-  --wave: #5f7d71;
-  --wave-progress: #7fd7b4;
-  --wave-cursor: #9ee8c8;
-  --zone-masc: #a8c8ee;
-  --zone-fem: #f59ec6;
-  --zone-neutral: #e8d089;
-  --zone-grow: #b3a9c6;
-  --zone-soft: #b9b0d2;
-  --zone-comfy: #a6d6c0;
-  --zone-strong: #eeb0cd;
-  --radius: 22px;
-}
-[data-theme="midnight"] {
-  --bg-base: #0d1322;
-  --bg-glow-1: #1a2440;
-  --bg-glow-2: #151d33;
-  --card: #182036;
-  --card-2: #121a2c;
-  --line: rgba(255, 255, 255, 0.07);
-  --shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-  --ink: #e3e9f5;
-  --ink-soft: #93a0bd;
-  --on-accent: #141c30;
-  --on-zone: #1a2338;
-  --accent: #8fa6f0;
-  --accent-2: #b79ae8;
-  --danger: #f08a8a;
-  --danger-bg: #32202a;
-  --success: #7fd2ac;
-  --success-bg: #15301f;
-  --titlebar-bg: #141c30;
-  --titlebar-ink: #a8b6d4;
-  --wave: #5c6a90;
-  --wave-progress: #8fa6f0;
-  --wave-cursor: #b0c2ff;
-  /* --zone-masc lifted well clear of the navy chrome — see spec, Token model */
-  --zone-masc: #c3dcff;
-  --zone-fem: #f59ec6;
-  --zone-neutral: #e8d089;
-  --zone-grow: #b3a9c6;
-  --zone-soft: #b9b0d2;
-  --zone-comfy: #a6d6c0;
-  --zone-strong: #eeb0cd;
-  --radius: 22px;
-}
-[data-theme="cocoa"] {
-  --bg-base: #16110f;
-  --bg-glow-1: #261c18;
-  --bg-glow-2: #1f1714;
-  --card: #211a17;
-  --card-2: #1a1411;
-  --line: rgba(255, 255, 255, 0.07);
-  --shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-  --ink: #f0e6df;
-  --ink-soft: #ab998e;
-  --on-accent: #241b17;
-  --on-zone: #2e211b;
-  --accent: #e0a882;
-  --accent-2: #c98f6f;
-  --danger: #f08a8a;
-  --danger-bg: #38201d;
-  --success: #7fd2ac;
-  --success-bg: #17301f;
-  --titlebar-bg: #241b17;
-  --titlebar-ink: #cdb5a5;
-  --wave: #7a6559;
-  --wave-progress: #e0a882;
-  --wave-cursor: #f5c3a0;
-  --zone-masc: #a8c8ee;
-  --zone-fem: #f59ec6;
-  --zone-neutral: #e8d089;
-  --zone-grow: #b3a9c6;
-  --zone-soft: #b9b0d2;
-  --zone-comfy: #a6d6c0;
-  --zone-strong: #eeb0cd;
-  --radius: 22px;
-}
-[data-theme="amber-night"] {
-  --bg-base: #131007;
-  --bg-glow-1: #1f1810;
-  --bg-glow-2: #1a150c;
-  --card: #1e1810;
-  --card-2: #17120b;
-  --line: rgba(255, 255, 255, 0.07);
-  --shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
-  --ink: #f3e7cd;
-  --ink-soft: #b0a084;
-  --on-accent: #1f1810;
-  --on-zone: #2b2213;
-  --accent: #e8c37a;
-  --accent-2: #d9a94f;
-  --danger: #f0928a;
-  --danger-bg: #351f16;
-  --success: #97d2ac;
-  --success-bg: #1b3018;
-  --titlebar-bg: #1f1810;
-  --titlebar-ink: #d8bd8a;
-  --wave: #806f4f;
-  --wave-progress: #e8c37a;
-  --wave-cursor: #f7dda2;
-  /* --zone-masc cooled to survive the warm cast — see spec, Token model */
-  --zone-masc: #a9cdf5;
-  --zone-fem: #f0a0c0;
-  --zone-neutral: #efd390;
-  --zone-grow: #b3a9c6;
-  --zone-soft: #b9b0d2;
-  --zone-comfy: #a6d6c0;
-  --zone-strong: #eeb0cd;
-  --radius: 22px;
-}
+**light-mint** — sage-mint chrome, green-slate text.
+```
+--bg-base: #eef6f2;  --bg-glow-1: #d9f2e6;  --bg-glow-2: #e3f1ea;
+--card: #fbfffd;     --card-2: #f2faf6;     --line: #ffffff;
+--ink: #355044;      --ink-soft: #63796d;   --on-accent: #ffffff;
+--accent: #4f9e7f;   --accent-2: #7fa8c4;
+--titlebar-bg: #cfeee0;  --titlebar-ink: #365f4d;
+--wave: #9dc0b2;     --wave-progress: #5fae8d;  --wave-cursor: #3f8f6d;
 ```
 
-- [ ] **Step 3: Run the token checker**
+- [ ] **Step 3: Derive the remaining tokens by role**
 
-Run: `node scripts/test_theme_tokens.js`
+For every token not anchored above, look at what it *is* in blossom relative to
+blossom's anchors, and produce the equivalent in this theme. Do not copy
+blossom's literal values — a pink shade in a mint theme is a bug.
 
-Expected: PASS across all eight themes. If it reports a contrast failure, adjust that theme's `--ink-soft` or `--card` until it clears — do not lower the floor in the script.
+- **Surfaces** — `--card-2` is a slightly recessed panel behind `--card`.
+  `--control-bg` is a *raised* control fill sitting on top of a card, so in a
+  light theme it is at or slightly above `--card` in lightness. `--line-soft`
+  is a softer divider than `--line`.
+- **Text** — `--ink-strong` is heavier than `--ink`; `--ink-heading`,
+  `--ink-accent`, `--ink-callout` and `--ink-warm` are the variations blossom
+  uses for headings, accented text, callouts and take labels. Keep their
+  relative weights, retinted to this theme's hue family.
+- **On-colors** — `--on-accent` is text on an accent fill; `--on-zone` is text
+  on a pastel zone pill. Zone pills stay pastel in every theme, so `--on-zone`
+  stays dark; make sure it clears contrast against all four zone colors.
+- **Accents** — `--accent-soft` is a lighter companion to `--accent`.
+- **States** — `--danger` / `--success` are the text-weight colors, `-bg` the
+  fills, `-border` the edges, `--danger-strong` the heavier idle fill on the
+  destructive-confirm button. Red and green stay red and green in every theme;
+  retune only for legibility on this theme's surfaces.
+- **Recording** — `--live` and `--live-2` are the two stops of the record
+  button's warm gradient. Keep them warm and distinct from `--accent`.
+- **Translucent triples** — see Step 4, they need their own thought.
+- **`--radius: 22px`** — identical in every theme.
 
-- [ ] **Step 4: Eyeball each theme**
+- [ ] **Step 4: The translucent triples need care**
 
-Run `npm run dev`, then in the console cycle through them:
+`--shadow-rgb`, `--overlay-rgb`, `--accent-glow-rgb`, `--live-glow-rgb`,
+`--scrim-rgb`, `--modal-shadow-rgb` and `--highlight-rgb` are bare `R, G, B`
+triples consumed as `rgba(var(--x-rgb), <alpha>)`, **and the alpha is fixed at
+each call site**. You are choosing a hue that has to work at an alpha you cannot
+change.
 
-```js
-["blossom","paper","light-mint","dusk-plum","dark-mint","midnight","cocoa","amber-night"]
-  .forEach((t,i)=>setTimeout(()=>document.documentElement.setAttribute("data-theme",t),i*1500));
+Read the call sites before choosing. For each triple ask: at the alphas actually
+used, does this colour read correctly on *this theme's* surfaces? A shadow tint
+must still read as a shadow; a highlight must still read as a highlight.
+
+**If any call site's fixed alpha makes a correct choice impossible for a theme,
+do not fudge it — report it.** That is a real finding about the token design,
+not a failure on your part, and the controller will rule on it.
+
+- [ ] **Step 5: Verify**
+
+```bash
+node scripts/test_theme_tokens.js
+cd dashboard-react && npm run build
 ```
 
-Charts and the waveform will still be wrong — they're hardcoded until Tasks 6 and 7. Cards, text, buttons and the background should all be correct.
+The checker must pass. **You may not add entries to `BASELINE_EXCEPTIONS`** —
+that list is frozen at blossom's four pre-existing pairs. If a new theme fails a
+contrast pair, fix the colour, not the checker. If you believe a floor is
+genuinely wrong for a specific pair, report it rather than editing the list.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add dashboard-react/src/index.css
+git commit -m "feat: add the paper and light-mint palettes"
+```
+
+---
+
+## Task 5b: The five dark themes
+
+Same structure as Task 5a, for the dark family. These are the higher-risk half:
+every "invisible in blossom" mistake from the sweep tasks surfaces here first.
+
+**Files:**
+- Modify: `dashboard-react/src/index.css`
+
+**Interfaces:**
+- Consumes: the 51-token vocabulary; the derivation rules from Task 5a Steps 3-4.
+- Produces: `[data-theme="dusk-plum"]`, `[data-theme="dark-mint"]`,
+  `[data-theme="midnight"]`, `[data-theme="cocoa"]`, `[data-theme="amber-night"]` blocks.
+
+- [ ] **Step 1: Anchor values from the approved mockups**
+
+```
+dusk-plum   --bg-base:#14131f --bg-glow-1:#2c1f38 --bg-glow-2:#221f3d
+            --card:#221b2e --card-2:#1b1626 --line:rgba(255,255,255,.07)
+            --ink:#ece3f5 --ink-soft:#a294b4 --accent:#f093c2 --accent-2:#b6a2f2
+            --titlebar-bg:#251d33 --titlebar-ink:#c8b6dd
+            --wave:#7d6aa8 --wave-progress:#f093c2 --wave-cursor:#ffa8d0
+dark-mint   --bg-base:#0f1614 --bg-glow-1:#17281f --bg-glow-2:#16231f
+            --card:#182420 --card-2:#131d1a --line:rgba(255,255,255,.07)
+            --ink:#e2efe8 --ink-soft:#92a89d --accent:#7fd7b4 --accent-2:#8fb8d8
+            --titlebar-bg:#1b2a24 --titlebar-ink:#a9c9ba
+            --wave:#5f7d71 --wave-progress:#7fd7b4 --wave-cursor:#9ee8c8
+midnight    --bg-base:#0d1322 --bg-glow-1:#1a2440 --bg-glow-2:#151d33
+            --card:#182036 --card-2:#121a2c --line:rgba(255,255,255,.07)
+            --ink:#e3e9f5 --ink-soft:#93a0bd --accent:#8fa6f0 --accent-2:#b79ae8
+            --titlebar-bg:#141c30 --titlebar-ink:#a8b6d4
+            --wave:#5c6a90 --wave-progress:#8fa6f0 --wave-cursor:#b0c2ff
+cocoa       --bg-base:#16110f --bg-glow-1:#261c18 --bg-glow-2:#1f1714
+            --card:#211a17 --card-2:#1a1411 --line:rgba(255,255,255,.07)
+            --ink:#f0e6df --ink-soft:#ab998e --accent:#e0a882 --accent-2:#c98f6f
+            --titlebar-bg:#241b17 --titlebar-ink:#cdb5a5
+            --wave:#7a6559 --wave-progress:#e0a882 --wave-cursor:#f5c3a0
+amber-night --bg-base:#131007 --bg-glow-1:#1f1810 --bg-glow-2:#1a150c
+            --card:#1e1810 --card-2:#17120b --line:rgba(255,255,255,.07)
+            --ink:#f3e7cd --ink-soft:#b0a084 --accent:#e8c37a --accent-2:#d9a94f
+            --titlebar-bg:#1f1810 --titlebar-ink:#d8bd8a
+            --wave:#806f4f --wave-progress:#e8c37a --wave-cursor:#f7dda2
+```
+
+`--on-accent` in every dark theme is a dark ink drawn from that theme's own
+background family, not white — these accents are light, so white on them fails
+contrast.
+
+- [ ] **Step 2: The data tokens, which are the point of the whole exercise**
+
+The `zones.ts` convention is law: blue means the masculine/deeper end and
+nothing else, pink the feminine end, butter the mid, lilac "room to grow".
+Themes retune these for legibility on a dark card; they never reassign meaning.
+Baseline for the dark family:
+
+```
+--zone-masc:#a8c8ee --zone-fem:#f59ec6 --zone-neutral:#e8d089 --zone-grow:#b3a9c6
+--zone-soft:#b9b0d2 --zone-comfy:#a6d6c0 --zone-strong:#eeb0cd
+--zone-masc-ink: a text-legible variant of that theme's --zone-masc
+```
+
+Two themes override the baseline, and this is why they were flagged when the
+palettes were chosen:
+
+- **midnight** — its navy chrome sits closest to the masculine blue. Use
+  `--zone-masc: #c3dcff`, lifted well clear of the chrome, and keep the chrome
+  deep. Check the two do not read as the same colour on screen.
+- **amber-night** — its warm cast mutes blue. Use `--zone-masc: #a9cdf5`,
+  cooled to claw back separation, with `--zone-fem: #f0a0c0` and
+  `--zone-neutral: #efd390`.
+
+- [ ] **Step 3: Derive the rest, per Task 5a Steps 3-4**
+
+Same rules. Two things bite harder in the dark family:
+
+- **`--control-bg`** is a raised control on a dark card, so it must be
+  *lighter* than `--card`, not white. A white control fill on a near-black card
+  is the single most jarring possible mistake here.
+- **`--overlay-rgb`** is consumed at high alpha in places (up to 0.75). A white
+  triple at 0.75 over a near-black card produces an almost-white block. Read
+  every call site and choose a triple that works at the alpha that is actually
+  used. Where no choice works, report it per Task 5a Step 4.
+
+- [ ] **Step 4: Verify**
+
+```bash
+node scripts/test_theme_tokens.js
+cd dashboard-react && npm run build
+```
+
+Checker must pass for all eight themes. `BASELINE_EXCEPTIONS` stays frozen at
+blossom's four pairs — a dark theme failing a contrast pair means its colours
+need fixing.
 
 - [ ] **Step 5: Commit**
 
 ```bash
 git add dashboard-react/src/index.css
-git commit -m "feat: add the seven non-default theme palettes"
+git commit -m "feat: add the five dark palettes"
 ```
 
 ---
