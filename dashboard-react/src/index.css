@@ -79,6 +79,132 @@
   /* non-color */
   --radius: 22px;
 }
+/* Paper — warm oat-cream, the lowest-glare light theme. */
+[data-theme="paper"] {
+  /* chrome — surfaces */
+  --bg-base: #f2efe8;
+  --bg-glow-1: #f6f0e4;
+  --bg-glow-2: #efeade;
+  --card: #fffdf8;
+  --card-2: #f7f4ee;
+  --control-bg: #ffffff;
+  --line: #ffffff;
+  --line-soft: #e5dcc6;
+  --shadow: 0 8px 24px rgba(150, 128, 96, 0.18);
+  --shadow-rgb: 150, 128, 96;
+  --overlay-rgb: 255, 255, 255;
+  --accent-glow-rgb: 138, 107, 58;
+  --live-glow-rgb: 200, 90, 58;
+  --scrim-rgb: 74, 62, 46;
+  --modal-shadow-rgb: 110, 90, 65;
+  --highlight-rgb: 214, 158, 74;
+  /* chrome — text */
+  --ink: #45403a;
+  --ink-soft: #716a5f;
+  --ink-strong: #5c4a30;
+  --ink-heading: #7a5f34;
+  --ink-accent: #8a6b3a;
+  --ink-callout: #6e5228;
+  --ink-warm: #7c5a3c;
+  --on-accent: #ffffff;
+  --on-zone: #453a2a;
+  /* chrome — accents */
+  --accent: #a58e63;
+  --accent-2: #a89a84;
+  --accent-soft: #b0813a;
+  /* chrome — states */
+  --danger: #c8453f;
+  --danger-bg: #f9e6df;
+  --danger-border: #f0c8ba;
+  --danger-strong: #d9524a;
+  --success: #3f9c78;
+  --success-bg: #eaf3e2;
+  --success-border: #d3e4bf;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #ece4d6;
+  --titlebar-ink: #5c554a;
+  /* chrome — waveform player */
+  --wave: #c5b394;
+  --wave-progress: #c2a878;
+  --wave-cursor: #a8895a;
+  /* chrome — live recording state */
+  --live: #d97a4a;
+  --live-2: #c85a3a;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #bcd3f0;
+  --zone-masc-ink: #5e7fb8;
+  --zone-fem: #ffb6d5;
+  --zone-neutral: #ffe9a8;
+  --zone-grow: #cdc6da;
+  --zone-soft: #e8ddc0;
+  --zone-comfy: #d9e8d2;
+  --zone-strong: #f0ccae;
+  /* non-color */
+  --radius: 22px;
+}
+/* Light mint — sage-mint chrome, green-slate text. */
+[data-theme="light-mint"] {
+  /* chrome — surfaces */
+  --bg-base: #eef6f2;
+  --bg-glow-1: #d9f2e6;
+  --bg-glow-2: #e3f1ea;
+  --card: #fbfffd;
+  --card-2: #f2faf6;
+  --control-bg: #ffffff;
+  --line: #ffffff;
+  --line-soft: #d3ece1;
+  --shadow: 0 8px 24px rgba(100, 138, 118, 0.18);
+  --shadow-rgb: 100, 138, 118;
+  --overlay-rgb: 255, 255, 255;
+  --accent-glow-rgb: 45, 122, 92;
+  --live-glow-rgb: 242, 84, 90;
+  --scrim-rgb: 40, 70, 58;
+  --modal-shadow-rgb: 45, 95, 75;
+  --highlight-rgb: 58, 168, 126;
+  /* chrome — text */
+  --ink: #355044;
+  --ink-soft: #5d7266;
+  --ink-strong: #234436;
+  --ink-heading: #2f6b52;
+  --ink-accent: #2d7a5c;
+  --ink-callout: #1f5c44;
+  --ink-warm: #9a5a3a;
+  --on-accent: #ffffff;
+  --on-zone: #2b4a3c;
+  /* chrome — accents */
+  --accent: #4f9e7f;
+  --accent-2: #7fa8c4;
+  --accent-soft: #2f8a68;
+  /* chrome — states */
+  --danger: #c7473f;
+  --danger-bg: #fbe9e7;
+  --danger-border: #f2c9c4;
+  --danger-strong: #d85850;
+  --success: #2f8f66;
+  --success-bg: #e3f5ea;
+  --success-border: #c3e6d2;
+  /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
+  --titlebar-bg: #cfeee0;
+  --titlebar-ink: #365f4d;
+  /* chrome — waveform player */
+  --wave: #9dc0b2;
+  --wave-progress: #5fae8d;
+  --wave-cursor: #3f8f6d;
+  /* chrome — live recording state */
+  --live: #ff7a66;
+  --live-2: #f2545a;
+  /* data — meaning-bearing, see zones.ts */
+  --zone-masc: #bcd3f0;
+  --zone-masc-ink: #5e7fb8;
+  --zone-fem: #ffb6d5;
+  --zone-neutral: #ffe9a8;
+  --zone-grow: #cdc6da;
+  --zone-soft: #dce6ef;
+  --zone-comfy: #c5ead9;
+  --zone-strong: #f7cfd6;
+  /* non-color */
+  --radius: 22px;
+}
 * {
   box-sizing: border-box;
 }
