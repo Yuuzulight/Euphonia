@@ -772,6 +772,37 @@ header.hero p {
   transform: rotate(20deg);
 }
 
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink-soft);
+  box-shadow: var(--shadow);
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.14s ease, color 0.14s ease;
+}
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  color: var(--ink);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* below ~400px the centered hero text can grow wide enough to run under the
+   toggle + gear pair in the top-right corner — reserve room for them. */
+@media (max-width: 400px) {
+  .hero-text {
+    padding-right: 90px;
+  }
+}
+
 .latest-banner {
   background: rgba(var(--overlay-rgb), 0.72);
   backdrop-filter: blur(10px) saturate(1.1);
