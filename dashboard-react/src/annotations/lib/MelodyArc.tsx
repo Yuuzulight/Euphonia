@@ -1,4 +1,5 @@
-import { FEM, GROW, MASC } from "../../zones";
+import { FEM, GROW, MASC, zoneColor } from "../../zones";
+import { useThemeColors } from "../../theme/ThemeProvider";
 
 // MelodyArc — a tiny sparkline of how melody has moved across takes. Once there
 // are several recordings, the single most important story ("is the TUNE getting
@@ -36,6 +37,7 @@ export function MelodyArc({
   target?: number;
   targetLabel?: string;
 }) {
+  const colors = useThemeColors();
   const W = 900;
   const H = 220;
   const pad = { l: 40, r: 16, t: 18, b: 34 };
@@ -74,7 +76,7 @@ export function MelodyArc({
       {/* target / goal line */}
       {target != null && (
         <g>
-          <line x1={pad.l} x2={W - pad.r} y1={y(target)} y2={y(target)} stroke={FEM}
+          <line x1={pad.l} x2={W - pad.r} y1={y(target)} y2={y(target)} stroke={zoneColor(FEM, colors)}
             strokeWidth={1.5} strokeDasharray="6 5" opacity={0.9} />
           <text x={W - pad.r} y={y(target) - 5} fontSize="10.5" fill="#c75c93" textAnchor="end" fontWeight={700}>
             {targetLabel} {target} st
@@ -90,8 +92,8 @@ export function MelodyArc({
         if (yr >= yt) return null;
         return (
           <g key={`gap${i}`}>
-            <line x1={x(i)} x2={x(i)} y1={yr} y2={yt} stroke={MASC} strokeWidth={9} opacity={0.4} strokeLinecap="round" />
-            <text x={x(i) - 12} y={(yr + yt) / 2 + 3} fontSize="10" fill="#5e7fb8" textAnchor="end">
+            <line x1={x(i)} x2={x(i)} y1={yr} y2={yt} stroke={zoneColor(MASC, colors)} strokeWidth={9} opacity={0.4} strokeLinecap="round" />
+            <text x={x(i) - 12} y={(yr + yt) / 2 + 3} fontSize="10" fill={colors.zoneMascInk} textAnchor="end">
               mirage
             </text>
           </g>
@@ -99,18 +101,18 @@ export function MelodyArc({
       })}
 
       {/* raw (mirage) line — faint dashed grey */}
-      <path d={toPath(rawPts)} fill="none" stroke={GROW} strokeWidth={2} strokeDasharray="4 4" opacity={0.85} />
+      <path d={toPath(rawPts)} fill="none" stroke={zoneColor(GROW, colors)} strokeWidth={2} strokeDasharray="4 4" opacity={0.85} />
       {rawPts.map((p, i) => p && (
-        <circle key={`r${i}`} cx={p[0]} cy={p[1]} r={3} fill={GROW} stroke="#fff" strokeWidth={1}>
+        <circle key={`r${i}`} cx={p[0]} cy={p[1]} r={3} fill={zoneColor(GROW, colors)} stroke="#fff" strokeWidth={1}>
           <title>take {points[i].label}: raw swing {points[i].rawSt} st (inflated by crashes)</title>
         </circle>
       ))}
 
       {/* true melody line — solid pink */}
-      <path d={toPath(truePts)} fill="none" stroke={FEM} strokeWidth={3} />
+      <path d={toPath(truePts)} fill="none" stroke={zoneColor(FEM, colors)} strokeWidth={3} />
       {truePts.map((p, i) => p && (
         <circle key={`t${i}`} cx={p[0]} cy={p[1]} r={points[i].current ? 7 : 5}
-          fill={FEM} stroke={points[i].current ? "#c75c93" : "#fff"} strokeWidth={points[i].current ? 2.5 : 1.5}>
+          fill={zoneColor(FEM, colors)} stroke={points[i].current ? "#c75c93" : "#fff"} strokeWidth={points[i].current ? 2.5 : 1.5}>
           <title>take {points[i].label}: true melody {points[i].trueSt} st{points[i].current ? " (this take)" : ""}</title>
         </circle>
       ))}

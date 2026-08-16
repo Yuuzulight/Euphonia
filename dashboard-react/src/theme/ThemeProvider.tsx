@@ -20,6 +20,7 @@ import {
 
 export interface ThemeColors {
   zoneMasc: string;
+  zoneMascInk: string;
   zoneFem: string;
   zoneNeutral: string;
   zoneGrow: string;
@@ -40,6 +41,7 @@ export interface ThemeColors {
 
 const TOKEN_OF: Record<keyof ThemeColors, string> = {
   zoneMasc: "--zone-masc",
+  zoneMascInk: "--zone-masc-ink",
   zoneFem: "--zone-fem",
   zoneNeutral: "--zone-neutral",
   zoneGrow: "--zone-grow",

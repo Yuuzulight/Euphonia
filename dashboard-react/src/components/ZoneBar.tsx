@@ -1,4 +1,6 @@
 import type { Zone } from "../zones";
+import { zoneColor } from "../zones";
+import { useThemeColors } from "../theme/ThemeProvider";
 
 interface Props {
   zones: Zone[];
@@ -8,6 +10,7 @@ interface Props {
 }
 
 export function ZoneBar({ zones, value, lo, hi }: Props) {
+  const colors = useThemeColors();
   const span = hi - lo;
   return (
     <>
@@ -19,7 +22,7 @@ export function ZoneBar({ zones, value, lo, hi }: Props) {
             <div
               key={i}
               className="seg"
-              style={{ left: `${left}%`, width: `${w}%`, background: z.color }}
+              style={{ left: `${left}%`, width: `${w}%`, background: zoneColor(z.color, colors) }}
             />
           );
         })}

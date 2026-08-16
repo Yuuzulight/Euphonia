@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
 import type { Recording, ReferenceVoice } from "../types";
 import type { MetricDef } from "../metrics";
-import { MASC, FEM, fmt } from "../zones";
+import { MASC, FEM, zoneColor, fmt } from "../zones";
 import { WaveformPlayer } from "./WaveformPlayer";
+import { useThemeColors } from "../theme/ThemeProvider";
 
 interface Props {
   metric: MetricDef;
@@ -75,6 +76,7 @@ export function MetricModal({
   origin,
   onClose,
 }: Props) {
+  const colors = useThemeColors();
   const cardRef = useRef<HTMLDivElement>(null);
   // which clip (take or reference) is loaded into the in-modal player
   const [selected, setSelected] = useState<Selected | null>(null);
@@ -270,7 +272,7 @@ export function MetricModal({
                   style={{
                     left: `${left}%`,
                     width: `${right - left}%`,
-                    background: z.color,
+                    background: zoneColor(z.color, colors),
                   }}
                 >
                   <span className="mm-seg-name">{z.name}</span>
@@ -371,11 +373,11 @@ export function MetricModal({
           {metric.showRefs ? (
             <>
               <span>
-                <i className="mm-key mm-key-fem" style={{ background: FEM }} />{" "}
+                <i className="mm-key mm-key-fem" style={{ background: zoneColor(FEM, colors) }} />{" "}
                 women's voices
               </span>
               <span>
-                <i className="mm-key mm-key-masc" style={{ background: MASC }} />{" "}
+                <i className="mm-key mm-key-masc" style={{ background: zoneColor(MASC, colors) }} />{" "}
                 men's voices
               </span>
             </>

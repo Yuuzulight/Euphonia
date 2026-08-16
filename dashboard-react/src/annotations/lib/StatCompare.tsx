@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { FEM, GROW } from "../../zones";
+import { FEM, GROW, zoneColor } from "../../zones";
+import { useThemeColors } from "../../theme/ThemeProvider";
 
 // A tiny "this take vs. another take" comparison strip. One row per metric, with
 // the two values side by side and a soft arrow showing which way it moved. Use
@@ -30,6 +31,7 @@ export function StatCompare({
   aTitle?: ReactNode;
   bTitle?: ReactNode;
 }) {
+  const colors = useThemeColors();
   return (
     <div
       style={{
@@ -63,7 +65,7 @@ export function StatCompare({
           aIsBetter = r.better === "up" ? (r.a as number) > (r.b as number) : (r.a as number) < (r.b as number);
         }
         const arrow = !hasBoth || r.a === r.b ? "·" : (r.a as number) > (r.b as number) ? "↑" : "↓";
-        const hi = aIsBetter === null ? "var(--ink)" : aIsBetter ? FEM : GROW;
+        const hi = aIsBetter === null ? "var(--ink)" : zoneColor(aIsBetter ? FEM : GROW, colors);
         return (
           <div key={i} style={{ display: "contents" }}>
             <div style={{ color: "var(--ink-soft)", paddingTop: 3 }}>{r.label}</div>

@@ -9,13 +9,16 @@ import {
   WEIGHT_ZONES,
   MELODY_ZONES,
   zoneOf,
+  zoneColor,
   fmt,
+  type Zone,
 } from "./zones";
 import { StatCard } from "./components/StatCard";
 import { MetricModal } from "./components/MetricModal";
 import { METRICS, type MetricKey } from "./metrics";
 import { ResonanceCard } from "./components/ResonanceCard";
-import { LineChart, type Point, type ChartBand } from "./components/LineChart";
+import { LineChart, type Point } from "./components/LineChart";
+import { useThemeColors } from "./theme/ThemeProvider";
 import { RecordingCard } from "./components/RecordingCard";
 import { CheatSheet } from "./components/CheatSheet";
 import { RegisterSection } from "./components/RegisterSection";
@@ -468,10 +471,18 @@ interface ChartCardProps {
   data: Point[];
   band?: [number, number];
   bandColor?: string;
-  bands?: ChartBand[];
+  bands?: Zone[];
 }
 
 function ChartCard({ h, cap, color, data, band, bandColor, bands }: ChartCardProps) {
+  const colors = useThemeColors();
+  // bands come in as zone keys (see zones.ts) — resolve each to this theme's
+  // actual color before handing them to LineChart, which just wants hex.
+  const resolvedBands = bands?.map((z) => ({
+    from: z.from,
+    to: z.to,
+    color: zoneColor(z.color, colors),
+  }));
   return (
     <div className="chart-card">
       <h3>{h}</h3>
@@ -481,7 +492,7 @@ function ChartCard({ h, cap, color, data, band, bandColor, bands }: ChartCardPro
         color={color}
         band={band}
         bandColor={bandColor}
-        bands={bands}
+        bands={resolvedBands}
       />
     </div>
   );
