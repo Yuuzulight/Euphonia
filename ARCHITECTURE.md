@@ -72,13 +72,102 @@ goal is just as important as the metrics:
 - Emoji in moderation (💗🎀🎯💕✨). Rounded font (`ui-rounded`). Keep it soft.
 
 ### Color convention — STRICT
-Defined in `dashboard-react/src/zones.ts`:
-- `MASC` blue `#bcd3f0` (and `#5e7fb8` strokes) = **masculine / fell-out-of-register ONLY.**
+Defined in `dashboard-react/src/zones.ts` — as of the theme system, these are
+**keys resolved per theme**, not hex constants, so don't go looking for a hex
+literal in that file:
+- `MASC` (blue in blossom) = **masculine / fell-out-of-register ONLY.**
   Never use blue for a generic "bad / needs work." A register crash *is* masculine
   register, so blue is correct there.
-- `FEM` pink `#ffb6d5` = good / feminine end. `BUTTER` `#ffe9a8` = neutral / mid.
-- `GROW` `#cdc6da` = neutral "room to grow" for **non-gendered** skill gaps (breathy,
-  rough, monotone). Use this, not blue, for those.
+- `FEM` (pink in blossom) = good / feminine end. `BUTTER` (butter-yellow in
+  blossom) = neutral / mid.
+- `GROW` (lilac-gray in blossom) = neutral "room to grow" for **non-gendered**
+  skill gaps (breathy, rough, monotone). Use this, not blue, for those.
+
+The convention itself is fixed across all eight themes; only the exact shade
+each key resolves to moves per theme, for legibility. See "Theming" below.
+
+---
+
+## Theming
+
+Eight themes: three light — `blossom` (the original palette, still the
+default), `paper`, `light-mint` — and five dark — `dusk-plum` (the default
+dark), `dark-mint`, `midnight`, `cocoa`, `amber-night`. Switch with the
+moon/sun button in the header (flips between your two favorites, one per
+family) or pick a specific one from the swatches in ⚙️ Settings. `mode` is
+`light` / `dark` / `auto`, and `auto` (the actual default) just follows the
+OS, swapping between whichever light and dark theme you've picked as your
+favorite in each family. Defined in `dashboard-react/src/theme/` — `themes.ts`
+(ids + families), `themeStore.ts` (the stored preference: load/save/resolve/
+apply), `ThemeProvider.tsx` (the React context + the `useThemeColors()` hook
+components read computed values from) — and the `[data-theme="…"]` blocks in
+`dashboard-react/src/index.css`.
+
+### Two token groups, and why the split exists
+Every theme block in `index.css` declares the same ~51-token vocabulary as
+blossom's `:root` (enforced — see the test script below), but those tokens
+split into two groups that get treated very differently:
+
+- **Chrome tokens** — surfaces, text, accents, states, the title bar, the
+  waveform player — are free to be whatever suits the theme. `light-mint`
+  and `dark-mint` genuinely go mint here (`--accent: #4f9e7f` in
+  `light-mint` — nothing pink or blue about it).
+- **Data tokens** (`--zone-*`) encode *meaning*, not decoration — the color
+  convention above. Blue means the masculine/deeper end and nothing else,
+  pink the feminine end, butter the mid, lilac "room to grow." That mapping
+  can't move per theme, or the metric bars and the reference-comparison
+  scale would lie about what they're showing. So every theme instead gets
+  its own legibility-adjusted *variant* of the same four colors — same hue
+  family, lifted or desaturated so it still reads on that theme's cards —
+  while which color means what never changes. That's why the mint themes go
+  mint in the chrome while their zone bars and charts still read
+  pink/blue/butter, exactly like every other theme.
+
+`zones.ts` used to hold `MASC`/`FEM`/`BUTTER`/`GROW` as hex literals; they're
+keys now, and `zoneColor(key, colors)` resolves one against the active
+theme's `ThemeColors` — read once per theme change in `ThemeProvider.tsx`
+(`readColors()`, a single `getComputedStyle` pass), not recomputed per
+component render.
+
+### Where the preference lives, and why not IndexedDB
+The chosen `{ mode, light, dark }` lives under one `localStorage` key,
+`euphonia:theme` (`themeStore.ts`) — not IndexedDB, deliberately.
+`localStorage` reads synchronously, so an inline script in `index.html` can
+read it and set `data-theme` on `<html>` *before* the module graph has
+loaded and React has mounted. Anything async, IndexedDB included, means the
+page paints once in the wrong theme and then snaps to the right one a beat
+later — a white flash on every load for anyone on a dark theme.
+
+That script deliberately re-implements `loadPref()`'s validation rather than
+importing it (nothing's loaded yet, so it can't) — the light/dark family
+arrays, the mode fallback, all of it, in about six lines.
+`scripts/test_theme_tokens.js` checks the script still lists every theme id
+the CSS defines, so adding a theme without also adding it there — which
+would mean that theme can never apply before first paint — fails the build
+instead of shipping a flash.
+
+`electron/src/theme.ts` carries a third, similar duplication: three colors
+per theme (window background, title bar, symbol color), because Electron's
+main process creates the `BrowserWindow` before the renderer exists and has
+no way to read CSS. The same test script checks this file has an entry for
+every theme id the CSS defines.
+
+### The test script, and its one honest limitation
+`scripts/test_theme_tokens.js` (plain Node, no framework, same style as
+`test_protocol_paths.js`) checks: every theme declares the same token set as
+blossom; every text-on-surface pair in `CONTRAST_PAIRS` clears its WCAG
+floor (4.5:1 for body text, 3:1 for large text/UI); and the pre-paint script
+plus `electron/src/theme.ts` both cover every theme id in the CSS.
+
+Blossom is the pre-existing palette, and the theme system deliberately froze
+it rather than retrofitting it — so five blossom pairs that don't clear
+those floors are grandfathered into a `BASELINE_EXCEPTIONS` list, each
+pinned to its measured ratio (the worst is `--on-accent` on `--accent`,
+1.63:1). **No theme built after blossom may add to that list** — every one
+of the other seven actually clears the floors. This is a real, known gap in
+the default theme, not something papered over: change any of those token
+values and the exception stops matching, so the check trips again instead
+of silently staying green.
 
 ---
 
@@ -520,9 +609,10 @@ gitignored build output; only `electron/resources/licenses/` and
 `electron/resources/icon.ico` are real, committed assets.
 
 **CI**: `.github/workflows/ci.yml` runs on every push/PR to `main` — builds both
-npm packages and runs the two regression scripts above (`test_protocol_paths.js`,
-`test_analyze_paths.py` via `uv`). It does not build the installer (no Windows
-runner, no ffmpeg/PyInstaller staging) — that stays a manual local step.
+npm packages and runs the regression scripts above (`test_protocol_paths.js`,
+`test_theme_tokens.js`, `test_analyze_paths.py` via `uv`). It does not build the
+installer (no Windows runner, no ffmpeg/PyInstaller staging) — that stays a
+manual local step.
 
 **Releasing** (so `electron-updater`/`updater.ts` can actually find new
 versions): `electron-builder.yml`'s `nsis.artifactName` is pinned to
@@ -651,7 +741,11 @@ load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
   - `index.html` — title + favicon `<link>`s + `theme-color`.
   - `src/types.ts` — data model (`Recording`, `Register`, `RecordingDetail`, `Phrase`,
     `ReferenceVoice`).
-  - `src/zones.ts` — colors, reference zones, `fmt`, `zoneOf`.
+  - `src/zones.ts` — zone-color keys, reference zones, `fmt`, `zoneOf` (colors
+    resolved per theme via `zoneColor()` — see Theming above).
+  - `src/theme/` — `themes.ts` (ids/families), `themeStore.ts` (the stored
+    preference), `ThemeProvider.tsx` (context + `useThemeColors()`) — see
+    Theming above.
   - `src/metrics.ts` — **the metric registry** (`METRICS`/`MetricDef`) powering the
     click-to-expand reference modal: per-metric scale + take/reference value-accessors.
   - `src/components/` — cards, charts, `RegisterSection` + `ContourChart` (permanent viz),
@@ -692,7 +786,8 @@ load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
   `_rthook_utf8_stdio.py` (a PyInstaller runtime hook fixing a Windows-only frozen-exe
   stdio encoding bug), `test_analyze_paths.py` + `test_protocol_paths.js` (the two
   small committed regression checks — `analyze.py`'s `resolve_paths()` branching and
-  `protocol.ts`'s path-containment security check).
+  `protocol.ts`'s path-containment security check), `test_theme_tokens.js` (theme
+  token parity + contrast check — see Theming above).
 - `docs/gemini-api-key.md` — the Gemini key setup guide; single source of truth,
   also rendered inline in the desktop app's onboarding modal.
 - `docs/specs/` — design specs (desktop app architecture rationale; theme system).

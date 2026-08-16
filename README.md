@@ -39,6 +39,8 @@ For results you can actually compare over time, read the *same* passage with a *
 
 The dashboard shows, for your latest take: pitch, resonance (formants), loudness, steadiness (jitter/shimmer), vocal weight, and a register/phrasing breakdown of where your voice stays in or falls out of your target range. Click any metric card to see the full scale, with your past takes and real reference voices plotted alongside so you can see where you sit. The **"What do these mean?"** section at the bottom explains each metric in plain language. Every number here is meant as a compass, not a judge — a hint toward what to work on next, never a verdict.
 
+Prefer a different look? There are eight themes, three light and five dark, one click away from the moon/sun button in the header or the picker in **⚙️ Settings** — whichever you pick is remembered on this machine.
+
 ### 4. Get a written insight for a take
 
 Click **✨ generate insight** under "Insights for this take" for a short, honest write-up of what's working and the single clearest thing to try next. It's generated instantly from the metrics above, no setup or account required, and cached once generated so opening the same take again won't regenerate it.
@@ -65,7 +67,7 @@ To remove a single take, use the small 🗑️ button on its card in **All recor
 
 This runs the same Praat voice-analysis engine as the desktop app, compiled to WebAssembly. Everything happens locally in your browser tab: nothing is uploaded anywhere, and once the page has loaded once it works offline. Recordings live in your browser's local storage (IndexedDB) instead of a file on disk, so they stay on that device and in that browser. Export a backup (⚙️ Settings → 💾 export all recordings) if you want to move them elsewhere or keep a copy.
 
-Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis. The one thing missing is auto-update — just refresh the page for the latest version.
+Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
 
 **Mobile:** the layout and the full record → analyze → results flow have both been tested on phone-sized screens against the live site, so this is more than a "should probably work." The one piece I haven't verified on an actual phone yet is microphone capture itself — if that misbehaves on your device, [open an issue](../../issues).
 

@@ -1,10 +1,14 @@
 // ---- reference zones for voice feminization (gentle guidance, not law) ----
 //
 // CRITICAL COLOR CONVENTION:
-//   blue  #bcd3f0 = MASCULINE / deeper gendered end ONLY (never "needs work")
-//   pink  #ffb6d5 = good / feminine end
-//   butter #ffe9a8 = neutral / mid
-//   GROW  #cdc6da = neutral "room to grow" for skill metrics (breathy/rough/flat)
+//   blue   = MASCULINE / deeper gendered end ONLY (never "needs work")
+//   pink   = good / feminine end
+//   butter = neutral / mid
+//   GROW   = neutral "room to grow" for skill metrics (breathy/rough/flat)
+// These are resolved per theme (see zoneColor() below) — the meaning above is
+// fixed, but the actual color each one paints depends on the active theme.
+// Look in dashboard-react/src/index.css's [data-theme="…"] blocks for the
+// current hex values, not here.
 import type { ThemeColors } from "./theme/ThemeProvider";
 
 export type ZoneColorKey =
