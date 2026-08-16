@@ -413,6 +413,93 @@ git commit -m "refactor: express every chrome color in index.css as a token"
 
 ---
 
+## Task 2b: Tokenize the translucent colors
+
+Added during execution. Task 2's verification grep only matches `#hex`, so it
+correctly left the file's `rgba(...)` literals alone. They are theme-dependent
+though — a purple-tinted drop shadow and `rgba(255, 255, 255, 0.75)` overlays
+would be glaring on a near-black card — so the palettes cannot be correct until
+these are tokenized too.
+
+**Files:**
+- Modify: `dashboard-react/src/index.css`
+
+**Interfaces:**
+- Consumes: the token vocabulary from Task 2.
+- Produces: `--shadow-rgb`, `--overlay-rgb`, `--accent-glow-rgb` — bare
+  `R, G, B` triples (no `rgba()` wrapper), so a rule can keep its own alpha and
+  its own blur/offset geometry while the hue follows the theme.
+
+- [ ] **Step 1: Add the triple tokens**
+
+A whole `box-shadow` cannot become one token — `0 6px 18px rgba(186,142,196,.22)`
+and `0 8px 24px rgba(186,142,196,.18)` differ in geometry, not just color, so
+substituting `var(--shadow)` for either would move the shadow. Tokenize the
+*color triple* only. Add to the blossom block, keeping the existing `--shadow`:
+
+```css
+  /* bare R, G, B triples — consumed as rgba(var(--shadow-rgb), 0.22) so each
+     rule keeps its own alpha and geometry while the hue follows the theme */
+  --shadow-rgb: 186, 142, 196;
+  --overlay-rgb: 255, 255, 255;
+  --accent-glow-rgb: 176, 106, 150;
+```
+
+- [ ] **Step 2: Convert the call sites**
+
+Rewrite each `rgba(...)` literal to consume its triple, preserving every
+alpha, offset and blur value exactly:
+
+```css
+/* before */  box-shadow: 0 6px 18px rgba(186, 142, 196, 0.22);
+/* after  */  box-shadow: 0 6px 18px rgba(var(--shadow-rgb), 0.22);
+```
+
+Pick the triple by role: drop shadows on surfaces take `--shadow-rgb`;
+translucent white highlights and scrims take `--overlay-rgb`; the glow under
+gradient buttons and the record-pulse keyframe take `--accent-glow-rgb`. If a
+literal's triple is within a max per-channel delta of 12 of a token's triple,
+consolidate onto it; beyond that, add another triple token rather than shifting
+the color (same rule as Task 2's Ruling 3).
+
+- [ ] **Step 3: Verify nothing translucent is left hardcoded**
+
+Run:
+
+```bash
+grep -nE "rgba?\([0-9]" dashboard-react/src/index.css | grep -v -- "--[a-z-]*-rgb:"
+```
+
+Expected: no output. The exclusion allows the triple definitions themselves.
+
+- [ ] **Step 4: Confirm the alphas survived**
+
+Run:
+
+```bash
+git diff -U0 dashboard-react/src/index.css | grep -E "^[-+].*rgba" | sort | sed 's/^/  /'
+```
+
+Read the pairs: every `+` line must carry the same alpha, offset and blur as the
+`-` line it replaces. A changed alpha is a defect, not a simplification.
+
+- [ ] **Step 5: Run the checker and build**
+
+Run: `node scripts/test_theme_tokens.js` and `cd dashboard-react && npm run build`
+
+Both must pass. The triples are not in `CONTRAST_PAIRS`, so they are checked for
+parity across themes but not for contrast — which is correct, since a shadow
+tint has no contrast requirement.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add dashboard-react/src/index.css
+git commit -m "refactor: tokenize the translucent shadow and overlay colors"
+```
+
+---
+
 ## Task 3: Theme state and pre-paint application
 
 **Files:**
@@ -584,17 +671,24 @@ Inside `<head>`, immediately after the `theme-color` meta tag:
          users. Keep the two in sync — it's ~6 lines, same trade as zones.ts. -->
     <script>
       (function () {
+        var d = { mode: "auto", light: "blossom", dark: "dusk-plum" };
+        var p = d;
         try {
-          var p = JSON.parse(localStorage.getItem("euphonia:theme") || "null");
-          if (!p) p = { mode: "auto", light: "blossom", dark: "dusk-plum" };
-          var dark =
-            p.mode === "dark" ||
-            (p.mode === "auto" &&
-              window.matchMedia("(prefers-color-scheme: dark)").matches);
-          document.documentElement.setAttribute("data-theme", dark ? p.dark : p.light);
+          p = JSON.parse(localStorage.getItem("euphonia:theme") || "null") || d;
         } catch (e) {
-          document.documentElement.setAttribute("data-theme", "blossom");
+          // corrupt storage: fall back to the defaults, NOT to light. Hardcoding
+          // blossom here would paint light and then snap dark once React mounts,
+          // which is the exact flash this script exists to prevent.
+          p = d;
         }
+        var dark =
+          p.mode === "dark" ||
+          (p.mode !== "light" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.setAttribute(
+          "data-theme",
+          dark ? p.dark || d.dark : p.light || d.light,
+        );
       })();
     </script>
 ```
