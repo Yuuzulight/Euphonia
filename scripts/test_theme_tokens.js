@@ -77,7 +77,10 @@ function contrast(a, b) {
 }
 
 function run(cssPath, electronThemePath) {
-  const css = fs.readFileSync(cssPath, "utf8");
+  // Strip CSS comments before any matching — otherwise a token commented out
+  // for debugging still registers as live, and blockRe can wander into a
+  // [data-theme="…"] mentioned inside a comment.
+  const css = fs.readFileSync(cssPath, "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
   const themes = parseThemes(css);
   const failures = [];
 
