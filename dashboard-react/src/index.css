@@ -136,9 +136,9 @@
   --zone-fem: #ffb6d5;
   --zone-neutral: #ffe9a8;
   --zone-grow: #cdc6da;
-  --zone-soft: #e8ddc0;
-  --zone-comfy: #d9e8d2;
-  --zone-strong: #f0ccae;
+  --zone-soft: #dfd6ea;
+  --zone-comfy: #d2e9da;
+  --zone-strong: #f6d7e2;
   /* non-color */
   --radius: 22px;
 }
@@ -199,7 +199,7 @@
   --zone-fem: #ffb6d5;
   --zone-neutral: #ffe9a8;
   --zone-grow: #cdc6da;
-  --zone-soft: #dce6ef;
+  --zone-soft: #dcd7ee;
   --zone-comfy: #c5ead9;
   --zone-strong: #f7cfd6;
   /* non-color */
