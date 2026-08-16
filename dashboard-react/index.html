@@ -9,6 +9,26 @@
     <link rel="alternate icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#d6ecff" />
+    <!-- Applies the saved theme before first paint. This deliberately
+         duplicates resolvePref() from src/theme/themeStore.ts rather than
+         importing it: the module graph hasn't loaded yet at this point, and
+         anything async here means a white flash on every load for dark-theme
+         users. Keep the two in sync — it's ~6 lines, same trade as zones.ts. -->
+    <script>
+      (function () {
+        try {
+          var p = JSON.parse(localStorage.getItem("euphonia:theme") || "null");
+          if (!p) p = { mode: "auto", light: "blossom", dark: "dusk-plum" };
+          var dark =
+            p.mode === "dark" ||
+            (p.mode === "auto" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.setAttribute("data-theme", dark ? p.dark : p.light);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "blossom");
+        }
+      })();
+    </script>
     <title>🎵 Euphonia</title>
   </head>
   <body>

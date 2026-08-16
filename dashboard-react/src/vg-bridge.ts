@@ -34,6 +34,10 @@ export interface EuphoniaBridge {
     onStatus(callback: (status: UpdateStatus) => void): () => void;
     install(): Promise<void>;
   };
+  /** Desktop only — repaints the native title bar. Absent in browser mode,
+      which is why it's optional and called with `?.`. Implemented in
+      electron/src/preload.ts (see Task 10). */
+  setTheme?: (id: string) => void;
 }
 
 declare global {
