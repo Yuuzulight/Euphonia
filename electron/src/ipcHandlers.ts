@@ -57,7 +57,12 @@ export function registerIpcHandlers(win: BrowserWindow): void {
     regenerateWithGemini(recording),
   );
 
-  ipcMain.on("theme:set", (_event, id: string) => {
+  ipcMain.on("theme:set", (_event, id: unknown) => {
+    // The `id: string` on the preload side is only a compile-time promise —
+    // a compromised or buggy renderer can send anything over the wire, so
+    // main must not trust the payload's shape before it reaches theme.ts's
+    // own-property lookup.
+    if (typeof id !== "string") return;
     const chrome = chromeFor(id);
     writeCachedTheme(id);
     if (!win.isDestroyed()) {

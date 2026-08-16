@@ -167,10 +167,26 @@ function run(cssPath, electronThemePath, htmlPath) {
   }
 
   // Cross-file check: main-process chrome colors must cover the same ids.
+  // Match on `"<id>": {` — a WINDOW_CHROME entry, whose value is always an
+  // object literal — not a bare `"<id>":`. The file also has a nativeTheme
+  // fallback ternary (`shouldUseDarkColors ? "dusk-plum" : "blossom"`) whose
+  // `"dusk-plum" :` already satisfies a plain quoted-id-then-colon pattern
+  // by accident of ternary syntax, and explanatory prose can quote an id
+  // too (e.g. "blossom") — matching either would let a deleted map entry
+  // false-pass this check. Requiring the trailing `{` rules out both, since
+  // ternary branches are string literals, not object-open braces. Strip
+  // comments first for the same reason the CSS is stripped above — a
+  // commented-out key shouldn't count as present.
   if (fs.existsSync(electronThemePath)) {
-    const src = fs.readFileSync(electronThemePath, "utf8");
+    const src = fs
+      .readFileSync(electronThemePath, "utf8")
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/\/\/.*$/gm, "");
     for (const id of themes.keys()) {
-      if (!src.includes(`"${id}"`)) {
+      // Theme ids are already constrained to [a-z-]+ by parseThemes' own
+      // regex, so no regex-special characters can appear here.
+      const keyPattern = new RegExp(`"${id}"\\s*:\\s*\\{`);
+      if (!keyPattern.test(src)) {
         failures.push(`electron/src/theme.ts has no entry for theme "${id}"`);
       }
     }
