@@ -32,13 +32,26 @@ const USER_DATA_ENTRIES = ["recordings.json", "audio", "analysis", "gemini-key.e
 // the failure this whole function exists to prevent.
 const EXTRA_ENTRIES = ["theme.json", "Local Storage"];
 
+// An entry only counts as data if it actually holds something. An empty audio/
+// or analysis/ directory is what a half-started profile leaves behind, and
+// treating one as "the user's data is already here" would block the migration
+// permanently — the same trap theme.json set, in a different disguise.
 function hasUserData(dir: string): boolean {
-  return USER_DATA_ENTRIES.some((name) => fs.existsSync(path.join(dir, name)));
+  return USER_DATA_ENTRIES.some((name) => {
+    const target = path.join(dir, name);
+    try {
+      const stat = fs.statSync(target);
+      return stat.isDirectory() ? fs.readdirSync(target).length > 0 : stat.size > 0;
+    } catch {
+      return false; // absent, or unreadable — either way, not data we can claim
+    }
+  });
 }
 
 export function migrateUserDataIfNeeded(): void {
   const newRoot = app.getPath("userData");
   const oldRoot = path.join(path.dirname(newRoot), LEGACY_DIR_NAME);
+
 
   if (newRoot === oldRoot) return; // name unchanged; nothing to do
   if (!fs.existsSync(oldRoot)) return; // fresh install
