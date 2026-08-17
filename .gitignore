@@ -39,6 +39,10 @@ build-sidecar/
 # electron-builder output
 electron/release/
 
+# ...but electron/build/ is source, not output — it holds the NSIS customization
+# electron-builder compiles into the installer, and `build/` above would eat it.
+!electron/build/
+
 # fetched manually, see electron/electron-builder.yml for the source URL
 electron/resources/ffmpeg/
 

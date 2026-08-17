@@ -45,6 +45,9 @@ win:
   # Developer Mode/admin, which we won't enable just to build unsigned).
   signAndEditExecutable: false
 nsis:
+  # One-time move of the install folder off the old euphonia-electron name.
+  # See the file itself for why productName cannot do this on its own.
+  include: build/installer.nsh
   # electron-builder's own latest.yml (for electron-updater) references this
   # exact hyphenated name. The default artifactName has spaces, which GitHub
   # then mangles to dots on upload — a three-way filename mismatch that
