@@ -1,8 +1,8 @@
 {
-  "name": "euphonia-electron",
+  "name": "Euphonia",
   "productName": "Euphonia",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Euphonia desktop app — voice-training recorder and analyzer",
   "author": "Euphonia contributors",
   "main": "dist/main.js",
