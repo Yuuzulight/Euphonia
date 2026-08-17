@@ -18,23 +18,22 @@ import path from "node:path";
 // happens.
 const LEGACY_DIR_NAME = "euphonia-electron";
 
-// The user's own data. Chromium's caches are deliberately not here — they are
-// disposable, and merging two of them risks corrupting both.
-const OWNED_ENTRIES = [
-  "recordings.json",
-  "audio",
-  "analysis",
-  "gemini-key.enc",
-  "theme.json",
-];
+// The user's irreplaceable data, and the ONLY thing that decides whether a
+// migration has already happened. Everything here is written by the user's own
+// actions, never by the app starting up — which is the property that makes it
+// safe to use as the sentinel.
+const USER_DATA_ENTRIES = ["recordings.json", "audio", "analysis", "gemini-key.enc"];
 
-// Not the user's data as such, but it holds the theme preference, so carrying it
-// across means the upgrade doesn't silently reset how the app looks. Best-effort
-// only: never let this decide whether the migration as a whole succeeded.
-const LOCAL_STORAGE_DIR = "Local Storage";
+// Moved when present, but deliberately NOT part of the sentinel. theme.json is a
+// disposable cache the app rewrites on every theme change, and Local Storage is
+// created by Chromium on first paint — so both can exist in the new directory
+// after a single stray launch. Treating either as "migration already done" would
+// permanently strand the user's recordings in the old folder, which is exactly
+// the failure this whole function exists to prevent.
+const EXTRA_ENTRIES = ["theme.json", "Local Storage"];
 
-function hasOwnedData(dir: string): boolean {
-  return OWNED_ENTRIES.some((name) => fs.existsSync(path.join(dir, name)));
+function hasUserData(dir: string): boolean {
+  return USER_DATA_ENTRIES.some((name) => fs.existsSync(path.join(dir, name)));
 }
 
 export function migrateUserDataIfNeeded(): void {
@@ -43,7 +42,8 @@ export function migrateUserDataIfNeeded(): void {
 
   if (newRoot === oldRoot) return; // name unchanged; nothing to do
   if (!fs.existsSync(oldRoot)) return; // fresh install
-  if (hasOwnedData(newRoot)) return; // already migrated — never clobber
+  if (!hasUserData(oldRoot)) return; // nothing worth moving
+  if (hasUserData(newRoot)) return; // already migrated — never clobber
 
   // Measured, not assumed: Electron creates userData before this module runs, so
   // newRoot almost always already exists and this is a per-entry move rather
@@ -54,7 +54,7 @@ export function migrateUserDataIfNeeded(): void {
       fs.renameSync(oldRoot, newRoot);
       return;
     }
-    for (const name of OWNED_ENTRIES) {
+    for (const name of USER_DATA_ENTRIES) {
       const from = path.join(oldRoot, name);
       if (!fs.existsSync(from)) continue;
       fs.renameSync(from, path.join(newRoot, name));
@@ -71,13 +71,17 @@ export function migrateUserDataIfNeeded(): void {
     }
   }
 
-  // Best-effort extras, each isolated so a failure leaves the move above intact.
-  try {
-    const lsFrom = path.join(oldRoot, LOCAL_STORAGE_DIR);
-    const lsTo = path.join(newRoot, LOCAL_STORAGE_DIR);
-    if (fs.existsSync(lsFrom) && !fs.existsSync(lsTo)) fs.renameSync(lsFrom, lsTo);
-  } catch {
-    // Theme preference resets to the default. Cosmetic; not worth failing over.
+  // Best-effort extras, isolated so a failure leaves the move above intact. Only
+  // taken when the destination is absent — a Local Storage the new profile has
+  // already started writing is not ours to overwrite.
+  for (const name of EXTRA_ENTRIES) {
+    try {
+      const from = path.join(oldRoot, name);
+      const to = path.join(newRoot, name);
+      if (fs.existsSync(from) && !fs.existsSync(to)) fs.renameSync(from, to);
+    } catch {
+      // At worst the theme resets to the default. Cosmetic; never worth failing.
+    }
   }
   try {
     if (fs.readdirSync(oldRoot).length === 0) fs.rmdirSync(oldRoot);
