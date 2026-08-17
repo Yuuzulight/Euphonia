@@ -2,9 +2,13 @@ import { app, BrowserWindow, Menu, shell } from "electron";
 import path from "node:path";
 import { registerAppProtocolScheme, registerAppProtocolHandler } from "./protocol";
 import { registerIpcHandlers } from "./ipcHandlers";
-import { getIconPath } from "./paths";
+import { getIconPath, migrateUserDataIfNeeded } from "./paths";
 import { checkForUpdates } from "./updater";
 import { chromeFor, readCachedTheme } from "./theme";
+
+// FIRST, before anything reads userData — the theme cache, the updater and
+// Chromium's session store all live under it. See paths.ts for why this exists.
+migrateUserDataIfNeeded();
 
 registerAppProtocolScheme();
 
