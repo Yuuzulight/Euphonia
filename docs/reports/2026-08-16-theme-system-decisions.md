@@ -11,6 +11,13 @@ to revisit.
 
 ## Decisions
 
+> **Superseded, 2026-08-17.** Rulings E and M below grandfathered eight blossom
+> contrast failures on the grounds that the palette was frozen. It was
+> subsequently unfrozen on purpose: all eight are fixed, `BASELINE_EXCEPTIONS`
+> is now empty, and every theme clears every floor on its own values. The
+> reasoning below is kept because it explains why the exceptions existed at all,
+> and because the button fix it anticipated is the one that was eventually used.
+
 - **R1 — the checker must assert blossom declares every token the contrast pairs reference.** As first written, a missing token made its contrast pair silently skip, so the checker would have exited 0 against a stylesheet that had not been tokenised at all — leaving the entire sweep unverified. Costs if wrong: a stricter checker could reject a legitimate future token rename; the fix is one line.
 
 - **R2 — theme blocks use `[data-theme="…"]` attribute selectors, with blossom on `:root, [data-theme="blossom"]`.** The Settings swatch chips preview a theme by putting `data-theme` on a `<span>`, and `:root[data-theme=…]` only ever matches the root element, so every chip would have silently rendered in the active theme instead of its own. The alternative — a duplicated colour map for chips — reintroduces exactly the drift the token system exists to prevent. Costs if wrong: attribute selectors carry marginally lower specificity; the fix is to restore the `:root` prefix and give chips inline colours.

@@ -13,7 +13,7 @@ import { getUserDataRoot } from "./paths";
 // `"<id>": {` object-key pattern, so an unquoted key it would otherwise
 // leave undetected as missing.
 export const WINDOW_CHROME: Record<string, { bg: string; titlebar: string; symbol: string }> = {
-  "blossom": { bg: "#f5f0ff", titlebar: "#ffd9ea", symbol: "#7a5a92" },
+  "blossom": { bg: "#f5f0ff", titlebar: "#ffd9ea", symbol: "#785990" },
   "paper": { bg: "#f2efe8", titlebar: "#ece4d6", symbol: "#5c554a" },
   "light-mint": { bg: "#eef6f2", titlebar: "#cfeee0", symbol: "#365f4d" },
   "dusk-plum": { bg: "#14131f", titlebar: "#251d33", symbol: "#c8b6dd" },

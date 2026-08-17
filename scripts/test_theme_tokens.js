@@ -29,24 +29,15 @@ const CONTRAST_PAIRS = [
   ["--accent-emphasis", "--card", BODY_MIN],
 ];
 
-// Blossom is the pre-existing palette and the spec freezes it, so these pairs
-// are grandfathered at their measured ratios. They are listed explicitly
-// rather than skipped: change any of these token values and the pair stops
-// matching this list, so the check trips again. Every other theme must clear the
-// floors — no new theme may add entries here. The frozen-list rule protects new
-// themes from buying their way out of the floors; it does not block widening
-// CONTRAST_PAIRS itself to catch a pre-existing blossom shortfall that the
-// original four pairs happened to miss — that's coverage, not weakening.
-const BASELINE_EXCEPTIONS = [
-  ["blossom", "--ink-soft", "--card"], // 3.04:1
-  ["blossom", "--ink-soft", "--bg-base"], // 2.81:1
-  ["blossom", "--titlebar-ink", "--titlebar-bg"], // 4.42:1
-  ["blossom", "--on-accent", "--accent"], // 1.63:1
-  ["blossom", "--on-accent", "--accent-2"], // 1.81:1 — pre-existing, found later than the original four
-  ["blossom", "--danger", "--danger-bg"], // 4.09:1
-  ["blossom", "--success", "--success-bg"], // 3.12:1
-  ["blossom", "--accent-emphasis", "--card"], // 3.78:1
-];
+// Deliberately empty. Blossom used to carry eight grandfathered pairs here,
+// because it predates this check and the palette was frozen; they were fixed
+// instead, so every theme now clears every floor on its own values and there is
+// nothing left to exempt.
+//
+// Keep the mechanism rather than deleting it — but adding an entry means a theme
+// is shipping text that fails WCAG AA, so it needs a reason recorded next to it,
+// not just a hex value someone liked.
+const BASELINE_EXCEPTIONS = [];
 
 // Matches any rule whose selector mentions :root or [data-theme=…], so it
 // handles all three forms in use:

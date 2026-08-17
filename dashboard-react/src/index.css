@@ -38,29 +38,29 @@
   --highlight-rgb: 224, 122, 176;
   /* chrome — text */
   --ink: #6b5876;
-  --ink-soft: #9d8ba8;
+  --ink-soft: #7c6789;
   --ink-strong: #7a5a92;
   --ink-heading: #8a6aa8;
   --ink-accent: #b06a96;
   --ink-callout: #a25688;
   --ink-warm: #855;
-  --on-accent: #ffffff;
+  --on-accent: #3a2c42;
   --on-zone: #5a4566;
   /* chrome — accents */
   --accent: #ffb6d5;
   --accent-2: #c9b6ff;
   --accent-soft: #d784ac;
   /* chrome — states */
-  --danger: #c84545;
+  --danger: #c33a3a;
   --danger-bg: #ffe8e8;
   --danger-border: #ffcccc;
   --danger-strong: #e05d5d;
-  --success: #3f9c78;
+  --success: #337e61;
   --success-bg: #eafaf3;
   --success-border: #cdeee0;
   /* chrome — desktop title bar (mirrored in electron/src/theme.ts) */
   --titlebar-bg: #ffd9ea;
-  --titlebar-ink: #7a5a92;
+  --titlebar-ink: #785990;
   /* chrome — waveform player */
   --wave: #bfa9e6;
   --wave-progress: #ff9ec5;
@@ -80,7 +80,7 @@
   --chart-5: #cf7fb0;
   --chart-3-band: #b8ecd8;
   --chart-4-band: #c9b6ff;
-  --accent-emphasis: #c75c93;
+  --accent-emphasis: #c04886;
   --wave-icon: #c0a9d6;
   --ink-faint: #b7a8c2;
   /* data — meaning-bearing, see zones.ts */

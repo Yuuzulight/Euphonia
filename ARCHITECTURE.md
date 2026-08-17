@@ -152,22 +152,33 @@ main process creates the `BrowserWindow` before the renderer exists and has
 no way to read CSS. The same test script checks this file has an entry for
 every theme id the CSS defines.
 
-### The test script, and its one honest limitation
+### The test script
 `scripts/test_theme_tokens.js` (plain Node, no framework, same style as
 `test_protocol_paths.js`) checks: every theme declares the same token set as
 blossom; every text-on-surface pair in `CONTRAST_PAIRS` clears its WCAG
 floor (4.5:1 for body text, 3:1 for large text/UI); and the pre-paint script
 plus `electron/src/theme.ts` both cover every theme id in the CSS.
 
-Blossom is the pre-existing palette, and the theme system deliberately froze
-it rather than retrofitting it — so five blossom pairs that don't clear
-those floors are grandfathered into a `BASELINE_EXCEPTIONS` list, each
-pinned to its measured ratio (the worst is `--on-accent` on `--accent`,
-1.63:1). **No theme built after blossom may add to that list** — every one
-of the other seven actually clears the floors. This is a real, known gap in
-the default theme, not something papered over: change any of those token
-values and the exception stops matching, so the check trips again instead
-of silently staying green.
+All eight themes clear every floor on their own values. `BASELINE_EXCEPTIONS`
+exists but is empty, and that is worth a note, because for most of the theme
+system's life it wasn't. Blossom predates the check by a long way and failed
+eight pairs — the worst being white on the pastel primary button at 1.63:1 —
+so they were grandfathered while the rest of the work landed, listed
+explicitly rather than skipped so that touching any of those values would
+trip the check again.
+
+They were fixed afterwards, and the fix is worth understanding because it
+generalises. Six of the eight were text that simply needed to be darker, all
+within a few percent of lightness and none changing hue. The two button pairs
+were the interesting ones: white on pastel pink cannot be fixed by moving the
+text, so the choice was between deepening the pink — which would have cost
+the pastel identity the whole app is built around — and keeping the pastel
+and darkening the label instead. The label won, because `--accent` is the
+design and `--on-accent` is only "whatever reads on it". `paper` and
+`light-mint` reached the same answer independently.
+
+Keep the mechanism, but adding an entry means a theme is shipping text that
+fails WCAG AA, so it needs a reason recorded beside it.
 
 ---
 
