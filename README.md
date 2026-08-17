@@ -1,6 +1,9 @@
-# Euphonia
-
-![HLdkXJnXwAAVpuS.jpg](HLdkXJnXwAAVpuS.jpg)
+<p align="center">
+  <picture>
+    <source srcset="assets/banner-dark.svg" media="(prefers-color-scheme: dark)">
+    <img src="assets/banner-light.svg" alt="Euphonia — finding the sound that feels like you" width="820">
+  </picture>
+</p>
 
 Euphonia is a voice-feminization training tool. Record yourself, and it analyzes the recording and surfaces clear, actionable metrics so you can track your progress over time.
 
@@ -9,6 +12,14 @@ Originally created by [scratchyone](https://github.com/scratchyone) as [voice-tr
 These metrics are grounded in established acoustic research, not professional clinical guidance. Treat Euphonia as one tool among several in your voice training toolkit, not a definitive assessment.
 
 For results that are meaningfully comparable over time, read the same passage with a similar microphone setup each time. The Rainbow Passage is used as the reference passage throughout this guide.
+
+## Preview
+
+Here's the dashboard after a take — the headline metrics up top, then resonance, which is the cue that carries a voice beyond pitch alone. Every number is framed as a compass rather than a verdict, and each card explains what it's measuring and which direction is which.
+
+![The Euphonia dashboard showing pitch, range, loudness, variability, clarity and steadiness cards above the resonance breakdown](HLdkXJnXwAAVpuS.jpg)
+
+Shown in **blossom**, the default. There are eight themes — three light, five dark — switchable from the header or ⚙️ Settings.
 
 There are three ways to use Euphonia, depending on your platform and how comfortable you are working in the code:
 
