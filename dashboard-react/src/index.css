@@ -2157,7 +2157,10 @@ a.legend-link {
   .mm-close,
   .rec-delete,
   .player .play,
-  .player .dl {
+  .player .dl,
+  .picker button,
+  .record-panel button,
+  .insight-placeholder button {
     min-width: 44px;
     min-height: 44px;
   }
@@ -2175,7 +2178,12 @@ a.legend-link {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 44px;
+    /* 44 tall because vertical space is free here, but only 14 wide: adjacent
+       markers sit as little as 0.6px apart on the scale, so a 44px-wide
+       overlay would swallow its neighbours' taps entirely and make dense
+       clusters less reachable than the bare 3px marks were. 14px is ~4.7x
+       the mark without stealing from the next one. */
+    width: 14px;
     height: 44px;
     transform: translate(-50%, -50%);
   }

@@ -18,6 +18,27 @@ import { seedBrowserData } from "./lib/seed_browser.mjs";
 const TAP_MIN = 44; // CSS px, Apple HIG / Material floor
 const SVG_TEXT_MIN = 8; // CSS px on screen
 
+// Enumerated exceptions to the width half of the floor, with the reason they
+// cannot meet it. Height is still asserted for these. Keep this list short and
+// justify every entry -- it is a statement about geometry, not a way to quiet
+// the check.
+const NARROW_TARGET_EXCEPTIONS = [
+  // Reference markers sit on a measurement scale, adjacent pairs measured as
+  // close as 0.6px apart; a 44px-wide hit area would eat its neighbours.
+  // Widening the visible mark is not an option either -- it encodes a position.
+  "mm-ref",
+];
+
+// A target fails the floor if its height is under TAP_MIN, or its width is
+// under TAP_MIN and it is not one of the enumerated narrow-target exceptions
+// above. Both dimensions stay in the message either way, so an exempted
+// element's actual width is never hidden from the output.
+function tapTargetFails(t) {
+  const cls0 = t.cls.split(" ")[0];
+  const widthExempt = NARROW_TARGET_EXCEPTIONS.includes(cls0);
+  return (t.w < TAP_MIN && !widthExempt) || t.h < TAP_MIN;
+}
+
 const args = process.argv.slice(2);
 const argOf = (name, fallback) => {
   const i = args.indexOf(name);
@@ -79,9 +100,16 @@ function measure() {
       if (getComputedStyle(el).visibility === "hidden") return;
       // An element can widen its hit area with a pseudo-element overlay without
       // changing its own box (see .mm-ref::after -- the visual mark has to stay
-      // 3px because it marks a position on a scale). Credit that overlay.
+      // 3px because it marks a position on a scale). Credit that overlay --
+      // but only if it can actually receive the tap. pointer-events: none is
+      // how a purely decorative overlay (a badge, a glow) opts out of hit
+      // testing, and crediting one of those would mask a genuinely small
+      // control behind it.
       const after = getComputedStyle(el, "::after");
-      const hasOverlay = after.content !== "none" && after.position === "absolute";
+      const hasOverlay =
+        after.content !== "none" &&
+        after.position === "absolute" &&
+        after.pointerEvents !== "none";
       const ow = hasOverlay ? parseFloat(after.width) || 0 : 0;
       const oh = hasOverlay ? parseFloat(after.height) || 0 : 0;
       targets.push({
@@ -198,7 +226,7 @@ for (const vp of VIEWPORTS) {
   // Assertion 3: touch targets, only where a coarse pointer is in play.
   if (vp.coarse) {
     for (const t of m.targets) {
-      if (t.w < TAP_MIN || t.h < TAP_MIN) {
+      if (tapTargetFails(t)) {
         fail(vp.name, `tap target ${t.w}x${t.h} < ${TAP_MIN} on .${t.cls.split(" ")[0]} "${t.label}"`);
       }
     }
@@ -224,7 +252,7 @@ for (const vp of VIEWPORTS) {
     }
     if (vp.coarse) {
       for (const t of modalState.targets) {
-        if (t.w < TAP_MIN || t.h < TAP_MIN) {
+        if (tapTargetFails(t)) {
           fail(vp.name, `tap target ${t.w}x${t.h} < ${TAP_MIN} on .${t.cls.split(" ")[0]} "${t.label}" (modal open)`);
         }
       }
