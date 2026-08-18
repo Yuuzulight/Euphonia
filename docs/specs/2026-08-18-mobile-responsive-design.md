@@ -56,7 +56,8 @@ empty.
 
 Two width breakpoints and two capability queries:
 
-- `max-width: 600px` — phone. Layout stacking and chart adaptation.
+- `max-width: 600px` — phone. Layout stacking. (Not the chart: it sizes from
+  its measured container, so it needs no breakpoint — see Contour chart.)
 - `max-width: 900px` — narrow / small tablet. Intermediate column counts.
 - `(hover: none)` — touch affordances, independent of width.
 - `(pointer: coarse)` — touch target sizing, independent of width.
@@ -74,25 +75,55 @@ desktop app unchanged.
 `ContourChart` renders a fixed `W = 900` viewBox scaled by CSS to whatever the
 card is wide. Everything inside — including text — scales with it.
 
-The fix is to make the chart's intrinsic width a function of the space it has,
-rather than a constant: below the phone breakpoint use a viewBox around 380
-units wide, so a 299 px render lands near 1:1 and the existing 9-10 unit font
-sizes resolve to legible pixels. Fewer x-axis ticks at that width, since 900
-units of labels will not fit in 380.
+**Corrected 2026-08-18, during planning.** This section first proposed a fixed
+alternate viewBox (~380 units) below the phone breakpoint. Measuring at three
+widths showed that does not work, and that the problem is not phone-only:
 
-Rejected alternative: scaling `fontSize` up to compensate (e.g. 27 units to
-land at 9 px). It works arithmetically but leaves every other dimension —
-padding, tick marks, stroke widths — at desktop proportions, so the chart
-looks progressively wronger as it narrows.
+| viewport | contour rendered | scale | 9-unit text |
+|---|---|---|---|
+| 375 px | 299 px | 0.332 | 3.0 px |
+| 768 px | 682 px | 0.758 | 6.8 px |
+| 1280 px | 964 px | 1.071 | 9.6 px |
+
+A 900-unit viewBox needs 800 px of render to clear an 8 px floor, so labels are
+too small on everything below roughly a 1050 px viewport — a tablet fails just
+as a phone does, and a 600 px breakpoint would have missed it. Meanwhile a
+fixed 380-unit viewBox gives 7.9 px at 375 px (still failing) and 16 px at
+768 px (absurdly large). No single alternate constant works.
+
+The fix instead makes the viewBox track the rendered width, so the scale is
+always about 1:1:
+
+    W = min(900, round(renderedWidth))     // clamped to a 260 floor
+
+Every dimension in the component already derives from `W`, `H` and `pad`, so
+padding, ticks and stroke widths follow automatically. Properties of this
+form, all of which the audit checks:
+
+- **Continuous.** At 900 px rendered both branches give 9 px text; there is no
+  jump at the boundary.
+- **Desktop is byte-identical.** Above 900 px rendered, `W` stays 900 and the
+  chart is exactly what ships today — which is what makes the desktop-parity
+  assertion meaningful rather than a formality.
+- **Correct by construction at every width**, not at the widths someone
+  remembered to write a breakpoint for.
+
+`H` stays 240. Below the threshold the chart renders 240 CSS px tall at every
+width, instead of shrinking with the viewport as it does now.
+
+Rejected alternatives: scaling `fontSize` up to compensate (leaves padding,
+ticks and stroke widths at desktop proportions, so the chart looks
+progressively wronger as it narrows), and the fixed-alternate-viewBox approach
+this section originally specified, for the arithmetic above.
 
 ### Metric modal (problems 2 and 3)
 
 `.mm-card` gets the treatment `.modal` already has: `max-height: calc(100dvh -
-32px)` (with a `100vh` fallback line before it) and `overflow-y: auto`, plus
+40px)` (with a `100vh` fallback line before it) and `overflow-y: auto`, plus
 `overscroll-behavior: contain` so scrolling the modal does not scroll the page
-behind it. This is what makes the landscape case reachable. 32px rather than
-`.modal`'s 40px because `.mm-card` is centred over a backdrop with less
-surrounding chrome; the exact figure matters less than the cap existing.
+behind it. This is what makes the landscape case reachable. The 40px is not
+arbitrary: `.mm-backdrop` is `position: fixed; inset: 0` with `padding: 20px`,
+so 40px is exactly the vertical padding the card sits inside.
 
 `.mm-ref` markers keep their visual size and gain an invisible expanded hit
 area via a pseudo-element. They are positioned on a measurement scale — making
@@ -175,9 +206,12 @@ there.
 
 - **`dvh` support.** Safari 15.4+, Chrome 108+. Older browsers fall through to
   the `100vh` declaration, i.e. today's behaviour. No regression, just no fix.
-- **The chart breakpoint is a second rendering path.** A viewBox that changes
-  with width means the chart has two configurations to keep working. Mitigated
-  by assertion 2 covering every width, not just the phone one.
+- **The chart now measures itself.** A viewBox computed from a measured
+  container means the chart depends on layout having settled, and on a
+  `ResizeObserver` firing. First paint before measurement must render
+  something sane rather than collapsing to zero width. Mitigated by assertion 2
+  covering every width, and by seeding the measured width from the 900 default
+  so the pre-measurement render is today's behaviour.
 - **Touch sizing could reflow layouts.** Growing hit areas under
   `(pointer: coarse)` can change wrapping on a touch laptop, which is a coarse
   pointer at desktop width. Assertion 1 runs at every width with coarse
