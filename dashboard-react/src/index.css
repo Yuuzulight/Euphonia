@@ -2144,6 +2144,43 @@ a.legend-link {
   background: var(--bg-glow-1);
   color: var(--ink-accent);
 }
+
+/* ---- touch targets ----
+   Keyed off the pointer, not the viewport: a 34px button is fine under a mouse
+   at any width and wrong under a thumb at any width. This never matches a
+   normal desktop, which is what keeps the desktop app unchanged.
+   44px is the Apple HIG / Material floor. Hit areas grow; nothing visual does,
+   so the design is untouched. */
+@media (pointer: coarse) {
+  .settings-btn,
+  .theme-toggle,
+  .mm-close,
+  .rec-delete,
+  .player .play,
+  .player .dl {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* The reference markers sit ON a measurement scale -- a 3px stem is the
+     mark, and widening it would misstate where the voice actually falls. So
+     the mark keeps its size and an invisible pseudo-element takes the taps. */
+  .mm-ref {
+    /* the stem is 3x16; the pad has to come from somewhere that does not
+       affect layout, hence the absolutely-positioned overlay below */
+    z-index: 1;
+  }
+  .mm-ref::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mm-backdrop, .mm-card { animation: none; }
 }

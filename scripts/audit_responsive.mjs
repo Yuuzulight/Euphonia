@@ -77,10 +77,17 @@ function measure() {
       const r = el.getBoundingClientRect();
       if (!r.width || !r.height) return; // not rendered
       if (getComputedStyle(el).visibility === "hidden") return;
+      // An element can widen its hit area with a pseudo-element overlay without
+      // changing its own box (see .mm-ref::after -- the visual mark has to stay
+      // 3px because it marks a position on a scale). Credit that overlay.
+      const after = getComputedStyle(el, "::after");
+      const hasOverlay = after.content !== "none" && after.position === "absolute";
+      const ow = hasOverlay ? parseFloat(after.width) || 0 : 0;
+      const oh = hasOverlay ? parseFloat(after.height) || 0 : 0;
       targets.push({
         cls: el.getAttribute("class") || "(none)",
-        w: Math.round(r.width),
-        h: Math.round(r.height),
+        w: Math.round(Math.max(r.width, ow)),
+        h: Math.round(Math.max(r.height, oh)),
         label: (el.textContent || "").trim().slice(0, 20),
       });
     });
