@@ -216,3 +216,46 @@ there.
   `(pointer: coarse)` can change wrapping on a touch laptop, which is a coarse
   pointer at desktop width. Assertion 1 runs at every width with coarse
   pointer emulation to catch it.
+
+## Outcome
+
+Implemented 2026-08-18. All eight audit viewports pass; both desktop rows are
+byte-identical to the pre-work baseline under a fine pointer.
+
+Two things this design got wrong, worth recording plainly rather than
+smoothing over:
+
+The trend `LineChart`s were called "already fine" above, on the strength of a
+single 375px measurement. They were not: at 320x568 the chart's own label text
+renders 7.92px, under the 8px floor, because `.chart-grid`'s `minmax(300px,
+1fr)` column doesn't shrink below 300px even though the surrounding `.wrap`
+only has 280px to give it at that width. Task 7 fixed it by reclaiming
+`.chart-card`'s side padding under `@media (max-width: 360px)` — the card's
+outer width stays pinned by the grid track, so this only reallocates space the
+card already had. A `LineChart` viewBox rewrite along the `ContourChart`
+pattern was considered and rejected: the naive version would also engage at
+1280px, shrinking the desktop chart's viewBox and growing its text from 8.6px
+to 9px — a desktop change the brief explicitly rules out.
+
+This design also anticipated two width breakpoints for layout stacking. None
+were needed. All four grids (`.stat-grid`, `.chart-grid`, `.gloss`,
+`.rec-grid`) already use `repeat(auto-fit, minmax())` and collapse to a single
+column on their own as space runs out. Task 7's layout review walked the
+seeded fixture at 320px and 375px against all five questions this spec raised
+and found nothing to fix. The only width breakpoint that exists anywhere on
+this branch is the 360px one above, and it exists for chart legibility, not
+layout stacking — Task 7 added no other CSS at all, which is the correct
+result, not a shortfall.
+
+One other correction happened earlier, during planning rather than
+implementation: the contour chart fix described above was changed from a
+fixed alternate viewBox at a phone breakpoint to a viewBox measured from the
+chart's own container, after measuring at 375 / 768 / 1280px showed no single
+fixed constant holds at every width. See the Contour chart section above,
+which already reflects the corrected approach.
+
+Across the whole branch, the responsive audit went from 381 failures to 0
+across the eight viewports it checks.
+
+Still unverified, and not verifiable this way: anything requiring physical
+hardware. See the Verification section.

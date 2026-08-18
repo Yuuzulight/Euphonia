@@ -80,7 +80,15 @@ This runs the same Praat voice-analysis engine as the desktop app, compiled to W
 
 Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
 
-**Mobile:** the layout and the full record → analyze → results flow have both been tested on phone-sized screens against the live site, so this is more than a "should probably work." The one piece I haven't verified on an actual phone yet is microphone capture itself — if that misbehaves on your device, [open an issue](../../issues).
+**Mobile:** the layout, the record → analyze → results flow, and the populated
+dashboard have been checked at phone and tablet viewports, down to 320px wide,
+with an automated audit (`scripts/audit_responsive.mjs`) covering horizontal
+overflow, chart label legibility, touch target sizes and modal reachability.
+That audit runs in browser viewport emulation, which is not the same as a real
+handset — it can't tell you how iOS Safari's collapsing toolbar behaves or how
+the record button falls under a thumb. Microphone capture in particular hasn't
+been verified on physical hardware. If something misbehaves on your device,
+[open an issue](../../issues).
 
 ## Developer workflow
 
