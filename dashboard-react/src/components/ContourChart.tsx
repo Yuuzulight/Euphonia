@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import type { RecordingDetail } from "../types";
 import { MASC, FEM, zoneColor } from "../zones";
 import { useThemeColors } from "../theme/ThemeProvider";
@@ -14,7 +15,31 @@ interface Props {
 // register, blue = fell out).
 export function ContourChart({ detail, femThreshold = 165 }: Props) {
   const colors = useThemeColors();
-  const W = 900;
+  // The viewBox tracks the rendered width so the scale stays near 1:1 and the
+  // 9-10 unit labels below land at 9-10 real pixels. A fixed 900 made them
+  // 3px on a phone and 6.8px on a 768px tablet -- everything in here derives
+  // from W/H/pad, so sizing W is enough to fix all of it at once.
+  //
+  // Above 900px rendered, W stays 900: that is exactly what desktop ships
+  // today, so widening the window changes nothing. 900 is also where the two
+  // branches agree (scale 1.0), so there is no jump at the boundary.
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [boxW, setBoxW] = useState(900);
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const apply = () => {
+      const w = el.getBoundingClientRect().width;
+      // 0 happens while the element is display:none (a collapsed section);
+      // keep the last good value rather than collapsing the chart.
+      if (w > 0) setBoxW(Math.max(260, Math.min(900, Math.round(w))));
+    };
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const W = boxW;
   const H = 240;
   const pad = { l: 40, r: 14, t: 14, b: 40 };
   const iw = W - pad.l - pad.r;
@@ -58,6 +83,7 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
   );
 
   return (
+    <div ref={wrapRef} className="contour-wrap">
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" className="contour">
       {/* feminine band (soft pink, above the fem threshold) */}
       <rect
@@ -156,5 +182,6 @@ export function ContourChart({ detail, femThreshold = 165 }: Props) {
         ● dots = how each phrase landed
       </text>
     </svg>
+    </div>
   );
 }

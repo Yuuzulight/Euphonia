@@ -1501,6 +1501,14 @@ a.legend-link {
   box-shadow: var(--shadow);
   border: 2px solid var(--line);
 }
+/* The contour chart measures this box to choose its viewBox (see
+   ContourChart.tsx). It must be a plain full-width block: if it ever became
+   inline or shrink-to-fit, the chart would measure its own output and the
+   width would oscillate. */
+.contour-wrap {
+  display: block;
+  width: 100%;
+}
 .contour {
   display: block;
 }
