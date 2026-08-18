@@ -1137,6 +1137,28 @@ section {
   margin: 0 0 8px;
 }
 
+/* LineChart's viewBox is a fixed 300 wide, so its 9px axis/tick text renders
+   at 9 * (rendered/300) actual px. .chart-grid's minmax(300px, 1fr) column
+   doesn't shrink below 300px even when the grid's own container is narrower
+   (it eats into .wrap's side padding instead of overflowing the viewport),
+   so the card itself always stays 300px wide down to 320px viewports. Below
+   that, its 16px left/right padding was the only thing still squeezing the
+   chart's actual rendered width down to 264px -- 7.92px text, under the 8px
+   floor. Trimming the padding here (not the viewBox) gives the chart back
+   the same fixed 300px card at ~276px content width (8.28px text) without
+   touching anything at 375px and up, where the card was already fine.
+   Deliberately NOT the ContourChart's "shrink the viewBox to match rendered
+   width" technique -- doing that here would also engage above 320px (at
+   1280 wide the chart renders 287px, dropping viewBox 300 -> 287 and
+   growing text 8.6 -> 9px), changing desktop geometry that today has zero
+   audit failures and needs to stay that way. */
+@media (max-width: 360px) {
+  .chart-card {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
 /* ---- recording cards ---- */
 .rec-grid {
   display: grid;
