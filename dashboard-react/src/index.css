@@ -1787,6 +1787,15 @@ a.legend-link {
 .mm-card {
   position: relative;
   width: min(640px, 100%);
+  /* Without a cap this overflows the fold in landscape -- measured at 802x375
+     it ran 74px past the bottom with overflow-y: visible on both the card and
+     its backdrop, so the content was simply unreachable. 40px is exactly the
+     vertical padding of .mm-backdrop (20px each side). dvh, not vh: on iOS
+     Safari 100vh is the large viewport and ignores the collapsing toolbar. */
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--card);
   border-radius: 26px;
   border: 2px solid var(--line);
@@ -2162,6 +2171,7 @@ a.legend-link {
 .modal {
   width: min(500px, 100%);
   max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
   overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--card);
