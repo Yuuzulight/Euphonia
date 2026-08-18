@@ -182,6 +182,39 @@ async function openMetricModal(page) {
   }
 }
 
+// Opens the in-modal player by tapping a reference-voice marker. This is the
+// only way to make .mm-take.is-clickable's sibling controls (.mm-player-close,
+// .player .vol range) actually render: fixture takes always carry
+// `audio: null` (see seed_sample_data.mjs), so a take marker never gets
+// role="button" and .mm-player never opens that way. Reference voices are
+// different -- public/reference.json ships real audio paths for all 21 of
+// them -- so a .mm-ref tap genuinely mounts .mm-player. `.mm-take.is-clickable`
+// itself is NOT reachable this way; see the note at the call site.
+//
+// `.mm-ref` is keyboard-activatable exactly like the stat card above
+// (role="button", tabIndex 0, Enter/Space -> the same play() handler), so the
+// same focus+Enter technique applies and sidesteps the same synthetic-.click()
+// trap documented on openMetricModal.
+async function openRefPlayer(page) {
+  const ref = page.locator(".mm-ref.is-clickable").first();
+  if (!(await ref.count())) return false;
+  await ref.focus();
+  await page.keyboard.press("Enter");
+  try {
+    await page.waitForSelector(".mm-player", { timeout: 2000 });
+    // .mm-player runs a 0.22s mm-player-in entrance animation -- same
+    // mid-animation trap as the modal itself, same fix: wait on the
+    // animation rather than a sleep.
+    await page.locator(".mm-player").evaluate(async (el) => {
+      await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+      await Promise.all(el.getAnimations().map((a) => a.finished));
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const failures = [];
 const results = [];
 const fail = (vp, msg) => failures.push(`[${vp}] ${msg}`);
@@ -257,6 +290,40 @@ for (const vp of VIEWPORTS) {
         }
       }
     }
+
+    // Assertion 3 (player state): the in-modal player is its own audio-gated
+    // state (.mm-player-close, .player .vol range) that no assertion above
+    // ever visits, because it only exists once .mm-player is mounted. Tap a
+    // reference-voice marker to get there -- see openRefPlayer for why that
+    // (and not a take marker) is the way in. Failures are folded into the
+    // same tap-target assertion, just tagged "(player open)".
+    //
+    // NOT covered here: .mm-take.is-clickable. That class only appears on a
+    // take marker once the take has audio, and every fixture take carries
+    // `audio: null` (scripts/seed_sample_data.mjs) -- there is no fixture
+    // audio, and inventing binary blobs for the repo to reach it is not
+    // worth it. It has the same CSS fix as the controls below, but it is
+    // genuinely unmeasured by this audit. Don't read a green run as having
+    // checked it.
+    const refOpened = await openRefPlayer(page);
+    let playerState = null;
+    if (refOpened) {
+      playerState = await page.evaluate(measure);
+      if (vp.coarse) {
+        for (const t of playerState.targets) {
+          if (tapTargetFails(t)) {
+            fail(vp.name, `tap target ${t.w}x${t.h} < ${TAP_MIN} on .${t.cls.split(" ")[0]} "${t.label}" (player open)`);
+          }
+        }
+      }
+      if (playerState.overflowBy > 0) {
+        fail(vp.name, `horizontal overflow by ${playerState.overflowBy}px while the player is open`);
+      }
+    } else {
+      fail(vp.name, "could not open the reference-voice player, so player-state tap-target assertions did not run");
+    }
+
+    modalState = { ...modalState, player: playerState };
   } else {
     fail(vp.name, "could not open a metric modal, so modal assertions did not run");
   }

@@ -2171,8 +2171,17 @@ a.legend-link {
    Keyed off the pointer, not the viewport: a 34px button is fine under a mouse
    at any width and wrong under a thumb at any width. This never matches a
    normal desktop, which is what keeps the desktop app unchanged.
-   44px is the Apple HIG / Material floor. Hit areas grow; nothing visual does,
-   so the design is untouched. */
+   44px is the Apple HIG / Material floor, applied as min-width/min-height so
+   layout keeps flowing normally around the grown box. For controls that were
+   already a fixed-size circle (.settings-btn, .theme-toggle, .mm-close,
+   .player .play, .player .dl) the rendered circle grows right along with the
+   hit area -- min-width/min-height beats a smaller width/height by the CSS
+   cascade, so there is no separate "grow the circle" step. That is intended
+   on touch, not a side effect: a bigger circle is also a bigger, easier
+   target to see and press. The one control on this branch that visually
+   stays put while its hit area grows is `.mm-ref` below, because unlike
+   these buttons its rendered size encodes real data (a position on a
+   measurement scale), not just a clickable icon. */
 @media (pointer: coarse) {
   .settings-btn,
   .theme-toggle,
@@ -2180,9 +2189,12 @@ a.legend-link {
   .rec-delete,
   .player .play,
   .player .dl,
+  .player .vol input[type="range"],
   .picker button,
   .record-panel button,
-  .insight-placeholder button {
+  .insight-placeholder button,
+  .mm-take.is-clickable,
+  .mm-player-close {
     min-width: 44px;
     min-height: 44px;
   }
@@ -2201,10 +2213,16 @@ a.legend-link {
     left: 50%;
     top: 50%;
     /* 44 tall because vertical space is free here, but only 14 wide: adjacent
-       markers sit as little as 0.6px apart on the scale, so a 44px-wide
-       overlay would swallow its neighbours' taps entirely and make dense
-       clusters less reachable than the bare 3px marks were. 14px is ~4.7x
-       the mark without stealing from the next one. */
+       markers sit as little as 0.6px apart on the scale, and every overlay
+       shares z-index: 1, so DOM order -- not proximity -- decides which one
+       wins a tap in the overlap. A 44px-wide overlay would swallow several
+       neighbours outright. 14px does not avoid that overlap, only shrinks
+       it: at worst it still reaches into roughly the nearest four markers on
+       either side, so a mis-tap near a dense cluster can still play an
+       adjacent reference voice instead of the intended one. That residual
+       risk is accepted as better than the alternative -- 44px would make
+       dense clusters harder to hit correctly, not easier -- and better than
+       the bare 3px mark, which had no forgiving margin at all. */
     width: 14px;
     height: 44px;
     transform: translate(-50%, -50%);

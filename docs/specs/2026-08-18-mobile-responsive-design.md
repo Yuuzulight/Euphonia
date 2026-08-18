@@ -259,3 +259,32 @@ across the eight viewports it checks.
 
 Still unverified, and not verifiable this way: anything requiring physical
 hardware. See the Verification section.
+
+Two margins are worth recording rather than just leaving green, because both
+are close enough to their floor that an unrelated future change could reopen
+them without the audit necessarily catching it at the exact spot that matters:
+
+- The contour chart's fix above is a straight consequence of making its
+  viewBox track rendered width: at 320px on the densest seeded take (11
+  phrases) the per-phrase landing dots (`r={4.5}` in `ContourChart`) now clear
+  each other by only 1.42px, versus overlapping outright before the fix. The
+  same 4.5-unit radius reads as ~9px on screen at 320px in the now-≈1:1
+  viewBox, where it used to read as ~1.2px. Real takes routinely run well
+  past 11 phrases, so tighter clusters than the seeded fixture **will**
+  overlap at narrow widths — this is cosmetic only, since the dots carry
+  `<title>` tooltips and no click/keyboard interaction, but it is not
+  hypothetical.
+- The 320px trend-chart fix (reclaiming `.chart-card`'s side padding under
+  `@media (max-width: 360px)`, described above) leaves the chart's own label
+  text at 8.28px against the 8px floor — a 3.5% margin. A later change to
+  `.chart-card` padding or border width, made without rerunning the audit at
+  320px specifically, could erase it.
+
+Also worth writing down rather than assuming: **CI does not run this audit.**
+It needs Playwright plus a preview server on 4173, the same reason
+`screenshot_themes.mjs` is a manual step rather than a pipeline stage. That
+makes the 381 → 0 result point-in-time, not continuously enforced — a
+regression here is something a person has to run the script and notice, not
+something a red CI check surfaces automatically. Wiring the audit into CI was
+considered and set aside for this branch: it is infrastructure work, and this
+plan is about CSS.
