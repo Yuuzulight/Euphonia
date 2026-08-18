@@ -2403,3 +2403,14 @@ a.legend-link {
 .danger-btn:hover {
   background: var(--danger-bg);
 }
+
+/* ---- affordances that hover was doing the work for ----
+   (hover: none) means no pointer can ever hover here, so anything resting in a
+   dimmed "discover me by hovering" state stays dimmed forever. Decorative
+   hover states (background, transform, shadow) need no equivalent and are
+   deliberately not listed. */
+@media (hover: none) {
+  .rec-delete {
+    opacity: 1;
+  }
+}
