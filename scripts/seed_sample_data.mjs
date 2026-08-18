@@ -1,35 +1,7 @@
-// Fills dashboard-react/public/ with a believable set of takes so the populated
-// dashboard can actually be looked at. Nothing in the repo rendered it before —
-// recordings.json ships as [], so every screenshot and every layout review to
-// date has been of the empty state.
+// Generates sample takes for testing the populated dashboard.
 //
 // Deterministic on purpose: same numbers every run, so screenshots diff cleanly
 // and a layout regression is the only thing that can move.
-//
-// Run:   node scripts/seed_sample_data.mjs
-// Undo:  node scripts/seed_sample_data.mjs --clean
-//
-// The output is NOT for committing — recordings.json is tracked as [], and
-// electron-builder.yml deliberately filters these paths out of the installer so
-// a builder's own voice data can never ship. Run --clean before committing.
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const pub = path.join(root, "dashboard-react", "public");
-const analysisDir = path.join(pub, "analysis");
-
-const clean = process.argv.includes("--clean");
-
-if (clean) {
-  fs.writeFileSync(path.join(pub, "recordings.json"), "[]\n");
-  for (const f of fs.readdirSync(analysisDir)) {
-    if (f.endsWith(".json")) fs.unlinkSync(path.join(analysisDir, f));
-  }
-  console.log("cleaned: recordings.json reset to [], analysis/*.json removed");
-  process.exit(0);
-}
 
 // Small deterministic PRNG (mulberry32) — Math.random() would reshuffle the
 // contour on every run and make screenshot diffs useless.
@@ -124,7 +96,6 @@ function makeTake(id, label, date, meanTarget, discipline, seed) {
     phrases,
     summary: register,
   };
-  fs.writeFileSync(path.join(analysisDir, `${id}.json`), JSON.stringify(detail));
 
   return {
     id, label,
@@ -132,7 +103,6 @@ function makeTake(id, label, date, meanTarget, discipline, seed) {
     date,
     source_file: `${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.wav`,
     audio: null, // no fixture audio: the player hides itself rather than 404ing
-    detail: `analysis/${id}.json`,
     duration_s: +dur.toFixed(2),
     pitch: {
       mean_hz: +mean.toFixed(1), median_hz: +median.toFixed(1),
@@ -160,25 +130,32 @@ function makeTake(id, label, date, meanTarget, discipline, seed) {
       tilt_db_khz: +(-9.4 + discipline * 2.5).toFixed(2),
     },
     register,
+    __detail: detail, // the heavy per-take analysis; goes to the `details` store
   };
 }
 
-fs.mkdirSync(analysisDir, { recursive: true });
-
-// Deliberately a progression: earliest take is the roughest, latest the best,
-// so the trend charts have a real shape instead of noise.
-const takes = [
-  makeTake(1, "Rainbow Passage, first try", "2026-07-02", 158, 0.18, 11),
-  makeTake(2, "Rainbow Passage, morning", "2026-07-14", 168, 0.36, 22),
-  makeTake(3, "Reading practice", "2026-07-28", 176, 0.55, 33),
-  makeTake(4, "Rainbow Passage, warmed up", "2026-08-09", 184, 0.71, 44),
-  makeTake(5, "Rainbow Passage, morning", "2026-08-16", 189, 0.83, 55),
-];
-
-fs.writeFileSync(path.join(pub, "recordings.json"), JSON.stringify(takes, null, 2) + "\n");
-
-console.log(`seeded ${takes.length} takes -> dashboard-react/public/recordings.json`);
-for (const t of takes) {
-  console.log(`  #${t.id} ${t.label.padEnd(30)} mean ${t.pitch.mean_hz} Hz, ${t.register.n_phrases} phrases, ${t.register.in_register_pct}% in register`);
+export function makeTakes() {
+  // Deliberately a progression: earliest take is the roughest, latest the best,
+  // so the trend charts have a real shape instead of noise.
+  return [
+    makeTake(1, "Rainbow Passage, first try", "2026-07-02", 158, 0.18, 11),
+    makeTake(2, "Rainbow Passage, morning", "2026-07-14", 168, 0.36, 22),
+    makeTake(3, "Reading practice", "2026-07-28", 176, 0.55, 33),
+    makeTake(4, "Rainbow Passage, warmed up", "2026-08-09", 184, 0.71, 44),
+    makeTake(5, "Rainbow Passage, morning", "2026-08-16", 189, 0.83, 55),
+  ];
 }
-console.log("\nrun with --clean before committing");
+
+// Running this file directly just prints what it would produce — a quick way to
+// eyeball the fixture without launching a browser. It writes nothing: fixtures
+// go into IndexedDB at runtime (see scripts/lib/seed_browser.mjs), never into
+// public/, where recordings.json is tracked as [] and electron-builder
+// deliberately filters the path out of the installer.
+if (import.meta.url === `file://${process.argv[1].replace(/\\/g, "/")}`) {
+  for (const t of makeTakes()) {
+    console.log(
+      `#${t.id} ${t.label.padEnd(30)} mean ${t.pitch.mean_hz} Hz, ` +
+        `${t.register.n_phrases} phrases, ${t.register.in_register_pct}% in register`,
+    );
+  }
+}
