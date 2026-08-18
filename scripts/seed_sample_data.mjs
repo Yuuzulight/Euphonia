@@ -2,6 +2,7 @@
 //
 // Deterministic on purpose: same numbers every run, so screenshots diff cleanly
 // and a layout regression is the only thing that can move.
+import { pathToFileURL } from "node:url";
 
 // Small deterministic PRNG (mulberry32) — Math.random() would reshuffle the
 // contour on every run and make screenshot diffs useless.
@@ -151,7 +152,7 @@ export function makeTakes() {
 // go into IndexedDB at runtime (see scripts/lib/seed_browser.mjs), never into
 // public/, where recordings.json is tracked as [] and electron-builder
 // deliberately filters the path out of the installer.
-if (import.meta.url === `file://${process.argv[1].replace(/\\/g, "/")}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   for (const t of makeTakes()) {
     console.log(
       `#${t.id} ${t.label.padEnd(30)} mean ${t.pitch.mean_hz} Hz, ` +
