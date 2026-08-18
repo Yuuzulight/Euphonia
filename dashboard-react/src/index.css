@@ -2413,4 +2413,12 @@ a.legend-link {
   .rec-delete {
     opacity: 1;
   }
+  /* .mm-ref-spk (the speaker badge on a playable reference tick) also sits at
+     opacity: 0 until :hover, but it is deliberately NOT given an equivalent
+     here: it has pointer-events: none (it's a decoration on .mm-ref, not an
+     affordance of its own), its own comment notes the banner above the ref
+     list already tells you playability before you ever hover, and
+     .mm-ref.is-playing .mm-ref-spk already reveals it on touch once a segment
+     is actually tapped and playing. Forcing it visible at rest would be
+     replacing a mouse-only preview with clutter, not fixing a gap. */
 }

@@ -133,9 +133,14 @@ async function openMetricModal(page) {
     // reads a transform-scaled frame, not the settled layout, which reported a
     // phantom clip at 320x568. Wait on the animations themselves rather than a
     // sleep, so this is deterministic instead of just slower.
-    await page
-      .locator(".mm-card")
-      .evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
+    await page.locator(".mm-card").evaluate(async (el) => {
+      // getAnimations() can return an empty list if the browser has not run a
+      // style pass since the element was inserted -- which would resolve this
+      // wait instantly and quietly reopen the mid-animation race. Cross a frame
+      // boundary first so mm-pop is registered, then wait on it.
+      await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+      await Promise.all(el.getAnimations().map((a) => a.finished));
+    });
     return true;
   } catch {
     return false;
