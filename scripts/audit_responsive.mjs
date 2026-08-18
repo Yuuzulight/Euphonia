@@ -129,6 +129,13 @@ async function openMetricModal(page) {
   await page.keyboard.press("Enter");
   try {
     await page.waitForSelector(".mm-card", { timeout: 2000 });
+    // .mm-card runs a 0.34s mm-pop entrance animation. Measuring mid-animation
+    // reads a transform-scaled frame, not the settled layout, which reported a
+    // phantom clip at 320x568. Wait on the animations themselves rather than a
+    // sleep, so this is deterministic instead of just slower.
+    await page
+      .locator(".mm-card")
+      .evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
     return true;
   } catch {
     return false;
