@@ -27,7 +27,7 @@ There are three ways to use Euphonia, depending on your platform and how comfort
 
 Euphonia is available as a Windows desktop app. No terminal, no account, no API key — install it, open it, record a take, and everything works instantly, including a written insight for every take. All your recordings and data stay on your own machine, in your own user folder.
 
-**Currently Windows-only.** A macOS build was part of the original plan but hasn't actually been built yet. If you're on a Mac, use the developer workflow below for now.
+**Currently Windows-only**, latest release v0.5.1. A macOS build was part of the original plan but hasn't actually been built yet. If you're on a Mac, use the developer workflow below for now.
 
 ### 1. Install it
 
