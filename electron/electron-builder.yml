@@ -44,6 +44,22 @@ win:
   # that fails to extract on this machine (dylib symlinks need Windows
   # Developer Mode/admin, which we won't enable just to build unsigned).
   signAndEditExecutable: false
+linux:
+  # AppImage only. electron-builder's default Linux targets also include snap,
+  # which would need snapcraft/mksquashfs on the build host.
+  target: AppImage
+  # The shared `icon: resources/icon.ico` above can't be used here: the icon
+  # tool electron-builder ships rejects .ico for Linux targets ("Unsupported
+  # input format .ico"). build-linux.sh generates this PNG from the .ico
+  # (frame [3], the 256x256 one) before packaging.
+  icon: resources/icon.png
+  # Otherwise electron-builder falls back to the "Utility" category.
+  category: AudioVideo
+  # Electron derives the window's app_id / WM_CLASS from `desktopName` in
+  # package.json, and this makes the installed .desktop filename match it, so
+  # the desktop environment can associate a running window with the launcher.
+  # Without both, electron-builder warns on every Linux build.
+  syncDesktopName: true
 nsis:
   # One-time move of the install folder off the old euphonia-electron name.
   # See the file itself for why productName cannot do this on its own.

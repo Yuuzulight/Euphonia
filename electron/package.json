@@ -1,6 +1,7 @@
 {
   "name": "Euphonia",
   "productName": "Euphonia",
+  "desktopName": "Euphonia.desktop",
   "private": true,
   "version": "0.5.1",
   "description": "Euphonia desktop app — voice-training recorder and analyzer",

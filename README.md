@@ -27,7 +27,7 @@ There are three ways to use Euphonia, depending on your platform and how comfort
 
 Euphonia is available as a Windows desktop app. No terminal, no account, no API key — install it, open it, record a take, and everything works instantly, including a written insight for every take. All your recordings and data stay on your own machine, in your own user folder.
 
-**Currently Windows-only.** A macOS build was part of the original plan but hasn't actually been built yet. If you're on a Mac, use the developer workflow below for now.
+**Windows build only.** A macOS build was part of the original plan but hasn't actually been built yet, and there's no prebuilt Linux release either — but you can build the AppImage with a builder script or  yourself from source (see **Linux** below). If you're on a Mac, use the developer workflow below for now.
 
 ### 1. Install it
 
@@ -71,6 +71,28 @@ Once a key is added, any take showing the built-in insight will offer a **"✨ u
 Open **⚙️ Settings** and click **💾 export all recordings** any time to save a full copy of your recordings, audio, and analysis to a folder of your choosing. It's a plain folder, not a locked-in format, so you can move or archive it however you like.
 
 To remove a single take, use the small 🗑️ button on its card in **All recordings**. To clear your whole history at once, use **delete all recordings** in the Settings danger zone. Both ask for confirmation first and can't be undone, so back up first if you want to keep anything.
+
+## Linux
+
+There's no prebuilt Linux release — the installer above is Windows-only. Instead, a script builds a self-contained AppImage from source and handles the whole process: it detects your distro's package manager, installs anything that's missing (Node.js, ffmpeg, ImageMagick, uv), builds the dashboard and the analyzer sidecar, packages the AppImage, and smoke-tests that it launches before handing you the path.
+
+```fish
+git clone https://github.com/Yuuzulight/Euphonia
+cd Euphonia
+./build-linux.sh
+```
+
+Output: `electron/release/Euphonia-<version>.AppImage` — run it with:
+
+```fish
+./electron/release/Euphonia-*.AppImage --no-sandbox
+```
+
+`--no-sandbox` is only needed where unprivileged user namespaces are disabled; on a machine without FUSE, add `--appimage-extract-and-run` instead. At the end the script also offers to write a `.desktop` launcher into the repo root, so Euphonia shows up in your application menu.
+
+Arch, Debian/Ubuntu, Fedora, openSUSE, Alpine, Void, Solus and Gentoo are detected automatically. On anything else, install Node.js 22+, ffmpeg, ImageMagick and [uv](https://docs.astral.sh/uv) yourself and run `./build-linux.sh --skip-deps`.
+
+For the manual step-by-step, the per-distro dependency commands, and AppImage troubleshooting (FUSE, sandboxing, the harmless GPU noise on launch), see [`docs/building-linux.md`](docs/building-linux.md).
 
 ## Browser version (works on macOS, Linux, and mobile too)
 
