@@ -643,6 +643,15 @@ electron/src/recordings.ts  deleteRecording(id)/deleteAllRecordings() — read/r
                              recordings.json plus remove the matching audio, analysis,
                              and cached-insight files. No sidecar involvement (unlike
                              creation, deletion is pure file/JSON bookkeeping).
+                             updateRecordingLabel(id, label): the same read/rewrite, one
+                             field. Only the label changes, since audio and analysis are
+                             keyed by id and a rename has no reason to touch a file. A blank
+                             or whitespace-only label is refused (the old name stays), which
+                             is also what the card does before it calls this. The cached
+                             insight is deliberately left alone: it is generated text that
+                             quotes the name it was written with, so it can read stale after
+                             a rename, and deleting it would remove text the user has
+                             already read.
                              exportRecordings(win) — opens a native "choose a folder"
                              dialog and copies recordings.json + audio/ + analysis/
                              into a timestamped subfolder there (fs.cpSync, no zip
@@ -671,6 +680,10 @@ Renderer-side type: `dashboard-react/src/vg-bridge.ts` (`EuphoniaBridge`). Curre
 surface:
 - `createRecording({ audioBase64, mimeType, label, note? }): Promise<void>` —
   Task 3/4. Writes a temp file, spawns the sidecar with `--output-root <userData>`.
+- `updateRecordingLabel(id: number, label: string): Promise<void>` renames one take in
+  place (label only, see `recordings.ts` above). Called from the ✏️ on each `RecordingCard`,
+  which edits inline: Enter or clicking away saves, Esc cancels, and a blank name keeps the
+  old one.
 - `deleteRecording(id: number): Promise<void>` — removes one recording's entry,
   audio file, analysis file, and cached insight. Shown as a 🗑️ on each
   `RecordingCard`, gated behind an inline (not native-dialog) confirm.

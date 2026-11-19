@@ -65,6 +65,15 @@ export const browserBridge: EuphoniaBridge = {
     await db.putDetail(id, detail);
   },
 
+  async updateRecordingLabel(id, label) {
+    const next = label.trim();
+    if (!next) return; // a blank name is refused, same as the desktop app, which also
+    // leaves the cached insight (generated text that quotes the old name) alone
+    const rec = (await db.getAllRecordings()).find((r) => r.id === id);
+    if (!rec) return;
+    await db.putRecording({ ...rec, label: next });
+  },
+
   async deleteRecording(id) {
     await db.deleteRecordingRow(id);
   },

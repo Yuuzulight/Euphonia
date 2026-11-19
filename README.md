@@ -88,7 +88,7 @@ Once a key is added, any take showing the built-in insight will offer a **"✨ u
 
 Open **⚙️ Settings** and click **💾 export all recordings** any time to save a full copy of your recordings, audio, and analysis to a folder of your choosing. It's a plain folder, not a locked-in format, so you can move or archive it however you like.
 
-To remove a single take, use the small 🗑️ button on its card in **All recordings**. To clear your whole history at once, use **delete all recordings** in the Settings danger zone. Both ask for confirmation first and can't be undone, so back up first if you want to keep anything.
+To rename a take, use the ✏️ button on its card in **All recordings**: type the new name and press Enter (or click away) to save it, Esc to leave it as it was. To remove a single take, use the small 🗑️ button on the same card. To clear your whole history at once, use **delete all recordings** in the Settings danger zone. Both ask for confirmation first and can't be undone, so back up first if you want to keep anything.
 
 ## Linux
 
@@ -118,7 +118,7 @@ For the manual step-by-step, the per-distro dependency commands, and AppImage tr
 
 This runs the same Praat voice-analysis engine as the desktop app, compiled to WebAssembly. Everything happens locally in your browser tab: nothing is uploaded anywhere, and once the page has loaded once it works offline. Recordings live in your browser's local storage (IndexedDB) instead of a file on disk, so they stay on that device and in that browser. Export a backup (⚙️ Settings → 💾 export all recordings) if you want to move them elsewhere or keep a copy.
 
-Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis, the live pitch/harmonics visualiser, the sentence prompt, live playback — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
+Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, rename/delete/export, register & phrasing analysis, the live pitch/harmonics visualiser, the sentence prompt, live playback — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
 
 **Mobile:** the layout, the record → analyze → results flow, and the populated
 dashboard have been checked at phone and tablet viewports, down to 320px wide,

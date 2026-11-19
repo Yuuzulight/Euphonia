@@ -118,6 +118,7 @@ export function generateTemplateInsight(
 
   const topWeakness = weaknesses[0];
   const strengthsList = strengths.slice(0, 3);
+  // the name is baked into the text: renaming the take does not rewrite this
   const summaryOpening = `Take #${r.id}${r.label ? ` ("${r.label}")` : ""} — here's what the numbers show.`;
 
   let summary: string;

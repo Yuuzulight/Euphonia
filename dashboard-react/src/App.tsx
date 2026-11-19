@@ -97,6 +97,11 @@ export function App() {
     };
   }, []);
 
+  async function handleRenameRecording(id: number, label: string) {
+    await window.euphonia.updateRecordingLabel(id, label);
+    refetchRecordings();
+  }
+
   async function handleDeleteRecording(id: number) {
     await window.euphonia.deleteRecording(id);
     if (selectedId === id) setSelectedId(null);
@@ -453,7 +458,11 @@ export function App() {
                 style={{ cursor: "pointer" }}
                 title="click to view this take above"
               >
-                <RecordingCard r={r} onDelete={() => handleDeleteRecording(r.id)} />
+                <RecordingCard
+                  r={r}
+                  onDelete={() => handleDeleteRecording(r.id)}
+                  onRename={(label) => handleRenameRecording(r.id, label)}
+                />
               </div>
             ))
           )}

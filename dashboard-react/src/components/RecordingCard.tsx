@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Recording } from "../types";
 import { fmt } from "../zones";
 import { WaveformPlayer } from "./WaveformPlayer";
@@ -6,23 +6,74 @@ import { WaveformPlayer } from "./WaveformPlayer";
 export function RecordingCard({
   r,
   onDelete,
+  onRename,
 }: {
   r: Recording;
   onDelete?: () => void;
+  /** Called with the new name when the user renames this take. */
+  onRename?: (label: string) => void;
 }) {
   const [confirming, setConfirming] = useState(false);
+  const [draft, setDraft] = useState<string | null>(null); // null = not renaming
+  // Esc must not also fire the blur-save that follows it
+  const skipBlur = useRef(false);
+
+  function save() {
+    if (skipBlur.current) {
+      skipBlur.current = false;
+      return;
+    }
+    const next = (draft ?? "").trim();
+    setDraft(null);
+    // blank or unchanged: keep the name it already had
+    if (next && next !== r.label) onRename?.(next);
+  }
+
+  function cancel() {
+    skipBlur.current = true;
+    setDraft(null);
+  }
 
   return (
     <div className="rec">
       <div className="top">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span className="num">{r.id}</span>
-          <span className="label-txt">{r.label}</span>
+          {draft === null ? (
+            <span className="label-txt">{r.label}</span>
+          ) : (
+            <input
+              className="rec-rename"
+              autoFocus
+              value={draft}
+              aria-label={`rename take ${r.id}`}
+              onChange={(e) => setDraft(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") save();
+                if (e.key === "Escape") cancel();
+              }}
+              onBlur={save}
+            />
+          )}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span className="date">
             {r.date} · {fmt(r.duration_s, "s")}
           </span>
+          {onRename && draft === null && (
+            <button
+              className="rec-rename-btn"
+              title="rename this take"
+              onClick={(e) => {
+                e.stopPropagation();
+                skipBlur.current = false;
+                setDraft(r.label);
+              }}
+            >
+              ✏️
+            </button>
+          )}
           {onDelete && !confirming && (
             <button
               className="rec-delete"

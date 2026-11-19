@@ -1235,7 +1235,8 @@ section {
 }
 
 /* ---- delete a take / delete everything (shared confirm styling) ---- */
-.rec-delete {
+.rec-delete,
+.rec-rename-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -1250,6 +1251,23 @@ section {
   opacity: 1;
   background: var(--danger-bg);
   transform: scale(1.08);
+}
+.rec-rename-btn:hover {
+  opacity: 1;
+  background: var(--bg-glow-1);
+  transform: scale(1.08);
+}
+/* the inline rename field, in place of the take's name */
+.rec-rename {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 4px 12px;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: inherit;
 }
 .rec-confirm,
 .danger-confirm {
