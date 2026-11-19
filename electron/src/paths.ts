@@ -119,6 +119,25 @@ export function getRecordingsJsonPath(): string {
   return path.join(getUserDataRoot(), "recordings.json");
 }
 
+// Where the practice sentences are read from at runtime, so adding a .txt never
+// needs a rebuild. Dev: the repo's own sentences/ folder (__dirname is
+// electron/dist, so two levels up is the repo root), the one you are editing
+// anyway. Packaged: a folder in the user's own data dir, which they can drop
+// packs into; the protocol handler falls back to the snapshot bundled inside
+// the app when that folder isn't there (or is empty).
+export function getSentencesDir(): string {
+  if (app.isPackaged) {
+    return path.join(getUserDataRoot(), "sentences");
+  }
+  return path.join(__dirname, "..", "..", "sentences");
+}
+
+// The snapshot of the packs the dashboard was built with (the Vite plugin emits
+// it into the bundle). Used when the folder above has nothing to offer.
+export function getBundledSentencesJson(): string {
+  return path.join(getRendererDistDir(), "sentences", "index.json");
+}
+
 // The built dashboard-react static bundle. In dev, dashboard-react/dist
 // sits two levels above electron/dist/. When packaged, electron-builder
 // copies it to process.resourcesPath/dashboard (see Task 10).

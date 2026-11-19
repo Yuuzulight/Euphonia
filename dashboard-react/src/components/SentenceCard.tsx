@@ -1,26 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  orderPacks,
-  parsePack,
-  randomSentence,
-  type SentencePack,
-} from "../sentences";
+import { randomSentence, type SentencePack } from "../sentences";
+import { fetchPacks } from "../sentencesSource";
 
 // The sentence prompt next to the record button: one random line from the
 // chosen pack of practice sentences.
 //
-// The packs come from the repo's own sentences/ folder, injected at build time
-// by sentencePacksPlugin.mjs as `virtual:sentences`. See the comment there for
-// why that isn't a fetch from public/ or an import.meta.glob. Adding a pack
-// shows up on reload in dev; a packaged build needs a rebuild.
-import FILES from "virtual:sentences";
+// The packs are read at runtime (see sentencesSource.ts), so dropping a .txt
+// into the sentences/ folder shows up on the next load, or the next time this
+// window is focused, with no rebuild. Which files are offered, and in what
+// order, is listPacks() in ../sentences.ts.
 
 // Bumping this key is a reset for every existing user, so don't.
 const STORAGE_KEY = "euphonia:sentence-pack";
-
-function packIdOf(path: string): string {
-  return path.split("/").pop()!.replace(/\.txt$/i, "");
-}
 
 function loadPackId(): string | null {
   try {
@@ -30,27 +21,49 @@ function loadPackId(): string | null {
   }
 }
 
-export function SentenceCard() {
-  const packs = useMemo<SentencePack[]>(() => {
-    const raw = new Map<string, string>();
-    for (const [path, text] of Object.entries(FILES)) raw.set(packIdOf(path), text);
-    return orderPacks([...raw.keys()]).map((id) => parsePack(id, raw.get(id)!));
-  }, []);
-
-  const [packId, setPackId] = useState<string | null>(() => {
-    const saved = loadPackId();
-    return saved && packs.some((p) => p.id === saved) ? saved : packs[0]?.id ?? null;
-  });
-  const pack = packs.find((p) => p.id === packId) ?? packs[0] ?? null;
-  const [sentence, setSentence] = useState(() => (pack ? randomSentence(pack) : ""));
+export function SentenceCard({ takeCount }: { takeCount: number }) {
+  const [packs, setPacks] = useState<SentencePack[] | null>(null);
+  const [packId, setPackId] = useState<string | null>(loadPackId);
+  const [sentence, setSentence] = useState("");
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement | null>(null);
 
-  // A different pack gets a sentence of its own straight away.
+  // Read the folder now, and again whenever the window comes back into focus:
+  // that is how a pack added while the app was open shows up.
   useEffect(() => {
-    if (pack) setSentence(randomSentence(pack));
+    let live = true;
+    const load = () => {
+      fetchPacks().then((next) => {
+        if (live && next) setPacks(next); // null = the read failed, keep what we have
+      });
+    };
+    load();
+    window.addEventListener("focus", load);
+    return () => {
+      live = false;
+      window.removeEventListener("focus", load);
+    };
+  }, []);
+
+  const pack = useMemo(() => {
+    if (!packs || packs.length === 0) return null;
+    return packs.find((p) => p.id === packId) ?? packs[0];
+  }, [packs, packId]);
+
+  // A pack that has just arrived, or a different one: show one of its lines,
+  // unless the line already on screen is still part of it.
+  useEffect(() => {
+    if (!pack) return;
+    setSentence((prev) => (prev && pack.sentences.includes(prev) ? prev : randomSentence(pack)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packId]);
+  }, [pack?.id, packs]);
+
+  // A finished take moves on to the next sentence, from the same pack.
+  useEffect(() => {
+    if (takeCount === 0 || !pack) return;
+    setSentence((prev) => randomSentence(pack, prev));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [takeCount]);
 
   // Close the list on a click outside it, or Esc.
   useEffect(() => {
@@ -69,7 +82,7 @@ export function SentenceCard() {
     };
   }, [open]);
 
-  if (!pack) return null; // no sentences/ files to read from
+  if (!pack || !packs) return null; // still loading, or nothing usable in the folder
 
   function choose(id: string) {
     setPackId(id);
@@ -100,7 +113,7 @@ export function SentenceCard() {
             className="sentence-next"
             aria-label="Another sentence"
             title="Another sentence"
-            onClick={() => setSentence(randomSentence(pack, sentence))}
+            onClick={() => setSentence((prev) => randomSentence(pack, prev))}
           >
             <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
               <path

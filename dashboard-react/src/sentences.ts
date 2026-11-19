@@ -1,7 +1,8 @@
 // Sentence packs: the .txt files in the repo's sentences/ folder, one sentence
-// per line, read aloud as practice material. Deliberately DOM-free and
-// glob-free so scripts/test_sentence_packs.ts can check the ordering rule with
-// plain node (the component does the import.meta.glob side).
+// per line, read aloud as practice material. The folder is read at runtime
+// (sentencesSource.ts) and this module decides which files qualify and in what
+// order. Deliberately DOM-free so scripts/test_sentence_packs.ts can check the
+// rules with plain node.
 
 export interface SentencePack {
   /** filename without its extension, e.g. "casual_EN", also the dropdown label */
@@ -18,11 +19,19 @@ export function packSuffix(id: string): string {
   return m ? m[1] : "";
 }
 
-/** Dropdown order: files whose name starts with a capital letter first, then
- *  the rest grouped by their _XX tag, so every file sharing an ending sits
- *  next to the others. Within a group, alphabetical. */
-export function orderPacks(ids: string[]): string[] {
-  return [...ids].sort((a, b) => {
+/** Only files that follow the naming convention are offered: a name starting
+ *  with a capital letter, or one ending in an _XX tag. A file that does
+ *  neither is skipped, so a stray notes.txt or draft-v2.txt never shows up. */
+export function isPack(id: string): boolean {
+  return /^[A-Z]/.test(id) || packSuffix(id) !== "";
+}
+
+/** The packs to list, in dropdown order: names starting with a capital letter
+ *  first, then the rest grouped by their _XX tag so every file sharing an
+ *  ending sits next to the others. Within a group, alphabetical. Files that
+ *  follow neither convention are left out. */
+export function listPacks(ids: string[]): string[] {
+  return ids.filter(isPack).sort((a, b) => {
     const capitalFirst = Number(!/^[A-Z]/.test(a)) - Number(!/^[A-Z]/.test(b));
     if (capitalFirst) return capitalFirst;
     const sa = packSuffix(a);

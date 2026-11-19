@@ -274,31 +274,47 @@ emoji pass through untouched, so the set grows one emoji at a time.
 
 ## Practice sentences (the sentence card by the record button)
 
-`sentences/*.txt` at the repo root hold practice material, one sentence per
-line. `src/components/SentenceCard.tsx` shows one random line from the chosen
-pack in a translucent box directly under the record panel, with a pill button
-that lists every pack and a small re-roll button for another sentence.
+`sentences/*.txt` hold practice material, one sentence per line: the repo's
+folder in dev, `<userData>/sentences` for a packaged install (see below).
+`src/components/SentenceCard.tsx` shows one random line from the chosen pack in a
+translucent box directly under the record panel, with a pill button that lists
+every pack and a small re-roll button for another sentence. Finishing a take
+moves on to a fresh sentence from the same pack (App.tsx bumps a `takeCount` the
+card watches, so nothing has to reach into the recorder).
 
-- **Where the packs come from:** the folder sits outside Vite's project root, so
-  an `import.meta.glob` there matches nothing and says nothing about it. Instead
-  `sentencePacksPlugin.mjs` (wired up in `vite.config.ts`) injects the whole
-  folder as the virtual module `virtual:sentences`, a
-  `{ "<pack id>": "<file text>" }` map. Bundled, not fetched from `public/`, so
-  the browser build, the desktop app and offline all behave the same, and nothing
-  about the `app://` protocol needed to change. In dev, adding or removing a
-  `.txt` reloads the page; a packaged build needs a rebuild to pick one up.
-- **Dropdown order** (`orderPacks` in `src/sentences.ts`): names starting with a
-  capital letter first, then the rest grouped by the `_XX` tag they end with, so
-  every file sharing an ending sits next to the others. With the current folder:
-  `English, Polish, casual_EN, flirty_EN, formal_EN, casual_PL, flirty_PL,
-  formal_PL`. Only a trailing `_XX` counts as a tag (`foo_EN_extra` has none) and
-  lowercase does not either (`foo_en`).
+- **Where the packs come from:** read at runtime, never baked into the JS.
+  `src/sentencesSource.ts` fetches `sentences/index.json`, a
+  `{ "<pack id>": "<file text>" }` map, and each host answers it from a folder it
+  can read live:
+
+  | host | source |
+  |---|---|
+  | browser dev server | `sentencePacksPlugin.mjs` middleware reads the repo's `sentences/` per request, and reloads the page on add/change/unlink |
+  | desktop app | the `app://` handler's `sentences/index.json` branch: the repo's folder in dev, `<userData>/sentences` when packaged, falling back to the snapshot bundled in the dashboard |
+  | static build / Pages | the snapshot the plugin emits to `dist/sentences/index.json` |
+
+  So a new or edited `.txt` needs no rebuild: the next load picks it up, and the
+  card also refetches whenever the window regains focus, so a pack added while
+  the app is open appears on alt-tab. A folder that doesn't exist, or one with
+  no `.txt` in it, means no card rather than an empty one, while a read that
+  fails (offline, or a host that isn't answering) leaves the list already on
+  screen alone. (The pack text used to
+  be inlined by a virtual module, which is why the bundle shrank by ~64 kB when
+  this moved to a fetch.)
+- **Which files are listed, and in what order** (`listPacks` in
+  `src/sentences.ts`): a file is offered only if it follows the naming
+  convention, and then names starting with a capital letter come first, followed
+  by the rest grouped by the `_XX` tag they end with, so every file sharing an
+  ending sits next to the others (alphabetical within a group). A file that does
+  neither, say `notes.txt` or `draft-v2.txt`, is skipped entirely. Only a
+  trailing `_XX` counts as a tag (`foo_EN_extra` has none) and lowercase does not
+  either (`foo_en`).
 - **The chosen pack is remembered** in `localStorage` under
   `euphonia:sentence-pack`, the same way the theme preference is; an unknown or
-  missing id falls back to the first pack, and a missing `sentences/` folder
-  means no card at all rather than an empty one.
-- Ordering and parsing are pure functions, so `scripts/test_sentence_packs.ts`
-  checks them against the real filenames.
+  missing id falls back to the first pack.
+- Listing, parsing and the random pick are pure functions, so
+  `scripts/test_sentence_packs.ts` pins the rule with synthetic names and then
+  checks the repo's own folder against it, rather than against a name list.
 
 ---
 
@@ -831,10 +847,14 @@ load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
     and **`MetricModal.tsx`** (the reference-comparison modal, see its section above).
   - `src/live/analysis.ts`: the live visualiser's DSP (autocorrelation F0 + a single-bin
     Goertzel magnitude), pure functions with no DOM, checked by `scripts/test_live_analysis.ts`.
-  - `src/sentences.ts`: sentence-pack ordering (`orderPacks`), parsing and random pick, pure
-    functions checked by `scripts/test_sentence_packs.ts` (see the sentence card above).
-  - `sentencePacksPlugin.mjs`: the Vite plugin that injects `virtual:sentences` (the repo's
-    `sentences/*.txt`) into the bundle.
+  - `src/sentences.ts`: which `sentences/*.txt` files are listed, in what order (`listPacks`),
+    plus parsing and the random pick, pure functions checked by
+    `scripts/test_sentence_packs.ts` (see the sentence card above).
+  - `src/sentencesSource.ts`: fetches `sentences/index.json` at runtime and hands the packs
+    to the card, so a new `.txt` never needs a rebuild.
+  - `sentencePacksPlugin.mjs`: the Vite plugin that serves that endpoint in dev (reading the
+    repo's `sentences/*.txt` per request) and emits the same JSON into the build output for a
+    static deploy and for the packaged app's fallback.
   - `src/annotations/` — `AnnotationsProvider` (context + `Note`/`Region`), `lib/`
     (reusable), `entries/` (per-recording, authored by you).
   - `src/vg-bridge.ts` — typed `window.euphonia` accessor + `blobToBase64` helper +

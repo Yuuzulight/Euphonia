@@ -206,6 +206,7 @@ Only rebuild the parts that changed:
 | What changed | Rebuild step |
 |---|---|
 | `dashboard-react/src/**` | §2 (`npm run build` in `dashboard-react/`) |
+| `sentences/*.txt` | nothing, to use it: the app reads that folder at runtime (the repo's in dev, `~/.config/Euphonia/sentences` for the packaged app). §2 + §7 only if you want new packs baked in as the shipped defaults |
 | `analyze.py` or Python deps | §5 (`uv run scripts/build_sidecar.py`) |
 | `electron/src/**` | §7 (`npm run dist` in `electron/`) |
 | Any of the above | §7 is always the final step |

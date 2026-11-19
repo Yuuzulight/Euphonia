@@ -54,6 +54,9 @@ export function App() {
   const [recordings, setRecordings] = useState<Recording[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  // Bumped when a take finishes saving, so the sentence card can move on to the
+  // next sentence. Nothing else reads it.
+  const [takeCount, setTakeCount] = useState(0);
   const [references, setReferences] = useState<ReferenceVoice[]>([]);
   // which metric's reference modal is open + the card rect it grew from
   const [modal, setModal] = useState<{ key: MetricKey; rect: DOMRect } | null>(
@@ -161,8 +164,13 @@ export function App() {
         )}
       </header>
 
-      <RecordButton onRecorded={refetchRecordings} />
-      <SentenceCard />
+      <RecordButton
+        onRecorded={() => {
+          refetchRecordings();
+          setTakeCount((n) => n + 1);
+        }}
+      />
+      <SentenceCard takeCount={takeCount} />
 
       {error && (
         <div className="empty">
