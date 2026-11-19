@@ -21,6 +21,10 @@ Here's the dashboard after a take — the headline metrics up top, then resonanc
 
 Shown in **blossom**, the default. There are eight themes — three light, five dark — switchable from the header or ⚙️ Settings.
 
+Every player also has a **Live** button. Click it to cycle through three views: **pitch**, your last few seconds of pitch drawn over the same register bands the cards use, with the 165 Hz fem floor as a dashed line; **harmonics**, every multiple of your fundamental (H1, H2, H3 …) marked on the live spectrum; and **both** at once. It follows the playhead while a take plays, and repaints when you scrub, so you can pause on any moment and look at it. The same button sits on the reference voices in the comparison modal, which is how you see your own harmonics next to a real voice's.
+
+![The player's Live button set to Both: the pitch trace over the register bands above a spectrum marked at each harmonic, H1 to H9](assets/live-visualiser.png)
+
 There are three ways to use Euphonia, depending on your platform and how comfortable you are working in the code:
 
 ## Desktop app (recommended if you just want to use it)
@@ -100,7 +104,7 @@ For the manual step-by-step, the per-distro dependency commands, and AppImage tr
 
 This runs the same Praat voice-analysis engine as the desktop app, compiled to WebAssembly. Everything happens locally in your browser tab: nothing is uploaded anywhere, and once the page has loaded once it works offline. Recordings live in your browser's local storage (IndexedDB) instead of a file on disk, so they stay on that device and in that browser. Export a backup (⚙️ Settings → 💾 export all recordings) if you want to move them elsewhere or keep a copy.
 
-Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
+Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis, the live pitch/harmonics visualiser — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
 
 **Mobile:** the layout, the record → analyze → results flow, and the populated
 dashboard have been checked at phone and tablet viewports, down to 320px wide,

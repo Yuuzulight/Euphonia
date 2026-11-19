@@ -24,6 +24,7 @@ import { RecordingCard } from "./components/RecordingCard";
 import { CheatSheet } from "./components/CheatSheet";
 import { RegisterSection } from "./components/RegisterSection";
 import { RecordButton } from "./components/RecordButton";
+import { SentenceCard } from "./components/SentenceCard";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { TitleBar } from "./components/TitleBar";
 import { UpdateBanner } from "./components/UpdateBanner";
@@ -161,6 +162,7 @@ export function App() {
       </header>
 
       <RecordButton onRecorded={refetchRecordings} />
+      <SentenceCard />
 
       {error && (
         <div className="empty">

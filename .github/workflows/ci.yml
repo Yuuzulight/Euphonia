@@ -34,6 +34,12 @@ jobs:
       - name: Test theme tokens (parity + contrast)
         run: node scripts/test_theme_tokens.js
 
+      - name: Test live visualiser DSP (pitch + spectrum)
+        run: node scripts/test_live_analysis.ts
+
+      - name: Test sentence packs (ordering + parsing)
+        run: node scripts/test_sentence_packs.ts
+
       - uses: astral-sh/setup-uv@v3
 
       - name: Test analyze.py path resolution

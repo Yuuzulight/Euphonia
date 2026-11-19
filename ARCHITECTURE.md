@@ -272,6 +272,36 @@ emoji pass through untouched, so the set grows one emoji at a time.
 
 ---
 
+## Practice sentences (the sentence card by the record button)
+
+`sentences/*.txt` at the repo root hold practice material, one sentence per
+line. `src/components/SentenceCard.tsx` shows one random line from the chosen
+pack in a translucent box directly under the record panel, with a pill button
+that lists every pack and a small re-roll button for another sentence.
+
+- **Where the packs come from:** the folder sits outside Vite's project root, so
+  an `import.meta.glob` there matches nothing and says nothing about it. Instead
+  `sentencePacksPlugin.mjs` (wired up in `vite.config.ts`) injects the whole
+  folder as the virtual module `virtual:sentences`, a
+  `{ "<pack id>": "<file text>" }` map. Bundled, not fetched from `public/`, so
+  the browser build, the desktop app and offline all behave the same, and nothing
+  about the `app://` protocol needed to change. In dev, adding or removing a
+  `.txt` reloads the page; a packaged build needs a rebuild to pick one up.
+- **Dropdown order** (`orderPacks` in `src/sentences.ts`): names starting with a
+  capital letter first, then the rest grouped by the `_XX` tag they end with, so
+  every file sharing an ending sits next to the others. With the current folder:
+  `English, Polish, casual_EN, flirty_EN, formal_EN, casual_PL, flirty_PL,
+  formal_PL`. Only a trailing `_XX` counts as a tag (`foo_EN_extra` has none) and
+  lowercase does not either (`foo_en`).
+- **The chosen pack is remembered** in `localStorage` under
+  `euphonia:sentence-pack`, the same way the theme preference is; an unknown or
+  missing id falls back to the first pack, and a missing `sentences/` folder
+  means no card at all rather than an empty one.
+- Ordering and parsing are pure functions, so `scripts/test_sentence_packs.ts`
+  checks them against the real filenames.
+
+---
+
 ## Recording player (themed waveform)
 
 The recordings play through a **themed wavesurfer.js waveform**, not the native `<audio>`
@@ -296,6 +326,40 @@ voice shape.
 - **Audio URL:** `${import.meta.env.BASE_URL}${src}` (`src` is like `audio/001.mp3` or
   `reference-audio/vctk_f294.mp3`); duration falls back to `getDuration()`; play state +
   currentTime from wavesurfer events. Deps: `wavesurfer.js` + `@wavesurfer/react` (~+15kb gzip).
+
+---
+
+## Live harmonics & pitch visualiser (the player's "Live" button)
+
+Every player carries a **Live** pill that cycles **off → Pitch → Harmonics →
+Both**, opening a canvas panel inside the player pill (one per player: turning
+it on for one card leaves the others alone). It works on takes *and* the
+reference clips in the comparison modal, since both go through
+`WaveformPlayer`.
+
+- **Pitch**: the last ~4 s of F0 as a scrolling trace over the same
+  `PITCH_ZONES` bands the metric bars use, with the 165 Hz fem floor drawn as
+  the goal line. Unvoiced frames are gaps, not invented values, so a take that
+  drops out of register reads exactly like it sounds.
+- **Harmonics**: the frame's spectrum on a log 80 Hz–4 kHz axis with a marker
+  at each `k·F0` (H1 = the fundamental, in the cursor pink), i.e. the harmonic
+  stack the whole app is really about. The curve is drawn relative to the
+  frame's own loudest bin, so a quiet take shows the same shape as a loud one.
+- **Both**: pitch trace on top, spectrum below.
+
+**Where the data comes from:** wavesurfer's own decoded buffer
+(`ws.getDecodedData()`) sampled at the playhead, *not* an `AnalyserNode`
+tapping the `<audio>` element. Routing the element through a Web Audio graph
+would risk silencing playback on a suspended context, and this way the views
+also keep drawing while paused or scrubbed. The cost is one autocorrelation
+(512-sample window) plus 150 Goertzel DFT bins (1024-sample Hann-windowed
+window) per frame, both in `src/live/analysis.ts`, pure functions, so
+`scripts/test_live_analysis.ts` can check them against synthetic tones.
+Consequences worth knowing: the buffer is decoded at **8 kHz** (wavesurfer's
+default), so the spectrum stops at 4 kHz, above F3, and nothing is lost;
+pitch resolution is `sampleRate/lag` (~4 Hz at 200 Hz), which is why the
+readout is rounded; and there's no octave-error repair beyond taking the first
+ACF peak near the tallest one.
 
 ---
 
@@ -762,8 +826,15 @@ load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
   - `src/components/` — cards, charts, `RegisterSection` + `ContourChart` (permanent viz),
     `icons.tsx` (the custom hand-drawn section/hero icon set — see Iconography above), the
     inline-emoji system: `emojiMap.tsx` (emoji→icon registry) + `RichText.tsx` (the scanner);
-    `WaveformPlayer.tsx` (themed wavesurfer player — see Recording player above); and
-    **`MetricModal.tsx`** (the reference-comparison modal — see its section above).
+    `WaveformPlayer.tsx` (themed wavesurfer player, see Recording player above);
+    **`LiveVisualiser.tsx`** (the player's live pitch/harmonics canvas, see its section above);
+    and **`MetricModal.tsx`** (the reference-comparison modal, see its section above).
+  - `src/live/analysis.ts`: the live visualiser's DSP (autocorrelation F0 + a single-bin
+    Goertzel magnitude), pure functions with no DOM, checked by `scripts/test_live_analysis.ts`.
+  - `src/sentences.ts`: sentence-pack ordering (`orderPacks`), parsing and random pick, pure
+    functions checked by `scripts/test_sentence_packs.ts` (see the sentence card above).
+  - `sentencePacksPlugin.mjs`: the Vite plugin that injects `virtual:sentences` (the repo's
+    `sentences/*.txt`) into the bundle.
   - `src/annotations/` — `AnnotationsProvider` (context + `Note`/`Region`), `lib/`
     (reusable), `entries/` (per-recording, authored by you).
   - `src/vg-bridge.ts` — typed `window.euphonia` accessor + `blobToBase64` helper +
@@ -798,7 +869,10 @@ load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
   stdio encoding bug), `test_analyze_paths.py` + `test_protocol_paths.js` (the two
   small committed regression checks — `analyze.py`'s `resolve_paths()` branching and
   `protocol.ts`'s path-containment security check), `test_theme_tokens.js` (theme
-  token parity + contrast check — see Theming above).
+  token parity + contrast check, see Theming above), `test_live_analysis.ts` (the
+  live visualiser's DSP against synthetic tones) and `test_sentence_packs.ts` (the
+  sentence card's ordering and parsing), both run with plain `node`, which strips
+  the types; needs Node ≥ 22.18.
 - `docs/gemini-api-key.md` — the Gemini key setup guide; single source of truth,
   also rendered inline in the desktop app's onboarding modal.
 - `docs/specs/` — design specs (desktop app architecture rationale; theme system).
