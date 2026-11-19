@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { blobToBase64 } from "../vg-bridge";
+import { LiveMonitorToggle } from "./LiveMonitorToggle";
 
 export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
   const [state, setState] = useState<"idle" | "recording" | "saving" | "error">("idle");
@@ -70,6 +71,8 @@ export function RecordButton({ onRecorded }: { onRecorded: () => void }) {
           <button className="retry" onClick={() => setState("idle")}>try again</button>
         </>
       )}
+      {/* its own stream, so it stays usable in every state, recording or not */}
+      <LiveMonitorToggle />
     </div>
   );
 }

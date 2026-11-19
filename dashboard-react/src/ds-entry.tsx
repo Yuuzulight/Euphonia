@@ -12,6 +12,7 @@ export { ContourChart } from "./components/ContourChart";
 export { RegisterSection } from "./components/RegisterSection";
 export { LiveVisualiser } from "./components/LiveVisualiser";
 export { SentenceCard } from "./components/SentenceCard";
+export { LiveMonitorToggle } from "./components/LiveMonitorToggle";
 
 // Reusable annotation/insight building blocks.
 export { InsightCard } from "./annotations/lib/InsightCard";

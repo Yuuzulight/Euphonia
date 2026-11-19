@@ -35,6 +35,10 @@ Packs are plain `.txt` files in `sentences/`, one sentence per line, and the fil
 
 Add or remove a file and the list follows on the next load, or the next time you come back to the window: nothing needs rebuilding. The desktop app reads a `sentences/` folder in its own data directory if you make one (`~/.config/Euphonia/sentences` on Linux, `%APPDATA%\Euphonia\sentences` on Windows) and falls back to the packs it shipped with.
 
+Below the record panel sits your **latest take**, ready to play, so you can hear what you just did without scrolling down to the list. It swaps over to the new take by itself as soon as one is saved.
+
+Next to the record button is a **🎧 live playback** pill. Switch it on and you hear yourself through the speakers while you speak, which is the quickest way to catch a habit in the moment. It has its own microphone stream, so it is not tied to recording: leave it on through a take, or turn it on with nothing recording at all. Headphones keep it from feeding back into the mic.
+
 There are three ways to use Euphonia, depending on your platform and how comfortable you are working in the code:
 
 ## Desktop app (recommended if you just want to use it)
@@ -114,7 +118,7 @@ For the manual step-by-step, the per-distro dependency commands, and AppImage tr
 
 This runs the same Praat voice-analysis engine as the desktop app, compiled to WebAssembly. Everything happens locally in your browser tab: nothing is uploaded anywhere, and once the page has loaded once it works offline. Recordings live in your browser's local storage (IndexedDB) instead of a file on disk, so they stay on that device and in that browser. Export a backup (⚙️ Settings → 💾 export all recordings) if you want to move them elsewhere or keep a copy.
 
-Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis, the live pitch/harmonics visualiser, the sentence prompt — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
+Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis, the live pitch/harmonics visualiser, the sentence prompt, live playback — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
 
 **Mobile:** the layout, the record → analyze → results flow, and the populated
 dashboard have been checked at phone and tablet viewports, down to 320px wide,

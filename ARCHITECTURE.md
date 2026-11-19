@@ -318,6 +318,29 @@ card watches, so nothing has to reach into the recorder).
 
 ---
 
+## Live playback (hearing yourself as you speak)
+
+`src/components/LiveMonitorToggle.tsx` is the 🎧 pill in the record panel: it opens its own
+microphone capture and plays it straight back out of the speakers, so you hear yourself in
+realtime while you practise.
+
+- **Its own stream and graph.** `getUserMedia` → `createMediaStreamSource` → `destination`,
+  with `echoCancellation`, `noiseSuppression` and `autoGainControl` all off, because the
+  point is hearing your own voice rather than a cleaned-up one. Switching it off stops the
+  tracks and closes the `AudioContext`, which is what releases the OS microphone indicator.
+- **Independent of recording by construction.** It is a separate stream from the recorder's,
+  and the pill renders in every state of `RecordButton` (idle, recording, saving, error), so
+  it can be running while a take records, or with nothing recording at all, and stopping
+  either one never touches the other. Both streams capture the same device, so a take made
+  with live playback on is not a different recording from one made without it.
+- **Headphones keep it from feeding back.** Through speakers, the mic plus the monitor path is
+  a loop. The pill's tooltip says so. There is no gain control and no echo suppression on
+  purpose: if feedback turns out to be a problem in practice, a gain slider is the thing to add.
+- **A refused microphone is visible**, not silent: the pill reads `mic blocked` and the tooltip
+  says to check the app's microphone permission.
+
+---
+
 ## Recording player (themed waveform)
 
 The recordings play through a **themed wavesurfer.js waveform**, not the native `<audio>`
@@ -327,9 +350,15 @@ voice shape.
 - **`src/components/WaveformPlayer.tsx`** — uses `@wavesurfer/react`'s `WavesurferPlayer`
   component. **Generic props** `{ src, duration?, downloadName? }` (not a `Recording`), so it
   plays *any* clip — Rachel's takes **and** the reference voices. Rendered by `RecordingCard`
-  (`<WaveformPlayer src={r.audio} duration={r.duration_s} downloadName={…} />`) and by the
-  **reference-comparison modal** (see its section below). An `audioBus` module singleton keeps
+  (`<WaveformPlayer src={r.audio} duration={r.duration_s} downloadName={…} />`), by the
+  **reference-comparison modal** (see its section below), and by the **latest-take player**
+  under the record panel (see below). An `audioBus` module singleton keeps
   only one player playing at a time across the whole app.
+- **Latest-take player** (`App.tsx`): one more `WaveformPlayer`, under the record panel with
+  the newest take's label, so the take you just made is playable without hunting for it in the
+  list. It renders only when that take has audio, and `key={latest.id}` remounts it whenever a
+  new take lands, which is what refreshes it after a recording (no polling, no state of its
+  own). It is the *latest* take, not the one selected elsewhere on the page.
 - **Layout:** a soft `lav-bg` rounded pill (CSS under `.player` in `index.css`) holding a
   gradient pink→lavender play/pause button, the waveform, an `m:ss / m:ss` time readout, and
   a pastel volume slider (`accent-color`). Volume hides under 520px.
@@ -843,6 +872,7 @@ load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
     `icons.tsx` (the custom hand-drawn section/hero icon set — see Iconography above), the
     inline-emoji system: `emojiMap.tsx` (emoji→icon registry) + `RichText.tsx` (the scanner);
     `WaveformPlayer.tsx` (themed wavesurfer player, see Recording player above);
+    **`LiveMonitorToggle.tsx`** (the record panel's live playback pill, see its section above);
     **`LiveVisualiser.tsx`** (the player's live pitch/harmonics canvas, see its section above);
     and **`MetricModal.tsx`** (the reference-comparison modal, see its section above).
   - `src/live/analysis.ts`: the live visualiser's DSP (autocorrelation F0 + a single-bin
