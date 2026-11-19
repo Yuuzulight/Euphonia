@@ -21,9 +21,11 @@ import { ResonanceCard } from "./components/ResonanceCard";
 import { LineChart, type Point } from "./components/LineChart";
 import { useThemeColors } from "./theme/ThemeProvider";
 import { RecordingCard } from "./components/RecordingCard";
+import { WaveformPlayer } from "./components/WaveformPlayer";
 import { CheatSheet } from "./components/CheatSheet";
 import { RegisterSection } from "./components/RegisterSection";
 import { RecordButton } from "./components/RecordButton";
+import { SentenceCard } from "./components/SentenceCard";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { TitleBar } from "./components/TitleBar";
 import { UpdateBanner } from "./components/UpdateBanner";
@@ -53,6 +55,9 @@ export function App() {
   const [recordings, setRecordings] = useState<Recording[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  // Bumped when a take finishes saving, so the sentence card can move on to the
+  // next sentence. Nothing else reads it.
+  const [takeCount, setTakeCount] = useState(0);
   const [references, setReferences] = useState<ReferenceVoice[]>([]);
   // which metric's reference modal is open + the card rect it grew from
   const [modal, setModal] = useState<{ key: MetricKey; rect: DOMRect } | null>(
@@ -91,6 +96,11 @@ export function App() {
       clearTimeout(hideTimer);
     };
   }, []);
+
+  async function handleRenameRecording(id: number, label: string) {
+    await window.euphonia.updateRecordingLabel(id, label);
+    refetchRecordings();
+  }
 
   async function handleDeleteRecording(id: number) {
     await window.euphonia.deleteRecording(id);
@@ -160,7 +170,30 @@ export function App() {
         )}
       </header>
 
-      <RecordButton onRecorded={refetchRecordings} />
+      <RecordButton
+        onRecorded={() => {
+          refetchRecordings();
+          setTakeCount((n) => n + 1);
+        }}
+      />
+      <SentenceCard takeCount={takeCount} />
+
+      {/* the newest take, playable without hunting for it in the list below; the
+          key makes a fresh take hand the player a fresh file */}
+      {latest?.audio && (
+        <section className="latest-play">
+          <h2 className="section-title">🎧 latest take</h2>
+          <p className="take-hint">
+            #{latest.id} · {latest.label}
+          </p>
+          <WaveformPlayer
+            key={latest.id}
+            src={latest.audio}
+            duration={latest.duration_s}
+            downloadName={`voice-take-${latest.id}`}
+          />
+        </section>
+      )}
 
       {error && (
         <div className="empty">
@@ -425,7 +458,11 @@ export function App() {
                 style={{ cursor: "pointer" }}
                 title="click to view this take above"
               >
-                <RecordingCard r={r} onDelete={() => handleDeleteRecording(r.id)} />
+                <RecordingCard
+                  r={r}
+                  onDelete={() => handleDeleteRecording(r.id)}
+                  onRename={(label) => handleRenameRecording(r.id, label)}
+                />
               </div>
             ))
           )}

@@ -272,6 +272,75 @@ emoji pass through untouched, so the set grows one emoji at a time.
 
 ---
 
+## Practice sentences (the sentence card by the record button)
+
+`sentences/*.txt` hold practice material, one sentence per line: the repo's
+folder in dev, `<userData>/sentences` for a packaged install (see below).
+`src/components/SentenceCard.tsx` shows one random line from the chosen pack in a
+translucent box directly under the record panel, with a pill button that lists
+every pack and a small re-roll button for another sentence. Finishing a take
+moves on to a fresh sentence from the same pack (App.tsx bumps a `takeCount` the
+card watches, so nothing has to reach into the recorder).
+
+- **Where the packs come from:** read at runtime, never baked into the JS.
+  `src/sentencesSource.ts` fetches `sentences/index.json`, a
+  `{ "<pack id>": "<file text>" }` map, and each host answers it from a folder it
+  can read live:
+
+  | host | source |
+  |---|---|
+  | browser dev server | `sentencePacksPlugin.mjs` middleware reads the repo's `sentences/` per request, and reloads the page on add/change/unlink |
+  | desktop app | the `app://` handler's `sentences/index.json` branch: the repo's folder in dev, `<userData>/sentences` when packaged, falling back to the snapshot bundled in the dashboard |
+  | static build / Pages | the snapshot the plugin emits to `dist/sentences/index.json` |
+
+  So a new or edited `.txt` needs no rebuild: the next load picks it up, and the
+  card also refetches whenever the window regains focus, so a pack added while
+  the app is open appears on alt-tab. A folder that doesn't exist, or one with
+  no `.txt` in it, means no card rather than an empty one, while a read that
+  fails (offline, or a host that isn't answering) leaves the list already on
+  screen alone. (The pack text used to
+  be inlined by a virtual module, which is why the bundle shrank by ~64 kB when
+  this moved to a fetch.)
+- **Which files are listed, and in what order** (`listPacks` in
+  `src/sentences.ts`): a file is offered only if it follows the naming
+  convention, and then names starting with a capital letter come first, followed
+  by the rest grouped by the `_XX` tag they end with, so every file sharing an
+  ending sits next to the others (alphabetical within a group). A file that does
+  neither, say `notes.txt` or `draft-v2.txt`, is skipped entirely. Only a
+  trailing `_XX` counts as a tag (`foo_EN_extra` has none) and lowercase does not
+  either (`foo_en`).
+- **The chosen pack is remembered** in `localStorage` under
+  `euphonia:sentence-pack`, the same way the theme preference is; an unknown or
+  missing id falls back to the first pack.
+- Listing, parsing and the random pick are pure functions, so
+  `scripts/test_sentence_packs.ts` pins the rule with synthetic names and then
+  checks the repo's own folder against it, rather than against a name list.
+
+---
+
+## Live playback (hearing yourself as you speak)
+
+`src/components/LiveMonitorToggle.tsx` is the 🎧 pill in the record panel: it opens its own
+microphone capture and plays it straight back out of the speakers, so you hear yourself in
+realtime while you practise.
+
+- **Its own stream and graph.** `getUserMedia` → `createMediaStreamSource` → `destination`,
+  with `echoCancellation`, `noiseSuppression` and `autoGainControl` all off, because the
+  point is hearing your own voice rather than a cleaned-up one. Switching it off stops the
+  tracks and closes the `AudioContext`, which is what releases the OS microphone indicator.
+- **Independent of recording by construction.** It is a separate stream from the recorder's,
+  and the pill renders in every state of `RecordButton` (idle, recording, saving, error), so
+  it can be running while a take records, or with nothing recording at all, and stopping
+  either one never touches the other. Both streams capture the same device, so a take made
+  with live playback on is not a different recording from one made without it.
+- **Headphones keep it from feeding back.** Through speakers, the mic plus the monitor path is
+  a loop. The pill's tooltip says so. There is no gain control and no echo suppression on
+  purpose: if feedback turns out to be a problem in practice, a gain slider is the thing to add.
+- **A refused microphone is visible**, not silent: the pill reads `mic blocked` and the tooltip
+  says to check the app's microphone permission.
+
+---
+
 ## Recording player (themed waveform)
 
 The recordings play through a **themed wavesurfer.js waveform**, not the native `<audio>`
@@ -281,9 +350,15 @@ voice shape.
 - **`src/components/WaveformPlayer.tsx`** — uses `@wavesurfer/react`'s `WavesurferPlayer`
   component. **Generic props** `{ src, duration?, downloadName? }` (not a `Recording`), so it
   plays *any* clip — Rachel's takes **and** the reference voices. Rendered by `RecordingCard`
-  (`<WaveformPlayer src={r.audio} duration={r.duration_s} downloadName={…} />`) and by the
-  **reference-comparison modal** (see its section below). An `audioBus` module singleton keeps
+  (`<WaveformPlayer src={r.audio} duration={r.duration_s} downloadName={…} />`), by the
+  **reference-comparison modal** (see its section below), and by the **latest-take player**
+  under the record panel (see below). An `audioBus` module singleton keeps
   only one player playing at a time across the whole app.
+- **Latest-take player** (`App.tsx`): one more `WaveformPlayer`, under the record panel with
+  the newest take's label, so the take you just made is playable without hunting for it in the
+  list. It renders only when that take has audio, and `key={latest.id}` remounts it whenever a
+  new take lands, which is what refreshes it after a recording (no polling, no state of its
+  own). It is the *latest* take, not the one selected elsewhere on the page.
 - **Layout:** a soft `lav-bg` rounded pill (CSS under `.player` in `index.css`) holding a
   gradient pink→lavender play/pause button, the waveform, an `m:ss / m:ss` time readout, and
   a pastel volume slider (`accent-color`). Volume hides under 520px.
@@ -296,6 +371,40 @@ voice shape.
 - **Audio URL:** `${import.meta.env.BASE_URL}${src}` (`src` is like `audio/001.mp3` or
   `reference-audio/vctk_f294.mp3`); duration falls back to `getDuration()`; play state +
   currentTime from wavesurfer events. Deps: `wavesurfer.js` + `@wavesurfer/react` (~+15kb gzip).
+
+---
+
+## Live harmonics & pitch visualiser (the player's "Live" button)
+
+Every player carries a **Live** pill that cycles **off → Pitch → Harmonics →
+Both**, opening a canvas panel inside the player pill (one per player: turning
+it on for one card leaves the others alone). It works on takes *and* the
+reference clips in the comparison modal, since both go through
+`WaveformPlayer`.
+
+- **Pitch**: the last ~4 s of F0 as a scrolling trace over the same
+  `PITCH_ZONES` bands the metric bars use, with the 165 Hz fem floor drawn as
+  the goal line. Unvoiced frames are gaps, not invented values, so a take that
+  drops out of register reads exactly like it sounds.
+- **Harmonics**: the frame's spectrum on a log 80 Hz–4 kHz axis with a marker
+  at each `k·F0` (H1 = the fundamental, in the cursor pink), i.e. the harmonic
+  stack the whole app is really about. The curve is drawn relative to the
+  frame's own loudest bin, so a quiet take shows the same shape as a loud one.
+- **Both**: pitch trace on top, spectrum below.
+
+**Where the data comes from:** wavesurfer's own decoded buffer
+(`ws.getDecodedData()`) sampled at the playhead, *not* an `AnalyserNode`
+tapping the `<audio>` element. Routing the element through a Web Audio graph
+would risk silencing playback on a suspended context, and this way the views
+also keep drawing while paused or scrubbed. The cost is one autocorrelation
+(512-sample window) plus 150 Goertzel DFT bins (1024-sample Hann-windowed
+window) per frame, both in `src/live/analysis.ts`, pure functions, so
+`scripts/test_live_analysis.ts` can check them against synthetic tones.
+Consequences worth knowing: the buffer is decoded at **8 kHz** (wavesurfer's
+default), so the spectrum stops at 4 kHz, above F3, and nothing is lost;
+pitch resolution is `sampleRate/lag` (~4 Hz at 200 Hz), which is why the
+readout is rounded; and there's no octave-error repair beyond taking the first
+ACF peak near the tallest one.
 
 ---
 
@@ -534,6 +643,15 @@ electron/src/recordings.ts  deleteRecording(id)/deleteAllRecordings() — read/r
                              recordings.json plus remove the matching audio, analysis,
                              and cached-insight files. No sidecar involvement (unlike
                              creation, deletion is pure file/JSON bookkeeping).
+                             updateRecordingLabel(id, label): the same read/rewrite, one
+                             field. Only the label changes, since audio and analysis are
+                             keyed by id and a rename has no reason to touch a file. A blank
+                             or whitespace-only label is refused (the old name stays), which
+                             is also what the card does before it calls this. The cached
+                             insight is deliberately left alone: it is generated text that
+                             quotes the name it was written with, so it can read stale after
+                             a rename, and deleting it would remove text the user has
+                             already read.
                              exportRecordings(win) — opens a native "choose a folder"
                              dialog and copies recordings.json + audio/ + analysis/
                              into a timestamped subfolder there (fs.cpSync, no zip
@@ -562,6 +680,10 @@ Renderer-side type: `dashboard-react/src/vg-bridge.ts` (`EuphoniaBridge`). Curre
 surface:
 - `createRecording({ audioBase64, mimeType, label, note? }): Promise<void>` —
   Task 3/4. Writes a temp file, spawns the sidecar with `--output-root <userData>`.
+- `updateRecordingLabel(id: number, label: string): Promise<void>` renames one take in
+  place (label only, see `recordings.ts` above). Called from the ✏️ on each `RecordingCard`,
+  which edits inline: Enter or clicking away saves, Esc cancels, and a blank name keeps the
+  old one.
 - `deleteRecording(id: number): Promise<void>` — removes one recording's entry,
   audio file, analysis file, and cached insight. Shown as a 🗑️ on each
   `RecordingCard`, gated behind an inline (not native-dialog) confirm.
@@ -762,8 +884,20 @@ load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
   - `src/components/` — cards, charts, `RegisterSection` + `ContourChart` (permanent viz),
     `icons.tsx` (the custom hand-drawn section/hero icon set — see Iconography above), the
     inline-emoji system: `emojiMap.tsx` (emoji→icon registry) + `RichText.tsx` (the scanner);
-    `WaveformPlayer.tsx` (themed wavesurfer player — see Recording player above); and
-    **`MetricModal.tsx`** (the reference-comparison modal — see its section above).
+    `WaveformPlayer.tsx` (themed wavesurfer player, see Recording player above);
+    **`LiveMonitorToggle.tsx`** (the record panel's live playback pill, see its section above);
+    **`LiveVisualiser.tsx`** (the player's live pitch/harmonics canvas, see its section above);
+    and **`MetricModal.tsx`** (the reference-comparison modal, see its section above).
+  - `src/live/analysis.ts`: the live visualiser's DSP (autocorrelation F0 + a single-bin
+    Goertzel magnitude), pure functions with no DOM, checked by `scripts/test_live_analysis.ts`.
+  - `src/sentences.ts`: which `sentences/*.txt` files are listed, in what order (`listPacks`),
+    plus parsing and the random pick, pure functions checked by
+    `scripts/test_sentence_packs.ts` (see the sentence card above).
+  - `src/sentencesSource.ts`: fetches `sentences/index.json` at runtime and hands the packs
+    to the card, so a new `.txt` never needs a rebuild.
+  - `sentencePacksPlugin.mjs`: the Vite plugin that serves that endpoint in dev (reading the
+    repo's `sentences/*.txt` per request) and emits the same JSON into the build output for a
+    static deploy and for the packaged app's fallback.
   - `src/annotations/` — `AnnotationsProvider` (context + `Note`/`Region`), `lib/`
     (reusable), `entries/` (per-recording, authored by you).
   - `src/vg-bridge.ts` — typed `window.euphonia` accessor + `blobToBase64` helper +
@@ -798,7 +932,10 @@ load re-downloads Pyodide + the wheel (~28MB) each time a cache is cleared.
   stdio encoding bug), `test_analyze_paths.py` + `test_protocol_paths.js` (the two
   small committed regression checks — `analyze.py`'s `resolve_paths()` branching and
   `protocol.ts`'s path-containment security check), `test_theme_tokens.js` (theme
-  token parity + contrast check — see Theming above).
+  token parity + contrast check, see Theming above), `test_live_analysis.ts` (the
+  live visualiser's DSP against synthetic tones) and `test_sentence_packs.ts` (the
+  sentence card's ordering and parsing), both run with plain `node`, which strips
+  the types; needs Node ≥ 22.18.
 - `docs/gemini-api-key.md` — the Gemini key setup guide; single source of truth,
   also rendered inline in the desktop app's onboarding modal.
 - `docs/specs/` — design specs (desktop app architecture rationale; theme system).

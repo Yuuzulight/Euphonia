@@ -40,6 +40,24 @@ export function deleteRecording(id: number): void {
   writeRecordings(recordings.filter((r) => r.id !== id));
 }
 
+// Only the label changes: the audio and the analysis keep their ids, so a
+// rename never has to touch a file. A blank label is refused rather than
+// written, since a nameless card is worse than the old name.
+//
+// The cached insight is left alone on purpose. It is generated text that quotes
+// the name it was written with, so it can read stale after a rename; deleting it
+// would take away text the user has already read, so they keep it and can
+// regenerate when they want the new name in it.
+export function updateRecordingLabel(id: number, label: string): void {
+  const next = label.trim();
+  if (!next) return;
+  const recordings = readRecordings();
+  const target = recordings.find((r) => r.id === id);
+  if (!target) return;
+  target.label = next;
+  writeRecordings(recordings);
+}
+
 export function deleteAllRecordings(): void {
   fs.rmSync(getAudioDir(), { recursive: true, force: true });
   fs.rmSync(getAnalysisDir(), { recursive: true, force: true });

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Euphonia
+GenericName=Voice Trainer
+Comment=Voice-training recorder and analyzer
+Exec="/home/stella/Projects/Euphonia-fork/Euphonia/electron/release/Euphonia-0.5.1.AppImage" %U
+Icon=/home/stella/Projects/Euphonia-fork/Euphonia/electron/resources/icon.png
+Terminal=false
+Categories=AudioVideo;Player;Recorder;
+Keywords=voice;singing;training;pitch;recording;
+StartupWMClass=Euphonia

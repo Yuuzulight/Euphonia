@@ -7,7 +7,7 @@ import { runAnalyze } from "./sidecar";
 import { getApiKey, setApiKey, clearApiKey } from "./settings";
 import type { RecordingSummary } from "./gemini";
 import { generateInsight, regenerateWithGemini, readCachedInsight } from "./insights";
-import { deleteRecording, deleteAllRecordings, exportRecordings } from "./recordings";
+import { deleteAllRecordings, deleteRecording, exportRecordings, updateRecordingLabel } from "./recordings";
 import { installUpdate } from "./updater";
 import { chromeFor, writeCachedTheme } from "./theme";
 
@@ -39,6 +39,9 @@ export function registerIpcHandlers(win: BrowserWindow): void {
     }
   });
 
+  ipcMain.handle("recordings:updateLabel", (_event, id: number, label: string) =>
+    updateRecordingLabel(id, label),
+  );
   ipcMain.handle("recordings:delete", (_event, id: number) => deleteRecording(id));
   ipcMain.handle("recordings:deleteAll", () => deleteAllRecordings());
   ipcMain.handle("recordings:export", () => exportRecordings(win));

@@ -17,6 +17,7 @@ export interface EuphoniaBridge {
     label: string;
     note?: string;
   }): Promise<void>;
+  updateRecordingLabel(id: number, label: string): Promise<void>;
   deleteRecording(id: number): Promise<void>;
   deleteAllRecordings(): Promise<void>;
   exportRecordings(): Promise<{ canceled: boolean; path?: string }>;

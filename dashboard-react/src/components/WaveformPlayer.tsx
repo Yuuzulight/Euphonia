@@ -3,6 +3,7 @@ import WavesurferPlayer from "@wavesurfer/react";
 import type WaveSurfer from "wavesurfer.js";
 import Hover from "wavesurfer.js/dist/plugins/hover.esm.js";
 import { useThemeColors } from "../theme/ThemeProvider";
+import { LiveVisualiser, type LiveMode } from "./LiveVisualiser";
 
 // Themed waveform player (wavesurfer.js) — replaces the native <audio> bar so
 // playback matches the pastel theme AND shows the take's actual voice shape.
@@ -34,6 +35,16 @@ const audioBus = {
   },
 };
 
+// Live visualiser: one button cycles off → pitch → harmonics → both. The
+// panel is per-player (turning it on for one card leaves the others alone).
+const LIVE_MODES: LiveMode[] = ["off", "pitch", "harmonics", "both"];
+const LIVE_TEXT: Record<LiveMode, string> = {
+  off: "Live",
+  pitch: "Pitch",
+  harmonics: "Harmonics",
+  both: "Both",
+};
+
 function fmtTime(s: number): string {
   if (!isFinite(s) || s < 0) s = 0;
   const m = Math.floor(s / 60);
@@ -57,6 +68,7 @@ export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(duration ?? 0);
   const [vol, setVol] = useState(1);
+  const [live, setLive] = useState<LiveMode>("off");
 
   // @wavesurfer/react rebuilds (destroys + recreates) the underlying
   // WaveSurfer instance whenever ANY option value changes across renders —
@@ -117,6 +129,8 @@ export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
   const isAbsolute = /^(blob:|data:|https?:)/.test(src);
   const url = isAbsolute ? src : `${import.meta.env.BASE_URL}${src}`;
   const ext = src.split(".").pop() || "m4a";
+
+  const nextLive = LIVE_MODES[(LIVE_MODES.indexOf(live) + 1) % LIVE_MODES.length];
 
   return (
     <div className="player">
@@ -188,6 +202,23 @@ export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
         />
       </div>
 
+      <button
+        className={live === "off" ? "viz-btn" : "viz-btn on"}
+        onClick={() => setLive(nextLive)}
+        aria-label={`Live visualiser: ${LIVE_TEXT[live]}. Click for ${LIVE_TEXT[nextLive]}`}
+        title={`Live visualiser: ${LIVE_TEXT[live]}. Click for ${LIVE_TEXT[nextLive]}`}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+          <g fill="currentColor">
+            <rect x="3" y="9" width="3" height="6" rx="1.5" />
+            <rect x="8.5" y="5" width="3" height="14" rx="1.5" />
+            <rect x="14" y="7.5" width="3" height="9" rx="1.5" />
+            <rect x="19.5" y="10" width="3" height="4" rx="1.5" />
+          </g>
+        </svg>
+        <span className="viz-btn-text">{LIVE_TEXT[live]}</span>
+      </button>
+
       <a
         className="dl"
         href={url}
@@ -213,6 +244,8 @@ export function WaveformPlayer({ src, duration, downloadName }: PlayerProps) {
           />
         </svg>
       </a>
+
+      {live !== "off" && <LiveVisualiser ws={ws} mode={live} />}
     </div>
   );
 }

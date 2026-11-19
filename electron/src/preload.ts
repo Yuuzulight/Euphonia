@@ -7,6 +7,8 @@ contextBridge.exposeInMainWorld("euphonia", {
     label: string;
     note?: string;
   }) => ipcRenderer.invoke("recordings:create", payload),
+  updateRecordingLabel: (id: number, label: string) =>
+    ipcRenderer.invoke("recordings:updateLabel", id, label),
   deleteRecording: (id: number) => ipcRenderer.invoke("recordings:delete", id),
   deleteAllRecordings: () => ipcRenderer.invoke("recordings:deleteAll"),
   exportRecordings: () => ipcRenderer.invoke("recordings:export"),

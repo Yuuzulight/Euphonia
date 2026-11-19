@@ -21,13 +21,31 @@ Here's the dashboard after a take — the headline metrics up top, then resonanc
 
 Shown in **blossom**, the default. There are eight themes — three light, five dark — switchable from the header or ⚙️ Settings.
 
+Every player also has a **Live** button. Click it to cycle through three views: **pitch**, your last few seconds of pitch drawn over the same register bands the cards use, with the 165 Hz fem floor as a dashed line; **harmonics**, every multiple of your fundamental (H1, H2, H3 …) marked on the live spectrum; and **both** at once. It follows the playhead while a take plays, and repaints when you scrub, so you can pause on any moment and look at it. The same button sits on the reference voices in the comparison modal, which is how you see your own harmonics next to a real voice's.
+
+![The player's Live button set to Both: the pitch trace over the register bands above a spectrum marked at each harmonic, H1 to H9](assets/live-visualiser.png)
+
+Under the record button sits a sentence prompt: one random line from a pack of practice sentences, with a small ⟳ button for another. Each finished take moves on to the next line by itself, so every recording starts from something fresh.
+
+Packs are plain `.txt` files in `sentences/`, one sentence per line, and the file name decides where it lands in the list:
+
+- a name starting with a capital letter goes to the top
+- otherwise it's grouped by the two-capital tag it ends with, so `casual_EN` and `formal_EN` sit together, then `casual_PL` and `formal_PL`
+- a name that does neither isn't listed at all
+
+Add or remove a file and the list follows on the next load, or the next time you come back to the window: nothing needs rebuilding. The desktop app reads a `sentences/` folder in its own data directory if you make one (`~/.config/Euphonia/sentences` on Linux, `%APPDATA%\Euphonia\sentences` on Windows) and falls back to the packs it shipped with.
+
+Below the record panel sits your **latest take**, ready to play, so you can hear what you just did without scrolling down to the list. It swaps over to the new take by itself as soon as one is saved.
+
+Next to the record button is a **🎧 live playback** pill. Switch it on and you hear yourself through the speakers while you speak, which is the quickest way to catch a habit in the moment. It has its own microphone stream, so it is not tied to recording: leave it on through a take, or turn it on with nothing recording at all. Headphones keep it from feeding back into the mic.
+
 There are three ways to use Euphonia, depending on your platform and how comfortable you are working in the code:
 
 ## Desktop app (recommended if you just want to use it)
 
 Euphonia is available as a Windows desktop app. No terminal, no account, no API key — install it, open it, record a take, and everything works instantly, including a written insight for every take. All your recordings and data stay on your own machine, in your own user folder.
 
-**Currently Windows-only.** A macOS build was part of the original plan but hasn't actually been built yet. If you're on a Mac, use the developer workflow below for now.
+**Windows build only.** A macOS build was part of the original plan but hasn't actually been built yet, and there's no prebuilt Linux release either — but you can build the AppImage with a builder script or  yourself from source (see **Linux** below). If you're on a Mac, use the developer workflow below for now.
 
 ### 1. Install it
 
@@ -70,7 +88,29 @@ Once a key is added, any take showing the built-in insight will offer a **"✨ u
 
 Open **⚙️ Settings** and click **💾 export all recordings** any time to save a full copy of your recordings, audio, and analysis to a folder of your choosing. It's a plain folder, not a locked-in format, so you can move or archive it however you like.
 
-To remove a single take, use the small 🗑️ button on its card in **All recordings**. To clear your whole history at once, use **delete all recordings** in the Settings danger zone. Both ask for confirmation first and can't be undone, so back up first if you want to keep anything.
+To rename a take, use the ✏️ button on its card in **All recordings**: type the new name and press Enter (or click away) to save it, Esc to leave it as it was. To remove a single take, use the small 🗑️ button on the same card. To clear your whole history at once, use **delete all recordings** in the Settings danger zone. Both ask for confirmation first and can't be undone, so back up first if you want to keep anything.
+
+## Linux
+
+There's no prebuilt Linux release — the installer above is Windows-only. Instead, a script builds a self-contained AppImage from source and handles the whole process: it detects your distro's package manager, installs anything that's missing (Node.js, ffmpeg, ImageMagick, uv), builds the dashboard and the analyzer sidecar, packages the AppImage, and smoke-tests that it launches before handing you the path.
+
+```fish
+git clone https://github.com/Yuuzulight/Euphonia
+cd Euphonia
+./build-linux.sh
+```
+
+Output: `electron/release/Euphonia-<version>.AppImage` — run it with:
+
+```fish
+./electron/release/Euphonia-*.AppImage --no-sandbox
+```
+
+`--no-sandbox` is only needed where unprivileged user namespaces are disabled; on a machine without FUSE, add `--appimage-extract-and-run` instead. At the end the script also offers to write a `.desktop` launcher into the repo root, so Euphonia shows up in your application menu.
+
+Arch, Debian/Ubuntu, Fedora, openSUSE, Alpine, Void, Solus and Gentoo are detected automatically. On anything else, install Node.js 22+, ffmpeg, ImageMagick and [uv](https://docs.astral.sh/uv) yourself and run `./build-linux.sh --skip-deps`.
+
+For the manual step-by-step, the per-distro dependency commands, and AppImage troubleshooting (FUSE, sandboxing, the harmless GPU noise on launch), see [`docs/building-linux.md`](docs/building-linux.md).
 
 ## Browser version (works on macOS, Linux, and mobile too)
 
@@ -78,7 +118,7 @@ To remove a single take, use the small 🗑️ button on its card in **All recor
 
 This runs the same Praat voice-analysis engine as the desktop app, compiled to WebAssembly. Everything happens locally in your browser tab: nothing is uploaded anywhere, and once the page has loaded once it works offline. Recordings live in your browser's local storage (IndexedDB) instead of a file on disk, so they stay on that device and in that browser. Export a backup (⚙️ Settings → 💾 export all recordings) if you want to move them elsewhere or keep a copy.
 
-Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, delete/export, register & phrasing analysis — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
+Everything from the desktop app works the same way here: instant written insights, the optional Gemini upgrade, rename/delete/export, register & phrasing analysis, the live pitch/harmonics visualiser, the sentence prompt, live playback — including the same eight light/dark themes, switchable from the header button or **⚙️ Settings** and remembered on this device. The one thing missing is auto-update — just refresh the page for the latest version.
 
 **Mobile:** the layout, the record → analyze → results flow, and the populated
 dashboard have been checked at phone and tablet viewports, down to 320px wide,
